@@ -4,8 +4,15 @@
 test -f /usr/sbin/cron || exit 0
 
 case "$1" in
-start)	start-stop-daemon --start --verbose --exec /usr/sbin/cron ;;
-stop)	start-stop-daemon --stop --verbose --exec /usr/sbin/cron ;;
-*)	echo "Usage: /etc/init.d/cron start|stop"; exit 1 ;;
+start)	echo -n "Starting periodic command scheduler: cron"
+        start-stop-daemon --start --quiet --exec /usr/sbin/cron
+        echo "." 
+	;;
+stop)	echo -n "Stopping periodic command scheduler: cron"
+        start-stop-daemon --stop --quiet --exec /usr/sbin/cron
+        echo "."
+        ;;
+*)	echo "Usage: /etc/init.d/cron start|stop"; exit 1 
+        ;;
 esac
 exit 0
