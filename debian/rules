@@ -18,6 +18,21 @@ ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
   DEB_INSTALL += -s
 endif
 
+# Set system type (Linux, HURD, etc.)
+DEB_HOST_GNU_SYSTEM = $(shell dpkg-architecture -qDEB_HOST_GNU_SYSTEM)
+ifeq ($(DEB_HOST_GNU_SYSTEM), gnu)
+  PAM_DEFS = 
+  PAM_LIBS =
+  CONFFILES = conffiles.nopam
+else
+  PAM_DEFS = -DUSE_PAM
+  PAM_LIBS = -lpam
+  CONFFILES = conffiles.pam
+endif
+
+export PAM_DEFS
+export PAM_LIBS
+
 build: build-stamp
 build-stamp:
 	dh_testdir
@@ -34,6 +49,7 @@ clean:
 
 	# Add here commands to clean up after the build process.
 	-$(MAKE) clean
+	rm -f debian/conffiles
 	dh_clean
 
 # Build architecture-independent files here.
@@ -53,6 +69,7 @@ binary-arch: build
 	install -m 755 debian/checksecurity debian/tmp/usr/sbin/.
 	install -m 644 debian/checksecurity.conf debian/tmp/etc/.
 
+	cp -p debian/$(CONFFILES) debian/conffiles
 	dh_installdocs FEATURES THANKS README debian/README.anacron
 #	dh_installexamples
 #	dh_installmenu
