@@ -63,8 +63,10 @@ load_database(old_db)
 	user		*u, *nu;
 #ifdef DEBIAN
 	struct stat     syscrond_stat;
-	time_t          syscrond_files_mtime;
+	struct stat     syscrond_file_stat;
+	
         char            syscrond_fname[PATH_MAX+1];
+	int             syscrond_change = 0;
 #endif
 
 	Debug(DLOAD, ("[%d] load_database()\n", getpid()))
@@ -92,7 +94,6 @@ load_database(old_db)
 		log_it("CRON", getpid(), "STAT FAILED", SYSCRONDIR);
 		(void) exit(ERROR_EXIT);
 	}
-	syscrond_files_mtime = syscrond_stat.st_mtime;
 
 	/* If SYSCRONDIR was modified, we know that something is changed and
 	 * there is no need for any further checks. If it wasn't, we should
@@ -101,25 +102,30 @@ load_database(old_db)
 	 * we avoid reading of SYSCRONDIR and don't change its access time.
 	 * This is especially important on laptops with APM.
 	 */
-	if (old_db->mtime >= syscrond_files_mtime) {
+	if (old_db->sysd_mtime != syscrond_stat.st_mtime) {
+	        syscrond_change = 1;
+	} else {
+	        /* Look through the individual files */
 		user *systab;
 
 		Debug(DLOAD, ("[%d] system dir mtime unch, check files now.\n",
 			      getpid()))
 
 		for (systab = old_db->head;
-			(systab = get_next_system_crontab (systab)) != NULL;
-			systab = systab->next) {
+		     (systab = get_next_system_crontab (systab)) != NULL;
+		     systab = systab->next) {
 
 			sprintf(syscrond_fname, "%s/%s", SYSCRONDIR,
 							 systab->name + 8);
 
 			Debug(DLOAD, ("\t%s:", syscrond_fname))
 
-			if (stat(syscrond_fname, &syscrond_stat) < OK)
-				syscrond_stat.st_mtime = 0;
-			syscrond_files_mtime = TMAX(syscrond_files_mtime,
-						     syscrond_stat.st_mtime);
+			if (stat(syscrond_fname, &syscrond_file_stat) < OK)
+				syscrond_file_stat.st_mtime = 0;
+
+			if (syscrond_file_stat.st_mtime != systab->mtime) {
+			        syscrond_change = 1;
+                        }
 
 			Debug(DLOAD, (" [checked]\n"))
 		}
@@ -134,11 +140,12 @@ load_database(old_db)
 	 * time this function is called.
 	 */
 #ifdef DEBIAN
-	if (old_db->mtime == TMAX(statbuf.st_mtime,
-				  TMAX(syscron_stat.st_mtime,
-				       syscrond_files_mtime))) {
+	if ((old_db->user_mtime == statbuf.st_mtime) &&
+	    (old_db->sys_mtime == syscron_stat.st_mtime) &&
+	    (!syscrond_change)) {
 #else
-	if (old_db->mtime == TMAX(statbuf.st_mtime, syscron_stat.st_mtime)) {
+	if ((old_db->user_mtime == statbuf.st_mtime) &&
+	    (old_db->sys_mtime == syscron_stat.st_mtime)) {
 #endif
 		Debug(DLOAD, ("[%d] spool dir mtime unch, no load needed.\n",
 			      getpid()))
@@ -150,11 +157,10 @@ load_database(old_db)
 	 * actually changed.  Whatever is left in the old database when
 	 * we're done is chaff -- crontabs that disappeared.
 	 */
+	new_db.user_mtime = statbuf.st_mtime;
+	new_db.sys_mtime = syscron_stat.st_mtime;
 #ifdef DEBIAN
-	new_db.mtime = TMAX(statbuf.st_mtime, TMAX(syscron_stat.st_mtime,
-						   syscrond_files_mtime));
-#else
-	new_db.mtime = TMAX(statbuf.st_mtime, syscron_stat.st_mtime);
+	new_db.sysd_mtime = syscrond_stat.st_mtime;
 #endif
 	new_db.head = new_db.tail = NULL;
 
@@ -383,26 +389,10 @@ next_crontab:
 }
 
 #ifdef DEBIAN
+
 /* True or false? Is this a valid filename (upper/lower alpha, digits,
  * underscores, and hyphens only?)
  */
-#if 0 /* This is the version from debianutils */
-static int valid_name (char *filename)
-{
-  while (*filename) {
-    if (!(((*filename >= 'a') && (*filename <= 'z')) ||
-	  ((*filename >= 'A') && (*filename <= 'Z')) ||
-	  ((*filename >= '0') && (*filename <= '9')) ||
-	  (*filename == '_') ||
-	  (*filename == '-')))
-      return 0;
-    ++filename;
-  }
-
-  return 1;
-}
-
-#else
 #include <ctype.h>
 /* Same function, better compliance with ISO C */
 static int valid_name (char *filename)
@@ -417,7 +407,6 @@ static int valid_name (char *filename)
 
   return 1;
 }
-#endif
 
 static user *
 get_next_system_crontab (curtab)
