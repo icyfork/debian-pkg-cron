@@ -1,0 +1,12 @@
+#!/bin/sh -e
+# debconf config script for cron
+
+# Source debconf library.
+. /usr/share/debconf/confmodule
+
+if [ "$1" = "configure" ] ; then
+    if  dpkg --compare-versions "$2" lt-nl "3.0pl1-74" ; then
+        db_input medium cron/checksecurity || true
+        db_go || true
+    fi
+fi
