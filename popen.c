@@ -126,7 +126,13 @@ cron_popen(program, type, e)
 # if defined(BSD) || defined(POSIX)
 		initgroups(env_get("LOGNAME", e->envp), e->gid);
 # endif
-		setuid(e->uid);
+		if (setuid(e->uid) !=0) {
+		  char msg[256];
+		  snprintf(msg, 256, "popen: setuid(%lu) failed: %s",
+			   (unsigned long) e->uid, strerror(errno)); 
+		  log_it("CRON",getpid(),"error",msg);
+		  exit(ERROR_EXIT);
+		}	
 		chdir(env_get("HOME", e->envp));
 
 #if WANT_GLOBBING

@@ -231,9 +231,7 @@ child_process(e, u)
 
 		/* that's the last thing we'll log.  close the log files.
 		 */
-#ifdef SYSLOG
-		closelog();
-#endif
+		log_close();
 
 		/* get new pgrp, void tty, etc.
 		 */
@@ -276,7 +274,13 @@ child_process(e, u)
 # if defined(BSD) || defined(POSIX)
 		initgroups(env_get("LOGNAME", e->envp), e->gid);
 # endif
-		setuid(e->uid);		/* we aren't root after this... */
+		if (setuid(e->uid) !=0) { /* we aren't root after this... */
+		  char msg[256];
+		  snprintf(msg, 256, "do_command:setuid(%lu) failed: %s",
+			   (unsigned long) e->uid, strerror(errno)); 
+		  log_it("CRON",getpid(),"error",msg);
+		  exit(ERROR_EXIT);
+		}	
 		chdir(env_get("HOME", e->envp));
 
 		/* exec the command.
