@@ -96,6 +96,21 @@ child_process(e, u)
 	usernm = env_get("LOGNAME", e->envp);
 	mailto = env_get("MAILTO", e->envp);
 
+	/* Check for arguments */
+	if (mailto) {
+		const char	*end;
+
+		/* These chars have to match those cron_popen()
+		 * uses to split the command string */
+		mailto += strspn(mailto, " \t\n");
+		end = mailto + strcspn(mailto, " \t\n");
+		if (*mailto == '-' || *end != '\0') {
+			printf("Bad Mailto karma.\n");
+			log_it("CRON",getpid(),"error","bad mailto");
+			mailto = NULL;
+		}
+	}
+
 #ifdef USE_SIGCHLD
 	/* our parent is watching for our death by catching SIGCHLD.  we
 	 * do not care to watch for our children's deaths this way -- we
@@ -391,8 +406,8 @@ child_process(e, u)
 
 				(void) gethostname(hostname, MAXHOSTNAMELEN);
 				(void) snprintf(mailcmd, sizeof(mailcmd),
-				    MAILARGS, MAILCMD);
-				if (!(mail = cron_popen(mailcmd, "w"))) {
+				    MAILARGS, MAILCMD, mailto);
+				if (!(mail = cron_popen(mailcmd, "w", e))) {
 					perror(MAILCMD);
 					(void) _exit(ERROR_EXIT);
 				}
