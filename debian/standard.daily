@@ -73,7 +73,8 @@ for lfdir in $lflist ; do
 	if [ -n "$more_lost_found" ] ; then
 	    lost_found="$lost_found
 
-$more_lost_found"
+$lfdir:
+    $more_lost_found"
 	    # NOTE: above weird line breaks in string are intentional!
         fi
     fi
