@@ -1,3 +1,11 @@
+cron (3.0pl1-56) frozen unstable; urgency=medium
+
+  * Release Manager: 59115 is RC bug.
+  * set backup password files to root-only rw (closes:#59115)
+  * Fixed missing ntfs in checksecurity.conf (closes:#56939)
+
+ -- Steve Greenland <stevegr@debian.org>  Mon, 28 Feb 2000 19:16:20 -0600
+
 cron (3.0pl1-55) unstable; urgency=low
 
   * Changed __linux feature checks to __linux__ (closes:#50240)
