@@ -76,6 +76,7 @@ binary-arch: build
 	# Can't use dh_installcron because we don't have "normal" naming
 	# convention
 	install -m 644 debian/crontab.main debian/tmp/etc/crontab
+	install -m 644 debian/placeholder debian/tmp/etc/cron.d/.placeholder
 	install -m 755 debian/standard.daily \
                        debian/tmp/etc/cron.daily/standard
 	install -m 755 debian/standard.monthly \
