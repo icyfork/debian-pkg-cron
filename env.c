@@ -194,7 +194,7 @@ env_get(name, envp)
 	register int	len = strlen(name);
 	register char	*p, *q;
 
-	while (p = *envp++) {
+	while ((p = *envp++)) {
 		if (!(q = strchr(p, '=')))
 			continue;
 		if ((q - p) == len && !strncmp(p, name, len))
