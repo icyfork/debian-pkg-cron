@@ -1,3 +1,9 @@
+cron (3.0pl1-60) unstable; urgency=low
+
+  * Re-set log to LOG_CRON after PAM changes it to LOG_AUTH.(closes:#70028)
+
+ -- Steve Greenland <stevegr@debian.org>  Thu, 31 Aug 2000 14:37:44 -0500
+
 cron (3.0pl1-59) unstable; urgency=low
 
   * Fixed typo of @cmp in standard.daily (closes:#69921,#69937,#69956)
