@@ -106,7 +106,7 @@
 # define NEED_GETDTABLESIZE
 #endif
 
-#if (BSD >= 199103)
+#if (BSD >= 199103) || defined(__linux)
 # define HAVE_SAVED_UIDS
 #endif
 
