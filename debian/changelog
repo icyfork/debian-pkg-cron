@@ -1,3 +1,12 @@
+cron (3.0pl1-57) frozen unstable; urgency=low
+
+  * Release Manager: 61296 is RC bug;
+  * Change lockfile-progs "Depends" to "Suggests" (policy violation),
+  only try to use lockfile-create in /etc/cron.daily/standard if it is
+  installed (closes:#61296)
+
+ -- Steve Greenland <stevegr@debian.org>  Wed, 29 Mar 2000 20:12:06 -0600
+
 cron (3.0pl1-56) frozen unstable; urgency=medium
 
   * Release Manager: 59115 is RC bug.

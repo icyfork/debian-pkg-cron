@@ -10,24 +10,26 @@ umask 022
 
 #
 # Avoid running more than one at a time -- could happen if the
-# checksecurity script hands on a network drive
+# checksecurity script lands on a network drive.
 #
 
-lockfile-create $LOCKFILE
-if [ $? -ne 0 ] ; then
-    cat <<EOF
+if [ -x /usr/bin/lockfile-create ] ; then
+    lockfile-create $LOCKFILE
+    if [ $? -ne 0 ] ; then
+	cat <<EOF
 
 Unable to run /etc/cron.daily/standard because lockfile $LOCKFILE
 acquisition failed. This probably means that the previous days
 instance is still running. Please check and correct if necessary.
 
 EOF
-    exit 1
-fi
+	exit 1
+    fi
 
-# Keep lockfile fresh
-lockfile-touch $LOCKFILE &
-LOCKTOUCHPID="$!"
+    # Keep lockfile fresh
+    lockfile-touch $LOCKFILE &
+    LOCKTOUCHPID="$!"
+fi
 
 #
 # Backup key system files
@@ -86,5 +88,7 @@ fi
 #
 # Clean up lockfile
 #
-kill $LOCKTOUCHPID
-lockfile-remove $LOCKFILE
+if [ -x /usr/bin/lockfile-create ] ; then
+    kill $LOCKTOUCHPID
+    lockfile-remove $LOCKFILE
+fi
