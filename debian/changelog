@@ -1,3 +1,11 @@
+cron (3.0pl1-63) unstable; urgency=medium
+
+  * Fix mistaken diagnostic in crontab ("Reached end of file 
+  while reading environment").
+  * Fix "Too many arguments to [" error in postinst. (closes:#79725)
+
+ -- Steve Greenland <stevegr@debian.org>  Sun, 28 Jan 2001 12:00:55 -0600
+
 cron (3.0pl1-62) unstable; urgency=medium
 
   * Change tracking of crontab directory mod times to deal with directories
