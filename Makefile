@@ -55,7 +55,7 @@ DESTMAN		=	$(DESTROOT)/share/man
 INCLUDE		=	-I.
 #INCLUDE	=
 #<<need getopt()>>
-LIBS		=	-lpam
+LIBS		= $(PAM_LIBS)
 #<<optimize or debug?>>
 OPTIM		=	-O2
 #OPTIM		=	-g
@@ -74,7 +74,7 @@ LINTFLAGS	=	-hbxa $(INCLUDE) $(COMPAT) $(DEBUGGING)
 # Allow override from command line
 DEBUG_DEFS = -DDEBUGGING=0   
 # The -DUSE_SIGCHLD is needed for the Alpha port
-DEFS = -DDEBIAN -DUSE_SIGCHLD $(DEBUG_DEFS) -DUSE_PAM
+DEFS = -DDEBIAN -DUSE_SIGCHLD $(DEBUG_DEFS) $(PAM_DEFS)
 #(SGI IRIX systems need this)
 #DEFS		=	-D_BSD_SIGNALS -Dconst=
 #<<the name of the BSD-like install program>>
