@@ -64,7 +64,7 @@ checksecurity >setuid.changes
 # Check to see if any files are in lost+found directories and warn admin
 #
 # Get a list of the (potential) ext2 l+f directories
-lflist=`df --type=ext2  |awk '/\/dev\// {printf "%s/lost+found ", $6}'`
+lflist=`df -P --type=ext2  |awk '/\/dev\// {printf "%s/lost+found ", $6}'`
 
 # In each directory, look for files
 for lfdir in $lflist ; do
