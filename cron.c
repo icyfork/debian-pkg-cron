@@ -259,6 +259,7 @@ run_reboot_jobs(db)
 {
 	register user		*u;
 	register entry		*e;
+    int rbfd;
 #ifdef DEBIAN
 #define REBOOT_FILE "/var/run/crond.reboot"
 	/* Run on actual reboot, rather than cron restart */
@@ -269,11 +270,15 @@ run_reboot_jobs(db)
 	        return;
 	}
 	/* Create the file */
-	if (creat(REBOOT_FILE, S_IRUSR&S_IWUSR) < 0) {
-	        /* Bad news, bail out */
+	if ((rbfd = creat(REBOOT_FILE, S_IRUSR&S_IWUSR)) < 0) {
+		/* Bad news, bail out */
 	        log_it("CRON",getpid(),"DEATH","Can't create reboot check file");
 		exit(0);
+	} else {
+		close(rbfd);
 	}
+      
+
         Debug(DMISC, ("[%d], Debian running reboot jobs\n",getpid()));
     
 #endif
