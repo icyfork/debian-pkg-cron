@@ -62,8 +62,8 @@
 #endif
 
 #ifndef POSIX
-# if (BSD >= 199103) || defined(__linux__) || defined(ultrix) || defined(AIX) ||\
-	defined(HPUX) || defined(CONVEX) || defined(IRIX)
+# if (BSD >= 199103) || defined(__linux__) || defined(__GNU__) || defined(ultrix) ||\
+        defined(AIX) ||\ defined(HPUX) || defined(CONVEX) || defined(IRIX)
 #  define POSIX
 # endif
 #endif
@@ -76,17 +76,17 @@
 
 /*****************************************************************/
 
-#if !defined(BSD) && !defined(HPUX) && !defined(CONVEX) && !defined(__linux__)
+#if !defined(BSD) && !defined(HPUX) && !defined(CONVEX) && !defined(__linux__) && !defined(__GNU__)
 # define NEED_VFORK
 #endif
 
 #if (!defined(BSD) || (BSD < 198902)) && !defined(__linux__) && \
-	!defined(IRIX) && !defined(NeXT) && !defined(HPUX)
+	!defined(IRIX) && !defined(NeXT) && !defined(HPUX) && !defined(__GNU__)
 # define NEED_STRCASECMP
 #endif
 
 #if (!defined(BSD) || (BSD < 198911)) && !defined(__linux__) &&\
-	!defined(IRIX) && !defined(UNICOS) && !defined(HPUX)
+	!defined(IRIX) && !defined(UNICOS) && !defined(HPUX) && !defined(__GNU__)
 # define NEED_STRDUP
 #endif
 
@@ -102,7 +102,7 @@
 # define NEED_SETSID
 #endif
 
-#if (defined(POSIX) && !defined(BSD)) && !defined(__linux__)
+#if (defined(POSIX) && !defined(BSD)) && !defined(__linux__) && !defined(__GNU__)
 # define NEED_GETDTABLESIZE
 #endif
 
@@ -110,7 +110,7 @@
 # define HAVE_SAVED_UIDS
 #endif
 
-#if !defined(ATT) && !defined(__linux__) && !defined(IRIX) && !defined(UNICOS)
+#if !defined(ATT) && !defined(__linux__) && !defined(__GNU__) && !defined(IRIX) && !defined(UNICOS)
 # define USE_SIGCHLD
 #endif
 
