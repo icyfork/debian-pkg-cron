@@ -1,13 +1,14 @@
 cron (3.0pl1-66) unstable; urgency=low
 
-  * The "Julian Gilbey has been spending too much time proofreading" release.
+  * The "Julian Gilbey has been spending too much time proofreading"
+  release. Remove hyphens in cron.init (closes:#91323)
   * change log_it() to open and close syslog every time, remove SIGPIPE
   catcher, etc., all in attempt to keep PAM happy.
   * Added original location to copyright file (closes:#88507)
   * Allocate username dynamically in crontab.c (closes:#89040,#62268)
-  * Remove hyphens in cron.init (closes:#91323)
+  * Remove pam_limits.so from cron.pam file.
 
- -- Steve Greenland <stevegr@debian.org>  Tue, 27 Mar 2001 17:12:58 -0600
+ -- Steve Greenland <stevegr@debian.org>  Tue, 27 Mar 2001 18:04:16 -0600
 
 cron (3.0pl1-65) unstable; urgency=high
 
