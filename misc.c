@@ -310,7 +310,7 @@ get_char(file)
 
 	ch = getc(file);
 	if (ch == '\n')
-		Set_LineNum(LineNumber + 1)
+		Set_LineNum(LineNumber + 1);
 	return ch;
 }
 
@@ -324,7 +324,7 @@ unget_char(ch, file)
 {
 	ungetc(ch, file);
 	if (ch == '\n')
-		Set_LineNum(LineNumber - 1)
+	       Set_LineNum(LineNumber - 1);
 }
 
 
