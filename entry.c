@@ -465,7 +465,7 @@ get_range(bits, low, high, names, ch, file)
 		 * sent as a 0 since there is no offset either.
 		 */
 		ch = get_number(&num3, 0, PPC_NULL, ch, file);
-		if (ch == EOF)
+		if (ch == EOF || num3 <= 0)
 			return EOF;
 	} else {
 		/* no step.  default==1.
@@ -538,9 +538,6 @@ get_number(numptr, low, names, ch, file)
 	 */
 	if (all_digits) {
 		*numptr = atoi(temp);
-                if (*numptr <= 0) {
-                    return EOF;
-                }
 		return ch;
 	}
 
