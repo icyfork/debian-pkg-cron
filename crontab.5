@@ -52,7 +52,15 @@ will be part of the value assigned to
 The
 .I value
 string may be placed in quotes (single or double, but matching) to preserve
-leading or trailing blanks.
+leading or trailing blanks. The  
+.I value
+string is 
+.B not
+parsed for environmental substitutions, thus lines like
+.PP
+    PATH = $HOME/bin:$PATH
+.PP
+will not work as you might expect.
 .PP
 Several environment variables are set up
 automatically by the
@@ -86,7 +94,7 @@ file itself. Note in particular that if you want a PATH other than
 .PP
 The format of a cron command is very much the V7 standard, with a number of
 upward-compatible extensions.  Each line has five time and date fields,
-followed by a command, followed by a newline character ('\n').  
+followed by a command, followed by a newline character ('\\n').  
 The system crontab (/etc/crontab) uses the same format, except that
 the username for the command is specified after the time and
 date fields and before the command. The fields may be separated
