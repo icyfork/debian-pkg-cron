@@ -79,7 +79,7 @@ DEFS = -DDEBIAN -DUSE_SIGCHLD $(DEBUG_DEFS) $(PAM_DEFS)
 #DEFS		=	-D_BSD_SIGNALS -Dconst=
 #<<the name of the BSD-like install program>>
 #INSTALL = installbsd
-INSTALL = install
+INSTALL = install -s
 #<<any special load flags>>
 # LDFLAGS		=	-s
 # Let install do the strip
@@ -118,8 +118,8 @@ crontab		:	$(CRONTAB_OBJ)
 			$(CC) $(LDFLAGS) -o crontab $(CRONTAB_OBJ) $(LIBS)
 
 install		:	all
-			$(INSTALL) -c -m  755 -o root -s cron    $(DESTSBIN)/
-			$(INSTALL) -c -m 4755 -o root -s crontab $(DESTBIN)/
+			$(INSTALL) -c -m  755 -o root cron    $(DESTSBIN)/
+			$(INSTALL) -c -m 4755 -o root crontab $(DESTBIN)/
 			sh putman.sh crontab.1 $(DESTMAN)
 			sh putman.sh cron.8    $(DESTMAN)
 			sh putman.sh crontab.5 $(DESTMAN)
