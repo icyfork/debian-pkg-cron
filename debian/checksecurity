@@ -13,6 +13,10 @@ cd /
 
 . /etc/checksecurity.conf
 
+if [ "$CHECKSECURITY_DISABLE" = "TRUE" ] ; then
+    exit
+fi
+
 if [ "$CHECKSECURITY_NOFINDERRORS" = "TRUE" ] ; then
 	exec 9>&2
 	exec 2>/dev/null
@@ -31,8 +35,10 @@ cd $LOG
 
 test -f setuid.today || touch setuid.today
 
-if ! cmp -s setuid.today $TMP >/dev/null
+if cmp -s setuid.today $TMP >/dev/null
 then
+    :
+else
 	echo "`hostname` changes to setuid programs and devices:"
 	diff setuid.today $TMP || [ $? = 1 ]
 	mv setuid.today setuid.yesterday

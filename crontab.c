@@ -321,7 +321,14 @@ edit_cmd() {
 	}
 
 	um = umask(077);
-	(void) sprintf(Filename, "/tmp/crontab.XXXXXXXXXX");
+
+	if (getenv("TMPDIR")) {
+	  strcpy(Filename, getenv("TMPDIR"));
+	} else {
+	  strcpy(Filename,"/tmp");
+	}
+	 
+	(void) sprintf(Filename+strlen(Filename), "/crontab.XXXXXXXXXX");
 	if ((t = mkstemp(Filename)) == -1) {
 		perror(Filename);
 		(void) umask(um);

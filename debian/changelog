@@ -1,3 +1,21 @@
+cron (3.0pl1-40) unstable; urgency=low
+
+  * Correct directory reference in standard.monthly to /var/log 
+  (Bug#12315, Bug#13466)
+  * Added -DUSE_SIGCHLD to defs, needed for alpha (Bug#12855,Bug#8611). 
+  May also fix Bug#9075.
+  * Changed check for suidmanager (Bug#9326)
+  * Checksecurity no longer checks fat or vfat filesystems (Bug#8845, 
+  Bug#13574)
+  * Changed spaces in crontab to <TAB>, appearance only (Bug#13369)
+  * Removed bashism from standard.daily and checksecurity (Bug#9908,
+  Bug#9909)
+  * Added CHECKSECURITY_DISABLE flag to checksecurity.conf.
+  * Get the changelog names correct (Bug#14618)
+  * Correct day-of-month and month ranges in crontab.5 (Bug#15073)
+
+ -- Steve Greenland <stevegr@master.debian.org>  Sun, 23 Nov 1997 22:58:05 -0600
+
 cron (3.0pl1-39) unstable; urgency=low
 
   * Added configuration variable to eliminate error messages from

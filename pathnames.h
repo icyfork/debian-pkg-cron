@@ -66,7 +66,9 @@
 			/* what editor to use if no EDITOR or VISUAL
 			 * environment variable specified.
 			 */
-#if defined(_PATH_VI)
+#if defined(DEBIAN)
+# define EDITOR "/usr/bin/editor"
+#elif defined(_PATH_VI)
 # define EDITOR _PATH_VI
 #else
 # define EDITOR "/usr/ucb/vi"

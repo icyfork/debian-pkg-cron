@@ -19,10 +19,11 @@ on a daily basis, so typically changes would be mailed to root.
 .SH CONFIGURATION
 The
 .B checksecurity.conf
-file defines two configuration variables:
-.B CHECKSECURITY_FILTER
+file defines three configuration variables:
+.BR CHECKSECURITY_FILTER ,
+.BR CHECKSECURITY_NOFINDERRORS ,
 and
-.BR CHECKSECURITY_NOFINDERRORS .
+.BR CHECKSECURITY_DISABLE .
 .PP
 The 
 .B CHECKSECURITY_FILTER
@@ -48,14 +49,27 @@ and either
 or
 .I nosuid 
 options, anything mounted on /dev/fd*, and anything mounted
-on /mnt.
+on /mnt or /amd.
 .PP
 The
 .B checksecurity.conf
 file is sourced from 
 .B checksecurity,
 so you could do some fairly tricky things to define 
-.B CHECKSECURITY_FILTER.
+.BR CHECKSECURITY_FILTER .
+.PP
+The 
+.B CHECKSECURITY_NOFINDERRORS 
+environment variable, if set to the literal "TRUE", disables
+find errors from checksecurity (actually, it re-routes them to 
+.B /dev/null
+).
+.PP
+The
+.B CHECKSECURITY_DISABLE  
+environment variable, if set to the literal "TRUE", disables
+checksecurity entirely, as a sop to those who think it's safe to allow
+random mounting of NFS and AFS disks without the nosuid or noexec flags.
 .SH FILES
 .TP
 .I /etc/checksecurity.conf

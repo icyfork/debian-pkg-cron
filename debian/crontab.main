@@ -15,4 +15,4 @@ PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 # you modify the times of the above commands, you'll probably
 # need to modify the anacron configuration too.
 #
-30 7    * * *   root    /usr/sbin/cronanacron
+30 7    * * *   root	/usr/sbin/cronanacron
