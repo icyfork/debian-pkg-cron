@@ -1,5 +1,4 @@
 #!/bin/sh
 # /etc/cron.monthly/standard: standard monthly maintenance script
 
-savelog -g adm -m 644 -u root -c 6 /var/log/wtmp >/dev/null
-savelog -g adm -m 644 -u root -c 6 /var/log/btmp >/dev/null
+# rotation of wtmp and btmp taken over by logrotate
