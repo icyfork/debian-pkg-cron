@@ -1,11 +1,6 @@
 #!/bin/sh
 set -e
 
-# source debconf to make sure that the config script is run, but we
-# don't actually do any debconf work here.
-. /usr/share/debconf/confmodule
-db_stop
-
 update-rc.d cron defaults 89 11 >/dev/null
 # Copy existing allow/deny files
 crondir="/var/spool/cron"
@@ -40,6 +35,19 @@ for oldstat in status.yesterday.* ; do
     fi                        
 done)
 
+# Add group for crontabs
+getent group crontab > /dev/null 2>&1 || addgroup --system crontab
+
+# Fixup crontab binary, directory and files for new group 'crontab'.
+
+if ! dpkg-statoverride --list /usr/bin/crontab > /dev/null ; then
+    chgrp crontab /usr/bin/crontab
+    chmod g+s /usr/bin/crontab
+    chgrp crontab $crondir/crontabs
+    chmod 1730 $crondir/crontabs
+    find $crondir/crontabs -mindepth 1 -maxdepth 1 -print0 | xargs -r -0 chgrp crontab
+fi
+
 if [ -x /etc/init.d/cron ]; then
 	if [ -x /usr/sbin/invoke-rc.d ] ; then
 	       invoke-rc.d cron start
@@ -48,17 +56,6 @@ if [ -x /etc/init.d/cron ]; then
 	fi
 fi
 
-# Fixup crontab binary, directory and files for new group 'crontab'.
 
-if ! dpkg-statoverride --list /usr/bin/crontab > /dev/null ; then
-    chgrp crontab /usr/bin/crontab
-    chmod g+s /usr/bin/crontab
-    chgrp crontab /var/spool/cron/crontabs 
-    chmod 1730 /var/spool/cron/crontabs 
-    cd $crondir/crontabs
-    for ct in * ; do
-        if [ -f $ct ] ; then  chown $ct:crontab $ct ; fi
-    done
-fi
 
 #DEBHELPER#
