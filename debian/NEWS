@@ -1,0 +1,9 @@
+cron (3.0pl1-74) unstable; urgency=low
+
+    The checksecurity script is no longer included with the cron package:
+    it now has its own package, "checksecurity". If you liked the
+    functionality provided with that script, please install the new
+    package.
+
+ -- Steve Greenland <stevegr@debian.org>  Sat,  6 Sep 2003 17:15:03 -0500
+

@@ -1,6 +1,0 @@
-Template: cron/checksecurity
-Type: note
-Description: Checksecurity no longer included with cron
- The checksecurity script is no longer included with the cron package: it
- now has its own package, "checksecurity". If you liked the functionality
- provided with that script, please install the new package.  
