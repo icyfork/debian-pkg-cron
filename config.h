@@ -62,7 +62,7 @@
 /* #define MAILCMD "/usr/mmdf/bin/submit"	-*/
 /* #define MAILARGS "%s -mlrxto %s"		-*/
 
-/* #define MAIL_DATE				/*-*/
+/* #define MAIL_DATE				-*/
 			/* should we include an ersatz Date: header in
 			 * generated mail?  if you are using sendmail
 			 * for MAILCMD, it is better to let sendmail
