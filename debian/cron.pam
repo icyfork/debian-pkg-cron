@@ -6,8 +6,7 @@
 auth       required   pam_env.so
 @include common-account
 @include common-session
-# Sets up user limits, please uncomment and read /etc/security/limits.conf
-# to enable this functionality.
-# session    required   pam_limits.so
+# Sets up user limits, please read /etc/security/limits.conf
+session    required   pam_limits.so
 
 
