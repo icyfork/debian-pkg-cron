@@ -2,13 +2,13 @@ Source: cron
 Section: admin
 Priority: important
 Maintainer: Steve Greenland <stevegr@debian.org>
-Standards-Version: 2.4.1.4
+Standards-Version: 3.0.1
 
 Package: cron
 Architecture: any
 Depends: ${shlibs:Depends}, bsdutils, debianutils (>=1.7)
 Recommends: smail | sendmail | mail-transport-agent
-Suggests: anacron (>=2.0-1)
+Suggests: anacron (>=2.0-1), logrotate
 Conflicts:
 Provides:
 Description: management of regular background processing
