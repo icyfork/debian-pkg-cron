@@ -78,7 +78,8 @@ upward-compatible extensions.  Each line has five time and date fields,
 followed by a command, followed by a newline character ('\n').  
 The system crontab (/etc/crontab) uses the same format, except that
 the username for the command is specified after the time and
-date fields and before the command.
+date fields and before the command. The fields may be separated
+by spaces or tabs.
 Note that if the line does not have a trailing newline character, the
 entire line will be silently ignored by both crontab and cron; the command
 will never be executed.
@@ -136,7 +137,7 @@ The ``sixth'' field (the rest of the line) specifies the command to be
 run.
 The entire command portion of the line, up to a newline or %
 character, will be executed by /bin/sh or by the shell
-specified in the SHELL variable of the cronfile.
+specified in the SHELL variable of the crontab file.
 Percent-signs (%) in the command, unless escaped with backslash
 (\\), will be changed into newline characters, and all data
 after the first % will be sent to the command as standard
@@ -144,7 +145,7 @@ input.
 .PP
 Note: The day of a command's execution can be specified by two
 fields \(em day of month, and day of week.  If both fields are
-restricted (ie, aren't *), the command will be run when
+restricted (i.e., aren't *), the command will be run when
 .I either
 field matches the current time.  For example,
 .br
