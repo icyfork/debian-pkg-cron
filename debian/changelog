@@ -1,3 +1,15 @@
+cron (3.0pl1-70) unstable; urgency=medium
+
+  * Catch full disk when writing new crontab. (closes: #110612)
+  * Don't modify backup file modes if no change (to prevent misleading
+    time mods). (closes: #104093)
+  * Remove obsolete reference to /bin/mail in crontab.5.  (closes: #110962)
+  * Add Marc Merlin's checksecurity patches with more configuration
+    options. (closes: #89547, #63445)
+  * Make all setuid.{today,yesterday,etc.} files group adm. (closes: #109520)
+
+ -- Steve Greenland <stevegr@debian.org>  Fri,  7 Sep 2001 18:27:37 -0500
+
 cron (3.0pl1-69) unstable; urgency=low
 
   * Don't run checksecurity on any partition mount nosuid or noexec.
@@ -392,6 +404,4 @@ cron (3.0pl1-35) frozen unstable; urgency=low
 
  -- Steve Greenland <steveg@neuromancer.dmccorp.com>  Sun, 1 Dec 1996 16:21:52 -0600
 
-Local variables:
-mode: debian-changelog
-End:
+
