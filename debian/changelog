@@ -1,3 +1,10 @@
+cron (3.0pl1-80) unstable; urgency=low
+
+  * Kill one last spurios syslog() (closes: #211117, #211245)
+  * Allow system crontabs to be symlinks (closes: #210467)
+
+ -- Steve Greenland <stevegr@debian.org>  Wed, 17 Sep 2003 19:15:55 -0500
+
 cron (3.0pl1-79) unstable; urgency=low
 
   * Don't exit postinst when user is unkown (closes: #208432)
