@@ -355,7 +355,7 @@ edit_cmd() {
 	char		n[MAX_FNAME], q[MAX_TEMPSTR], *editor;
 	FILE		*f;
 	int		ch, t, x;
-	struct stat	statbuf;
+	struct stat	statbuf, fsbuf;
 	time_t		mtime;
 	WAIT_T		waiter;
 	PID_T		pid, xpid;
@@ -438,6 +438,10 @@ edit_cmd() {
 		perror(Filename);
 		exit(ERROR_EXIT);
 	}
+	if (fstat(t, &fsbuf) < 0) {
+		perror("unable to fstat temp file");
+		goto fatal;
+	}
  again:
 	rewind(NewCrontab);
 	if (ferror(NewCrontab)) {
@@ -450,6 +454,11 @@ edit_cmd() {
 		perror("fstat");
 		goto fatal;
 	}
+	if (statbuf.st_dev != fsbuf.st_dev || statbuf.st_ino != fsbuf.st_ino) {
+		fprintf(stderr, "temp file must be edited in place\n");
+		exit(ERROR_EXIT);
+	}
+
 	mtime = statbuf.st_mtime;
 
 	if ((!(editor = getenv("VISUAL")))
@@ -528,6 +537,10 @@ edit_cmd() {
 	(void)signal(SIGINT, SIG_DFL);
 	(void)signal(SIGQUIT, SIG_DFL);
 	(void)signal(SIGTSTP, SIG_DFL);
+	if (statbuf.st_dev != fsbuf.st_dev || statbuf.st_ino != fsbuf.st_ino) {
+		fprintf(stderr, "temp file must be edited in place\n");
+		exit(ERROR_EXIT);
+	}
 	if (fstat(t, &statbuf) < 0) {
 		perror("fstat");
 		goto fatal;
@@ -664,6 +677,7 @@ replace_cmd() {
 	while (!CheckErrorCount && !eof) {
 		switch (load_env(envstr, tmp)) {
 		case ERR:
+		        check_error("Reached end of file while reading environment");
 			eof = TRUE;
 			break;
 		case FALSE:
