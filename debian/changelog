@@ -1,3 +1,11 @@
+cron (3.0pl1-87) unstable; urgency=low
+
+  * Clarify wording about /etc/cron.d files in cron.8.
+  * Make sure file descriptor 0==stdin at startup, so we don't
+    accidentally use it for something else. (closes: #295589)
+
+ -- Steve Greenland <stevegr@debian.org>  Wed, 16 Feb 2005 18:37:27 -0600
+
 cron (3.0pl1-86) unstable; urgency=high
 
   * And yes, still needs urgency=high.
