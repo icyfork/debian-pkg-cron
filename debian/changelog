@@ -1,19 +1,34 @@
-cron (3.0pl1-52) unstable; urgency=low
+cron (3.0pl1-53) unstable; urgency=medium
 
   * Applied OpenBSD patches supplied Topi Miettinen. Big change is
   better handling of timekeeping (in particular, changes to/from daylight
   savings time) (closes:#8499).
   * Redirect stdin, stdout, and stderr to /dev/null.
   (closes:#37189, #23231, #30653).
-  * Fixed bit_set()/bit_nset() confusion that caused @hourly to not work.
+  * Fixed bit_set()/bit_nset() confusion that caused @hourly to not work, so
+  that functionality is now documented (closes:#43282).
   * Changed warrantee to warranty in debian/copyright (but it's still 
   misspelled in the source files) (closes:#40312)
   * Adjust checksecurity and cron_daily/standard to get consistent owner/perms
   on /var/log/setuid* files. (closes:#15295)
   * Add 'coda' to the list of nfs/afs like file systems in checksecurity.conf
   (closes:#29909)
+  * Fix version comparison to use dpkg --compare-versions, which is what I
+  should have done in the first place (closes:#42454)
+  * Add 'xfs' to the list of nfs/afs like file systems in checksecurity.conf,
+  as it appears that xfs==arla and arla==xfs. If there are other file systems
+  that show up as 'xfs', please let me know (closes:#37523)
+  * Don't rotate wtmp and btmp (closes:#42301).
 
- -- Steve Greenland <stevegr@debian.org>  Mon,  2 Aug 1999 22:21:08 -0500
+ -- Steve Greenland <stevegr@debian.org>  Sat, 11 Sep 1999 18:42:37 -0500
+
+cron (3.0pl1-52) unstable; urgency=high
+
+  * Patch to fix "Reverse DoS": user could send arbitrary options to 
+  sendmail via MAILTO variable. Fix by not allowing spaces or leading
+  dashes in MAILTO, and run sendmail as user, not root.
+
+ -- Steve Greenland <stevegr@debian.org>  Sun, 29 Aug 1999 21:50:28 -0500
 
 cron (3.0pl1-51) unstable; urgency=low
 
