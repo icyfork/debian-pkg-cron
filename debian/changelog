@@ -1,3 +1,15 @@
+cron (3.0pl1-72) unstable; urgency=low
+
+  * Add type usbdevfs to skipped "file systems" (this is /proc/bus/usb)
+    (closes: #113186,#113187)
+  * Removed 'xfs' from list of skipped file system types. Unfortunately,
+    it appears to be used by both the arla network file system and the SGI
+    XFS filesystem, and I must make the conservative choice. (closes: #113234)
+  * Remove extra diff in checksecurity. (closes: 113950)
+  * Add type none to skipped "file systems" (--bind mounts) (closes: #111395)
+
+ -- Steve Greenland <stevegr@debian.org>  Mon,  1 Oct 2001 07:46:34 -0500
+
 cron (3.0pl1-71) unstable; urgency=medium
 
   * Fixed nasty typo in checksecurity. (closes: #112156)
