@@ -5,3 +5,4 @@ if [ $1 = purge ]; then
     rm -f /etc/cron.allow /etc/cron.deny
 fi
 
+#DEBHELPER#
