@@ -18,7 +18,7 @@ if [ -x /usr/bin/lockfile-create ] ; then
 	cat <<EOF
 
 Unable to run /etc/cron.daily/standard because lockfile $LOCKFILE
-acquisition failed. This probably means that the previous days
+acquisition failed. This probably means that the previous day's
 instance is still running. Please check and correct if necessary.
 
 EOF
