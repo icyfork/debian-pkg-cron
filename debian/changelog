@@ -1,3 +1,13 @@
+cron (3.0pl1-55) unstable; urgency=low
+
+  * Changed __linux feature checks to __linux__ (closes:#50240)
+  * Added '-u' to diff in checksecurity (closes:#51679)
+  * Moved checksecurity LOGDIR (formerly LOG) setting to config 
+  file (closes:#49683)
+  * Fixed removal of lockfile in cron.daily/standard.
+
+ -- Steve Greenland <stevegr@debian.org>  Sat, 18 Dec 1999 18:53:29 -0600
+
 cron (3.0pl1-54) unstable; urgency=low
 
   * Fixed spelling in checksecurity.8 (closes:#45281)
