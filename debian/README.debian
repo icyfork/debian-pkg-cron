@@ -1,7 +1,7 @@
 cron for DEBIAN
 ----------------------
 
-This is Debian/GNU Linux's prepackaged version of Paul Vixie's cron
+This is the Debian GNU/Linux prepackaged version of Paul Vixie's cron
 subsystem.
 
 This package was put together by Ian Jackson <iwj10@cus.cam.ac.uk>,
