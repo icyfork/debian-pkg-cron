@@ -69,7 +69,7 @@ daemon.
 SHELL is set to /bin/sh, and LOGNAME and HOME are set from the /etc/passwd 
 line of the crontab's owner. PATH is set to "/usr/bin:/bin".
 HOME, SHELL, and PATH may be overridden by settings in the crontab;
-LOGNAME may not.
+LOGNAME is the user that the job is running from, and may not be changed.
 .PP
 (Another note: the LOGNAME variable is sometimes called USER on BSD systems...
 on these systems, USER will be set also.)
