@@ -677,7 +677,6 @@ replace_cmd() {
 	while (!CheckErrorCount && !eof) {
 		switch (load_env(envstr, tmp)) {
 		case ERR:
-		        check_error("Reached end of file while reading environment");
 			eof = TRUE;
 			break;
 		case FALSE:
