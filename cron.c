@@ -147,14 +147,14 @@ main(argc, argv)
 		time_min timeDiff;
 		int wakeupKind;
 
-		load_database(&database);
-
 		/* ... wait for the time (in minutes) to change ... */
 		do {
 			cron_sleep(timeRunning + 1);
 			set_time();
 		} while (clockTime == timeRunning);
 		timeRunning = clockTime;
+
+		load_database(&database);
 
 		/*
 		 * ... calculate how the current time differs from
