@@ -6,28 +6,6 @@
 
 bak=/var/backups
 
-# The following three find commands are commented out do to the
-# severe, easily exploited security hole introduced by 'find . _stuff_
-# | xargs rm' style commands. Changing it to '-exec rm {}' doesn't
-# help.
-
-# if [ -d /tmp -a ! -L /tmp ] && cd /tmp
-# then
-# 	find . -type f -atime +3 -print0 | xargs -r0 rm -f --
-# 	find . ! -name . -type d -mtime +1 -print0 | xargs -r0 rmdir -- >/dev/null 2>&1
-# fi
-
-# if [ -d /var/tmp -a ! -L /var/tmp ] && cd /var/tmp
-# then
-# 	find . -type f -atime +7 -print0 | xargs -r0 rm -f --
-# 	find . ! -name . -type d -mtime +1 -print0 | xargs -r0 rmdir -- >/dev/null 2>&1
-# fi
-
-#if cd /var/spool/cron/crontabs
-#then
-#	find . -name 'tmp.[0-9]*' -mtime +2 -print0 | xargs -r0 rm -f --
-#fi
-
 umask 022
 if cd $bak
 then
@@ -54,3 +32,21 @@ cd /var/log
 umask 027
 savelog -c 7 setuid.changes >/dev/null
 checksecurity >setuid.changes
+
+#
+# Check to see if any files are in lost+found directories and warn admin
+#
+lost_found=`find /lost\+found |grep -v lost\+found\$`
+if [ "$lost_found" ]; then
+    cat << EOF
+Files were found in lost+found directories. This is probably
+the result of a crash or bad shutdown, or possibly of a disk
+problem. These files may contain important information. You
+should examine them, and move them out of lost+found or delete
+them if they are not important.
+
+The following files were found:
+$lost_found
+EOF
+fi
+
