@@ -30,7 +30,7 @@ fi
 
 cd /var/log
 umask 027
-savelog -c 7 setuid.changes >/dev/null
+savelog -c 7 -m 640 -u root -g adm setuid.changes >/dev/null
 checksecurity >setuid.changes
 
 #
