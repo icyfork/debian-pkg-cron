@@ -1,9 +1,0 @@
-#!/bin/sh
-# Run anacron if present
-
-PATH=/sbin:/bin:/usr/sbin:/usr/bin
-export PATH
-
-if [ -x /usr/sbin/anacron ] ; then
-    /usr/sbin/anacron
-fi
