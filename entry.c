@@ -318,6 +318,7 @@ load_entry(file, error_func, pw, envp)
 	 */
 	if (ch == EOF) {
 		ecode = e_cmd;
+                log_it("CRON",getpid(),"DEBUG","detected early eof");
 		goto eof;
 	}
 
