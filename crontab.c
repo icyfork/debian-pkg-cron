@@ -56,7 +56,7 @@ static char	*Options[] = { "???", "list", "delete", "edit", "replace" };
 
 
 static	PID_T		Pid;
-static	char		User[MAX_UNAME], RealUser[MAX_UNAME];
+static	char		*User, *RealUser;
 static	char		Filename[MAX_FNAME];
 static	FILE		*NewCrontab = NULL;
 static	int		CheckErrorCount;
@@ -157,9 +157,11 @@ parse_args(argc, argv)
 		fprintf(stderr, "bailing out.\n");
 		exit(ERROR_EXIT);
 	}
-	(void) strncpy(User, pw->pw_name, (sizeof User)-1);
-	User[(sizeof User)-1] = '\0';
-	strcpy(RealUser, User);
+	if (((User=strdup(pw->pw_name)) == NULL) ||
+	    ((RealUser=strdup(pw->pw_name)) == NULL)) {
+	        fprintf(stderr, "Memory allocation error\n");
+		exit(ERROR_EXIT);
+	}
 	Filename[0] = '\0';
 	Option = opt_unknown;
 
@@ -186,8 +188,11 @@ parse_args(argc, argv)
 					"must be privileged to use -u\n");
 				exit(ERROR_EXIT);
 			}
-			(void) strncpy(User, pw->pw_name, (sizeof User)-1);
-			User[(sizeof User)-1] = '\0';
+			free(User);
+			if ((User=strdup(pw->pw_name)) == NULL) {
+			        fprintf(stderr, "Memory allocation error\n");
+				exit(ERROR_EXIT);
+			}
 			break;
 		case 'l':
 			if (Option != opt_unknown)
