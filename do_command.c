@@ -29,6 +29,18 @@ static char rcsid[] = "$Id: do_command.c,v 2.12 1994/01/15 20:43:43 vixie Exp $"
 #if defined(SYSLOG)
 # include <syslog.h>
 #endif
+#if defined(USE_PAM)
+#include <security/pam_appl.h>
+static pam_handle_t *pamh = NULL;
+static const struct pam_conv conv = {
+	NULL
+};
+#define PAM_FAIL_CHECK if (retcode != PAM_SUCCESS) { \
+	fprintf(stderr,"\n%s\n",pam_strerror(pamh, retcode)); \
+	syslog(LOG_ERR,"%s",pam_strerror(pamh, retcode)); \
+	pam_end(pamh, retcode); exit(1); \
+   }
+#endif
 
 
 static void		child_process __P((entry *, user *)),
@@ -78,6 +90,10 @@ child_process(e, u)
 	register char	*input_data;
 	char		*usernm, *mailto;
 	int		children = 0;
+
+#if defined(USE_PAM)
+	int		retcode = 0;
+#endif
 
 	Debug(DPROC, ("[%d] child_process('%s')\n", getpid(), e->cmd))
 
@@ -171,6 +187,17 @@ child_process(e, u)
 		}
 		*p = '\0';
 	}
+
+#if defined(USE_PAM)
+	retcode = pam_start("cron", usernm, &conv, &pamh);
+	PAM_FAIL_CHECK;
+	retcode = pam_acct_mgmt(pamh, PAM_SILENT);
+	PAM_FAIL_CHECK;
+	retcode = pam_open_session(pamh, PAM_SILENT);
+	PAM_FAIL_CHECK;
+	retcode = pam_setcred(pamh, PAM_ESTABLISH_CRED | PAM_SILENT);
+	PAM_FAIL_CHECK;
+#endif
 
 	/* fork again, this time so we can exec the user's command.
 	 */
@@ -499,6 +526,11 @@ child_process(e, u)
 			Debug(DPROC, (", dumped core"))
 		Debug(DPROC, ("\n"))
 	}
+#if defined(USE_PAM)
+	pam_setcred(pamh, PAM_DELETE_CRED | PAM_SILENT);
+	retcode = pam_close_session(pamh, PAM_SILENT);
+	pam_end(pamh, retcode);
+#endif
 }
 
 
