@@ -31,6 +31,18 @@ static char rcsid[] = "$Id: database.c,v 2.8 1994/01/15 20:43:43 vixie Exp $";
 
 #define TMAX(a,b) ((a)>(b)?(a):(b))
 
+/* Try to get maximum path name -- this isn't really correct, but we're
+going to be lazy */
+
+#ifndef PATH_MAX
+
+#ifdef MAXPATHLEN
+#define PATH_MAX MAXPATHLEN 
+#else
+#define PATH_MAX 2048
+#endif
+
+#endif /* ifndef PATH_MAX */
 
 static	void		process_crontab __P((char *, char *, char *,
 					     struct stat *,
@@ -52,7 +64,7 @@ load_database(old_db)
 #ifdef DEBIAN
 	struct stat     syscrond_stat;
 	time_t          syscrond_files_mtime;
-        char            syscrond_fname[MAXPATHLEN+1];
+        char            syscrond_fname[PATH_MAX+1];
 #endif
 
 	Debug(DLOAD, ("[%d] load_database()\n", getpid()))
@@ -161,7 +173,7 @@ load_database(old_db)
 
 	while (NULL != (dp = readdir(dir))) {
 		char	fname[MAXNAMLEN+1],
-		        tabname[MAXPATHLEN];
+		        tabname[PATH_MAX+1];
 
 
 		/* avoid file names beginning with ".".  this is good
@@ -203,7 +215,7 @@ load_database(old_db)
 
 	while (NULL != (dp = readdir(dir))) {
 		char	fname[MAXNAMLEN+1],
-			tabname[MAXPATHLEN];
+			tabname[PATH_MAX+1];
 
 		/* avoid file names beginning with ".".  this is good
 		 * because we would otherwise waste two guaranteed calls
@@ -214,7 +226,7 @@ load_database(old_db)
 			continue;
 
 		(void) strcpy(fname, dp->d_name);
-		snprintf(tabname, MAXNAMLEN+1, CRON_TAB(fname));
+		snprintf(tabname, PATH_MAX+1, CRON_TAB(fname));
 
 		process_crontab(fname, fname, tabname,
 				&statbuf, &new_db, old_db);
