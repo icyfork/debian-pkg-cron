@@ -679,10 +679,21 @@ arpadate(clock)
 
 
 #ifdef HAVE_SAVED_UIDS
-static int save_euid;
-int swap_uids() { save_euid = geteuid(); return seteuid(getuid()); }
-int swap_uids_back() { return seteuid(save_euid); }
+static uid_t save_euid, save_egid;
+int swap_uids()
+{
+	save_euid = geteuid(); save_egid = getegid();
+	return (setegid(getgid()) || seteuid(getuid())) ? -1 : 0;
+}
+int swap_uids_back()
+{
+	return (setegid(save_egid) || seteuid(save_euid)) ? -1 : 0;
+}
 #else /*HAVE_SAVED_UIDS*/
-int swap_uids() { return setreuid(geteuid(), getuid()); }
+int swap_uids()
+{
+	return (setregid(getegid(), getgid()) || setreuid(geteuid(), getuid()))
+		? -1 : 0;
+}
 int swap_uids_back() { return swap_uids(); }
 #endif /*HAVE_SAVED_UIDS*/
