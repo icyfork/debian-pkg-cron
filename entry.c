@@ -225,6 +225,9 @@ load_entry(file, error_func, pw, envp)
 		bit_set(e->dow, 7);
 	}
 
+	/* If we used one of the @commands, we may be pointing at
+       blanks, and if we don't skip over them, we'll miss the user/command */	
+    Skip_Blanks(ch, file);
 	/* ch is the first character of a command, or a username */
 	unget_char(ch, file);
 

@@ -276,6 +276,7 @@ run_reboot_jobs(db)
 		exit(0);
 	} else {
 		close(rbfd);
+		log_it("CRON", getpid(),"INFO", "Running @reboot jobs");
 	}
       
 
