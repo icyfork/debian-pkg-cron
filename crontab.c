@@ -31,6 +31,7 @@ static char rcsid[] = "$Id: crontab.c,v 2.13 1994/01/17 03:20:37 vixie Exp $";
 #include "cron.h"
 #include <errno.h>
 #include <fcntl.h>
+#include <signal.h>
 #include <sys/file.h>
 #include <sys/stat.h>
 #ifdef USE_UTIMES
@@ -129,6 +130,12 @@ main(argc, argv)
 	/*NOTREACHED*/
 }
 	
+#if DEBUGGING
+char *getoptarg = "u:lerx:";
+#else
+char *getoptarg = "u:ler";
+#endif
+
 
 static void
 parse_args(argc, argv)
@@ -148,12 +155,16 @@ parse_args(argc, argv)
 	strcpy(RealUser, User);
 	Filename[0] = '\0';
 	Option = opt_unknown;
-	while (EOF != (argch = getopt(argc, argv, "u:lerx:"))) {
+
+	while (EOF != (argch = getopt(argc, argv, getoptarg))) {
 		switch (argch) {
+#if DEBUGGING
 		case 'x':
 			if (!set_debug_flags(optarg))
 				usage("bad debug option");
+			usage("unrecognized option");
 			break;
+#endif
 		case 'u':
 			if (!(pw = getpwnam(optarg)))
 			{
@@ -439,6 +450,10 @@ edit_cmd() {
 	 * close and reopen the file around the edit.
 	 */
 
+	/* Turn off signals. */
+	(void)signal(SIGHUP, SIG_IGN);
+	(void)signal(SIGINT, SIG_IGN);
+	(void)signal(SIGQUIT, SIG_IGN);
 	switch (pid = fork()) {
 	case -1:
 		perror("fork");
@@ -469,24 +484,33 @@ edit_cmd() {
 	}
 
 	/* parent */
-	xpid = wait(&waiter);
-	if (xpid != pid) {
-		fprintf(stderr, "%s: wrong PID (%d != %d) from \"%s\"\n",
-			ProgramName, xpid, pid, editor);
-		goto fatal;
+	while (1) {
+		xpid = waitpid(pid, &waiter, WUNTRACED);
+		if (xpid == -1) {
+			fprintf(stderr, "%s: waitpid() failed waiting for PID %d from \"%s\": %s\n",
+				ProgramName, pid, editor, strerror(errno));
+		} else if (xpid != pid) {
+			fprintf(stderr, "%s: wrong PID (%d != %d) from \"%s\"\n",
+				ProgramName, xpid, pid, editor);
+			goto fatal;
+		} else if (WIFSTOPPED(waiter)) {
+			raise(WSTOPSIG(waiter));
+		} else if (WIFEXITED(waiter) && WEXITSTATUS(waiter)) {
+			fprintf(stderr, "%s: \"%s\" exited with status %d\n",
+				ProgramName, editor, WEXITSTATUS(waiter));
+			goto fatal;
+		} else if (WIFSIGNALED(waiter)) {
+			fprintf(stderr,
+				"%s: \"%s\" killed; signal %d (%score dumped)\n",
+				ProgramName, editor, WTERMSIG(waiter),
+				WCOREDUMP(waiter) ?"" :"no ");
+			goto fatal;
+		} else
+			break;
 	}
-	if (WIFEXITED(waiter) && WEXITSTATUS(waiter)) {
-		fprintf(stderr, "%s: \"%s\" exited with status %d\n",
-			ProgramName, editor, WEXITSTATUS(waiter));
-		goto fatal;
-	}
-	if (WIFSIGNALED(waiter)) {
-		fprintf(stderr,
-			"%s: \"%s\" killed; signal %d (%score dumped)\n",
-			ProgramName, editor, WTERMSIG(waiter),
-			WCOREDUMP(waiter) ?"" :"no ");
-		goto fatal;
-	}
+	(void)signal(SIGHUP, SIG_DFL);
+	(void)signal(SIGINT, SIG_DFL);
+	(void)signal(SIGQUIT, SIG_DFL);
 	if (fstat(t, &statbuf) < 0) {
 		perror("fstat");
 		goto fatal;
