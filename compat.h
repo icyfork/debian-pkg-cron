@@ -114,7 +114,7 @@
 # define USE_SIGCHLD
 #endif
 
-#if !defined(AIX) && !defined(UNICOS)
+#if !defined(AIX) && !defined(UNICOS) && !defined(DEBIAN)
 # define SYS_TIME_H 1
 #else
 # define SYS_TIME_H 0

@@ -6,8 +6,11 @@ cron (3.0pl1-64) unstable; urgency=high
   avoid problem with long device names. (closes:#86851)
   * Convert from suidmanager to dpkg --statoverride.
   * Remove unnecessary dependency on bsdutils (it's Essential)
+  * Change compat.h to not cause inclusion of sys/time.h (instead of 
+  time.h), due to recent change in glibc. Why it was doing this, I have
+  no idea.
 
- -- Steve Greenland <stevegr@debian.org>  Wed, 21 Feb 2001 15:51:20 -0600
+ -- Steve Greenland <stevegr@debian.org>  Wed, 21 Feb 2001 16:26:57 -0600
 
 cron (3.0pl1-63) unstable; urgency=medium
 
