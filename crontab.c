@@ -494,7 +494,7 @@ edit_cmd() {
 				ProgramName, xpid, pid, editor);
 			goto fatal;
 		} else if (WIFSTOPPED(waiter)) {
-			raise(WSTOPSIG(waiter));
+		        /* raise(WSTOPSIG(waiter)); Not needed and breaks in job control shell*/
 		} else if (WIFEXITED(waiter) && WEXITSTATUS(waiter)) {
 			fprintf(stderr, "%s: \"%s\" exited with status %d\n",
 				ProgramName, editor, WEXITSTATUS(waiter));
@@ -511,6 +511,7 @@ edit_cmd() {
 	(void)signal(SIGHUP, SIG_DFL);
 	(void)signal(SIGINT, SIG_DFL);
 	(void)signal(SIGQUIT, SIG_DFL);
+	(void)signal(SIGTSTP, SIG_DFL);
 	if (fstat(t, &statbuf) < 0) {
 		perror("fstat");
 		goto fatal;
