@@ -63,9 +63,8 @@ static char ** build_env(char **cronenv)
            environment settings override pam's */
 
         while ((cronvar = cronenv[count++])) {
-                syslog(LOG_ERR, "Adding %s", cronvar);
                 if (!(jobenv = env_set(jobenv, cronvar))) {
-                        syslog(LOG_ERR, "Adding failed!");
+                        syslog(LOG_ERR, "Setting Cron environment variable %s failed", cronvar);
                         return NULL;
                 }
         }
