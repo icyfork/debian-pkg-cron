@@ -59,6 +59,7 @@ b-cron-se/build-stamp:
 	dh_testdir
 	rm -rf b-cron-se
 	mkdir b-cron-se
+	cp debian/cron-se.overrides b-cron-se/cron-se
 	cd b-cron-se
 	# Add here commands to compile the package.
 	SELINUX_DEFS="-DWITH_SELINUX" SELINUX_LIBS=-lselinux $(MAKE) -C b-cron-se -f ../Makefile OPTIM="$(DEB_OPTIM)" DEBUG_DEFS="$(DEB_DEBUG_DEFS)" VPATH=.. INCLUDE=-I..
