@@ -1,3 +1,10 @@
+cron (3.0pl1-48) frozen unstable; urgency=low
+
+  * Fixed rules file so that crontab doesn't get suid bit removed by latest
+  version of debhelper. (closes:Bug#29683)
+
+ -- Steve Greenland <stevegr@master.debian.org>  Mon, 30 Nov 1998 21:10:00 -0600
+
 cron (3.0pl1-47) frozen unstable; urgency=high
 
   * Removed close of {stdin,stdout,stderr}, as it appears that

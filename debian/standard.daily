@@ -35,6 +35,8 @@ then
 	cmp -s group.bak  /etc/group  || cp -p /etc/group  group.bak
         if [ -f /etc/shadow ] ; then
 	  cmp -s shadow.bak  /etc/shadow  || cp -p /etc/shadow  shadow.bak
+	fi
+        if [ -f /etc/gshadow ] ; then
 	  cmp -s gshadow.bak  /etc/gshadow  || cp -p /etc/gshadow  gshadow.bak
 	fi
 fi
