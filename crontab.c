@@ -592,8 +592,8 @@ edit_cmd() {
 
         /* Okay, edit the file */
 
-	if ((!(editor = getenv("VISUAL")))
-	 && (!(editor = getenv("EDITOR")))
+	if ((!((editor = getenv("VISUAL")) && strlen(editor)))
+	 && (!((editor = getenv("EDITOR")) && strlen(editor)))
 	    ) {
 		editor = EDITOR;
 	}
