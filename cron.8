@@ -65,6 +65,21 @@ need not be restarted whenever a crontab file is modified.  Note that the
 .IR crontab (1)
 command updates the modtime of the spool directory whenever it changes a
 crontab.
+.PP
+Special considerations exist when the clock is changed by less than 3
+hours, for example at the beginning and end of daylight savings
+time. If the time has moved forwards, those jobs which would have
+run in the time that was skipped will be run soon after the change. 
+Conversely, if the time has moved backwards by less than 3 hours,
+those jobs that fall into the repeated time will not be run.
+.PP
+Only jobs that run at a particular time (not specified as
+@hourly, nor with '*' in the hour or minute specifier) are
+affected. Jobs which are specified with wildcards are run based on the
+new time immediately.
+.PP
+Clock changes of more than 3 hours are considered to be corrections to
+the clock, and the new time is used immediately.
 .SH DEBIAN SPECIFIC
 .I cron
 treats the files in /etc/cron.d as extensions to the /etc/crontab file (they
