@@ -612,16 +612,21 @@ replace_cmd() {
 	time_t	now = time(NULL);
 	char	**envp = env_init();
 	mode_t	um;
+	int	saved_uid;
 
 	if (envp == NULL) {
 		fprintf(stderr, "%s: Cannot allocate memory.\n", ProgramName);
 		return (-2);
 	}
 
-	/* Assume priviledge.  This way we can only receive signals on our
+	/* Assume privilege.  This way we can only receive signals on our
 	   input - the ones listed below (or from root - root's problem, not
 	   ours). */
-	setuid(geteuid());
+	saved_uid = getuid();
+	if (setuid(geteuid()) < 0) {
+		perror("setuid");
+		return -2;
+	}
 
 	/* Assumes Linux-style signal handlers (takes int, returns void) */
 	/* Signal handlers, to ensure we do not leave temp files in the
@@ -697,6 +702,9 @@ replace_cmd() {
 	if (CheckErrorCount != 0) {
 		fprintf(stderr, "errors in crontab file, can't install.\n");
 		fclose(tmp);  unlink(tn);
+		/* Give up privilege, in case we loop. */
+		if (setreuid(saved_uid, -1) < 0)
+			return (-2);
 		return (-1);
 	}
 
@@ -739,6 +747,11 @@ replace_cmd() {
 	log_it(RealUser, Pid, "REPLACE", User);
 
 	poke_daemon();
+
+	/* Give up privilege, just in case. */
+	/* Don't need to check for error; nothing happens beyond here but a log entry,
+	   and the failure message is incorrect after the rename above. */
+	setreuid(saved_uid, -1);
 
 	return (0);
 }
