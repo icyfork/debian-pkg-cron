@@ -122,7 +122,11 @@ main(argc, argv)
 	acquire_daemonlock(0);
 	database.head = NULL;
 	database.tail = NULL;
-	database.mtime = (time_t) 0;
+	database.sys_mtime = (time_t) 0;
+	database.user_mtime = (time_t) 0;
+#ifdef DEBIAN
+	database.sysd_mtime = (time_t) 0;
+#endif
 	load_database(&database);
 
 	set_time();
@@ -244,6 +248,10 @@ main(argc, argv)
 	}
 }
 
+#ifdef DEBIAN
+#include <sys/stat.h>
+#include <fcntl.h>
+#endif
 
 static void
 run_reboot_jobs(db)
@@ -251,7 +259,25 @@ run_reboot_jobs(db)
 {
 	register user		*u;
 	register entry		*e;
-
+#ifdef DEBIAN
+#define REBOOT_FILE "/var/run/crond.reboot"
+	/* Run on actual reboot, rather than cron restart */
+	if (access(REBOOT_FILE, F_OK) == 0) {
+	        /* File exists, return */
+     	        log_it("CRON", getpid(),"INFO",
+		       "Skipping @reboot jobs -- not system startup");
+	        return;
+	}
+	/* Create the file */
+	if (creat(REBOOT_FILE, S_IRUSR&S_IWUSR) < 0) {
+	        /* Bad news, bail out */
+	        log_it("CRON",getpid(),"DEATH","Can't create reboot check file");
+		exit(0);
+	}
+        Debug(DMISC, ("[%d], Debian running reboot jobs\n",getpid()));
+    
+#endif
+        Debug(DMISC, ("[%d], vixie running reboot jobs\n", getpid()));
 	for (u = db->head;  u != NULL;  u = u->next) {
 		for (e = u->crontab;  e != NULL;  e = e->next) {
 			if (e->flags & WHEN_REBOOT) {
