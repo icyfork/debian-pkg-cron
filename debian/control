@@ -6,7 +6,7 @@ Standards-Version: 3.0.1
 
 Package: cron
 Architecture: any
-Depends: ${shlibs:Depends}, bsdutils, debianutils (>=1.7)
+Depends: ${shlibs:Depends}, bsdutils, debianutils (>=1.7), lockfile-progs
 Recommends: smail | sendmail | mail-transport-agent
 Suggests: anacron (>=2.0-1), logrotate
 Conflicts:
