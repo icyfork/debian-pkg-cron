@@ -43,8 +43,9 @@
 			 */
 
 #define MAILCMD _PATH_SENDMAIL					/*-*/
-#define MAILARGS "%s -FCronDaemon -odi -oem -or0s %s"		/*-*/
-			/* -Fx	 = set full-name of sender
+#define MAILARGS "%s -i -FCronDaemon -odi -oem -or0s %s"		/*-*/
+			/* -i    = don't terminate on "." by itself
+                         * -Fx	 = set full-name of sender
 			 * -odi	 = Option Deliverymode Interactive
 			 * -oem	 = Option Errors Mailedtosender
 			 * -or0s = Option Readtimeout -- don't time out
