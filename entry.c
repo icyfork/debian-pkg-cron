@@ -515,6 +515,10 @@ get_number(numptr, low, names, ch, file)
 	}
 	*pc = '\0';
 
+        if (len == 0) {
+            return EOF;
+        }
+
 	/* try to find the name in the name list
 	 */
 	if (names) {
@@ -534,6 +538,9 @@ get_number(numptr, low, names, ch, file)
 	 */
 	if (all_digits) {
 		*numptr = atoi(temp);
+                if (*numptr <= 0) {
+                    return EOF;
+                }
 		return ch;
 	}
 
