@@ -35,8 +35,9 @@ static char rcsid[] = "$Id: database.c,v 2.8 1994/01/15 20:43:43 vixie Exp $";
 static	void		process_crontab __P((char *, char *, char *,
 					     struct stat *,
 					     cron_db *, cron_db *));
-
-
+#ifdef DEBIAN
+static int valid_name (char *filename);
+#endif
 void
 load_database(old_db)
 	cron_db		*old_db;
@@ -99,6 +100,12 @@ load_database(old_db)
 		if (dp->d_name[0] == '.')
 		  continue;
 		
+		/* skipfile names with letters outside the set
+		 * [A-Za-z0-9_-], like run-parts.
+		 */
+		if (!valid_name(dp->d_name))
+		  continue;
+		    
 		sprintf(syscrond_fname, "%s/%s", SYSCRONDIR, dp->d_name);
 
 		if (stat(syscrond_fname, &syscrond_stat) < OK)
@@ -169,6 +176,12 @@ load_database(old_db)
 		if (dp->d_name[0] == '.')
 			continue;
 		
+		/* skipfile names with letters outside the set
+		 * [A-Za-z0-9_-], like run-parts.
+		 */
+		if (!valid_name(dp->d_name))
+		  continue;
+
 		/* Generate the "fname" */
 		(void) strcpy(fname,"*system*");
 		(void) strcat(fname, dp->d_name);
@@ -360,3 +373,41 @@ next_crontab:
 		close(crontab_fd);
 	}
 }
+
+#ifdef DEBIAN
+/* True or false? Is this a valid filename (upper/lower alpha, digits,
+ * underscores, and hyphens only?)
+ */
+#if 0 /* This is the version from debianutils */
+static int valid_name (char *filename)
+{
+  while (*filename) {
+    if (!(((*filename >= 'a') && (*filename <= 'z')) ||
+	  ((*filename >= 'A') && (*filename <= 'Z')) ||
+	  ((*filename >= '0') && (*filename <= '9')) ||
+	  (*filename == '_') ||
+	  (*filename == '-')))
+      return 0;
+    ++filename;
+  }
+  
+  return 1;
+}
+
+#else
+#include <ctype.h>
+/* Same function, better compliance with ISO C */
+static int valid_name (char *filename)
+{
+  while (*filename) {
+    if (!(isalnum(*filename) ||
+	  (*filename == '_') ||
+	  (*filename == '-')))
+      return 0;
+    ++filename;
+  }
+  
+  return 1;
+}
+#endif
+#endif

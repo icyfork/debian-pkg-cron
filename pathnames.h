@@ -47,8 +47,13 @@
 			 * LOG_FILE or SYSLOG is defined, we don't log.  If
 			 * both are defined, we log both ways.
 			 */
+#ifdef DEBIAN
+#define	ALLOW_FILE	"/etc/cron.allow"		/*-*/
+#define DENY_FILE	"/etc/cron.deny"		/*-*/
+#else
 #define	ALLOW_FILE	"allow"		/*-*/
 #define DENY_FILE	"deny"		/*-*/
+#endif
 /* #define LOG_FILE	"log"		  -*/
 
 			/* where should the daemon stick its PID?

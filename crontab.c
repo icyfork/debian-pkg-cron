@@ -155,16 +155,17 @@ parse_args(argc, argv)
 				usage("bad debug option");
 			break;
 		case 'u':
-			if (getuid() != ROOT_UID)
-			{
-				fprintf(stderr,
-					"must be privileged to use -u\n");
-				exit(ERROR_EXIT);
-			}
 			if (!(pw = getpwnam(optarg)))
 			{
 				fprintf(stderr, "%s:  user `%s' unknown\n",
 					ProgramName, optarg);
+				exit(ERROR_EXIT);
+			}
+			if ((getuid() != ROOT_UID) &&
+			    (getuid() != pw->pw_uid))
+			{
+				fprintf(stderr,
+					"must be privileged to use -u\n");
 				exit(ERROR_EXIT);
 			}
 			(void) strncpy(User, pw->pw_name, (sizeof User)-1);
@@ -348,12 +349,17 @@ edit_cmd() {
 	}
 
 	um = umask(077);
-
+#if 0
+	/* The support for TMPDIR is temporarily removed, because of
+	   interactions with emacs */
 	if (getenv("TMPDIR")) {
 	  strcpy(Filename, getenv("TMPDIR"));
 	} else {
 	  strcpy(Filename,"/tmp");
 	}
+#else
+	  strcpy(Filename,"/tmp");
+#endif
 	 
 	(void) sprintf(Filename+strlen(Filename), "/crontab.XXXXXXXXXX");
 	if ((t = mkstemp(Filename)) == -1) {

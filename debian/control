@@ -6,9 +6,9 @@ Standards-Version: 2.1.1.0
 
 Package: cron
 Architecture: any
-Depends: ${shlibs:Depends}, bsdutils
+Depends: ${shlibs:Depends}, bsdutils, debianutils (>=1.7)
 Recommends: smail | sendmail | mail-transport-agent
-Suggests: anacron
+Suggests: anacron (>=2.0-1)
 Conflicts:
 Provides:
 Description: management of regular background processing

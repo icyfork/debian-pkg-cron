@@ -1,0 +1,11 @@
+usr/bin
+usr/sbin
+usr/man/man1
+usr/man/man5
+usr/man/man8
+etc/cron.daily
+etc/cron.weekly
+etc/cron.monthly
+etc/cron.d
+etc/init.d
+var/spool/cron/crontabs

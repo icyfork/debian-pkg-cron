@@ -101,7 +101,11 @@ child_process(e, u)
 	 * use wait() explictly.  so we have to disable the signal (which
 	 * was inherited from the parent).
 	 */
+#ifdef DEBIAN
+	(void) signal(SIGCHLD, SIG_DFL);
+#else
 	(void) signal(SIGCHLD, SIG_IGN);
+#endif
 #else
 	/* on system-V systems, we are ignoring SIGCLD.  we have to stop
 	 * ignoring it now or the wait() in cron_pclose() won't work.
@@ -227,6 +231,13 @@ child_process(e, u)
 				_exit(OK_EXIT);
 			}
 # endif /*DEBUGGING*/
+#if 0
+			{
+			  struct sigaction oact;
+			  sigaction(SIGCHLD, NULL, &oact);
+			}
+			fprintf(stdout,"error");
+#endif
 			execle(shell, shell, "-c", e->cmd, (char *)0, e->envp);
 			fprintf(stderr, "execl: couldn't exec `%s'\n", shell);
 			perror("execl");

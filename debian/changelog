@@ -1,3 +1,11 @@
+cron (3.0pl1-42) unstable; urgency=low
+
+  * Don't output header on 'crontab -l' if CRONTAB_NOHEADER is 'Y' (Bug#15642)
+  * Read files in /etc/cron.d in addition to /etc/crontab (Bug#16628, 
+  Bug#16617)
+
+ -- Steve Greenland <stevegr@master.debian.org>  Sun, 11 Jan 1998 18:32:26 -0600
+
 cron (3.0pl1-41) unstable; urgency=low
 
   * Updated crontab to use /usr/bin/editor if EDITOR and VISUAL undefined.

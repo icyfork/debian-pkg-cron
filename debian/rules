@@ -7,7 +7,6 @@
 # paternity under the Copyright, Designs and Patents Act 1988.)
 # This file may have to be extensively modified
 #
-# Modified to be a prototype for debmake by Christoph Lameter <clameter@debian.org>
 
 package=cron
 
@@ -35,6 +34,7 @@ binary-arch:	checkroot build
 	install -d debian/tmp/usr/{bin,sbin}
 	install -d debian/tmp/usr/man/{man1,man5,man8}
 	install -d debian/tmp/etc/cron.{daily,weekly,monthly}
+	install -d debian/tmp/etc/cron.d
 	install -d debian/tmp/etc/init.d
 	install -d debian/tmp/var/spool/cron/crontabs
         # Install the custom debian stuff 
@@ -50,8 +50,8 @@ binary-arch:	checkroot build
 	install -m 755 debian/cronanacron debian/tmp/usr/sbin/.
         # Rest is normal deb-make
 	make install DESTDIR=`pwd`/debian/tmp
-	# Must have debmake installed for this to work. 
-	debstd -m CHANGES FEATURES THANKS README
+	# Docs
+	debstd CHANGES FEATURES THANKS README
 	dpkg-gencontrol
 	chown -R root.root debian/tmp
 	chmod -R g-ws,u+w,a+r debian/tmp

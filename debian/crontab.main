@@ -7,12 +7,10 @@ SHELL=/bin/sh
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 
 # m h dom mon dow user	command
-42 6	* * *	root	run-parts /etc/cron.daily
-47 6	* * 7	root	run-parts /etc/cron.weekly
-52 6	1 * *	root	run-parts /etc/cron.monthly
+42 6	* * *	root	run-parts --report /etc/cron.daily
+47 6	* * 7	root	run-parts --report /etc/cron.weekly
+52 6	1 * *	root	run-parts --report /etc/cron.monthly
 #
-# This runs anacron to keep it current, if it's installed. If
-# you modify the times of the above commands, you'll probably
-# need to modify the anacron configuration too.
-#
-30 7    * * *   root	/usr/sbin/cronanacron
+# Removed invocation of anacron, as this is now handled by a 
+# /etc/cron.d file
+

@@ -486,10 +486,12 @@ log_it(username, xpid, event, detail)
 #if defined(SYSLOG)
 	static int		syslog_open = 0;
 #if defined(DEBIAN)
-  struct sigaction act, 
-    oact={NULL, 0, 0, NULL};
+  struct sigaction act, oact;
   int caught_sig_pipe = 0; 
 
+  oact.sa_handler = NULL;
+  sigemptyset(&oact.sa_mask);
+  oact.sa_flags =  0;
 #endif
 #endif
 

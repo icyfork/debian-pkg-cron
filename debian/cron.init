@@ -12,6 +12,13 @@ stop)	echo -n "Stopping periodic command scheduler: cron"
         start-stop-daemon --stop --quiet --exec /usr/sbin/cron
         echo "."
         ;;
+restart) echo -n "Re-starting periodic command scheduler: cron"
+        start-stop-daemon --stop --quiet --exec /usr/sbin/cron
+        start-stop-daemon --start --quiet --exec /usr/sbin/cron
+        ;;
+reload|force-reload) echo -n "Re-loading configuration files for periodic command scheduler: cron"
+	; cron reloads automatically
+        ;;
 *)	echo "Usage: /etc/init.d/cron start|stop"; exit 1 
         ;;
 esac
