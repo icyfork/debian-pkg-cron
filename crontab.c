@@ -665,19 +665,18 @@ replace_cmd() {
 	Set_LineNum(1)
 	while (EOF != (ch = get_char(NewCrontab)))
 		putc(ch, tmp);
-	ftruncate(fileno(tmp), ftell(tmp));
-	fflush(tmp);  rewind(tmp);
 
-	if (ferror(tmp)) {
+	if (ferror(tmp) || fflush(tmp) || fsync(fd)) {
 		fprintf(stderr, "%s: error while writing new crontab to %s\n",
 			ProgramName, tn);
+		perror("Error");
 		fclose(tmp);  unlink(tn);
 		return (-2);
 	}
 
 	/* check the syntax of the file being installed.
 	 */
-
+	rewind(tmp);
 	/* BUG: was reporting errors after the EOF if there were any errors
 	 * in the file proper -- kludged it by stopping after first error.
 	 *		vix 31mar87
