@@ -31,6 +31,10 @@ static char sccsid[] = "@(#)popen.c	5.7 (Berkeley) 2/14/89";
 #include "cron.h"
 #include <signal.h>
 
+#if defined(BSD) || defined(POSIX)
+#  include <grp.h>
+#endif
+
 
 #define MAX_ARGS 100
 #define WANT_GLOBBING 0
