@@ -37,11 +37,14 @@ if cd $bak
 then
 	cmp -s passwd.bak /etc/passwd || cp -p /etc/passwd passwd.bak
 	cmp -s group.bak  /etc/group  || cp -p /etc/group  group.bak
+        chmod 600 passwd.bak group.bak
         if [ -f /etc/shadow ] ; then
 	  cmp -s shadow.bak  /etc/shadow  || cp -p /etc/shadow  shadow.bak
+          chmod 600 shadow.bak
 	fi
         if [ -f /etc/gshadow ] ; then
 	  cmp -s gshadow.bak  /etc/gshadow  || cp -p /etc/gshadow  gshadow.bak
+	  chmod 600 gshadow.bak
 	fi
 fi
 
