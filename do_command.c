@@ -307,8 +307,6 @@ child_process(e, u)
 		{
                         char    **jobenv = build_env(e->envp); 
                         char	*shell = env_get("SHELL", jobenv);
-                        syslog(LOG_ERR, "have shell='%s'", shell);
-
 # if DEBUGGING
 			if (DebugFlags & DTEST) {
 				fprintf(stderr,
