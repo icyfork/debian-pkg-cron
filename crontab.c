@@ -367,7 +367,6 @@ static int
 create_tmp_crontab()
 {
         const char *template = "/crontab.XXXXXX";
-        int t;
         int nfd;
         char *tmp;
 
@@ -478,7 +477,7 @@ cleanup_tmp_crontab(void)
                 return;
         }
 
-        while (ep = readdir (dp)) {
+        while ((ep = readdir (dp))) {
                 if (!strcmp(ep->d_name, ".") ||
                     !strcmp(ep->d_name, "..")) {
                         continue;
@@ -508,12 +507,10 @@ edit_cmd() {
 	char		n[MAX_FNAME], q[MAX_TEMPSTR], *editor;
 	FILE		*f;
 	int		ch, t, x;
-	struct stat	statbuf, fsbuf;
-	time_t		mtime;
+	struct stat     fsbuf;
 	WAIT_T		waiter;
 	PID_T		pid, xpid;
 	mode_t		um;
-        int             fatalf;
 
 	log_it(RealUser, Pid, "BEGIN EDIT", User);
 	(void) snprintf(n, MAX_FNAME, CRON_TAB(User));
