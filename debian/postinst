@@ -40,12 +40,12 @@ getent group crontab > /dev/null 2>&1 || addgroup --system crontab
 
 # Fixup crontab binary, directory and files for new group 'crontab'.
 
-if dpkg --compare-versions "$2" lt "3.0pl1-79" ; then
-    if ! dpkg-statoverride --list /usr/bin/crontab > /dev/null ; then
-        chgrp crontab /usr/bin/crontab
-        chmod g+s /usr/bin/crontab
-        chgrp crontab $crondir/crontabs
-        chmod 1730 $crondir/crontabs
+if ! dpkg-statoverride --list /usr/bin/crontab > /dev/null ; then
+    chgrp crontab /usr/bin/crontab
+    chmod g+s /usr/bin/crontab
+    chgrp crontab $crondir/crontabs
+    chmod 1730 $crondir/crontabs
+    if dpkg --compare-versions "$2" lt "3.0pl1-81" ; then
         cd $crondir/crontabs
         set +e
         ls -1 |  xargs -r -n 1 --replace=xxx  chown 'xxx:crontab' 'xxx'
