@@ -3,3 +3,8 @@
 /etc/cron.daily/standard
 /etc/cron.monthly/standard
 /etc/pam.d/cron
+/etc/cron.hourly/.placeholder
+/etc/cron.daily/.placeholder
+/etc/cron.weekly/.placeholder
+/etc/cron.monthly/.placeholder
+/etc/cron.d/.placeholder
