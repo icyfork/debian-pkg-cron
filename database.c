@@ -340,41 +340,66 @@ process_crontab(uname, fname, tabname, statbuf, new_db, old_db)
 		goto next_crontab;
 	}
 
-	if ((crontab_fd = open(tabname, O_RDONLY|O_NOFOLLOW, 0)) < OK) {
+        if (pw) {
+            /* Path for user crontabs (including root's!) */
+            if ((crontab_fd = open(tabname, O_RDONLY|O_NOFOLLOW, 0)) < OK) {
 		/* crontab not accessible?
 		 */
 		log_it(fname, getpid(), "CAN'T OPEN", tabname);
 		goto next_crontab;
-	}
+            }
 
-	if (fstat(crontab_fd, statbuf) < OK) {
+            if (fstat(crontab_fd, statbuf) < OK) {
 		log_it(fname, getpid(), "FSTAT FAILED", tabname);
 		goto next_crontab;
-	}
-        /* Check to make sure that the crontab is owned by the correct user
-           (or root) */
+            }
+            /* Check to make sure that the crontab is owned by the correct user
+               (or root) */
 
-	if (pw &&
-	    statbuf->st_uid != pw->pw_uid &&
-	    statbuf->st_uid != ROOT_UID) {
-		log_it(fname, getpid(), "WRONG FILE OWNER", tabname);
+            if (statbuf->st_uid != pw->pw_uid &&
+                statbuf->st_uid != ROOT_UID) {
+                log_it(fname, getpid(), "WRONG FILE OWNER", tabname);
 		goto next_crontab;
-	}
+            }
+            if (!S_ISREG(statbuf->st_mode) ||
+                statbuf->st_nlink != 1 ||
+                (statbuf->st_mode & 07777) != 0600) {
+                log_it(fname, getpid(), "WRONG INODE INFO", tabname);
+ 		goto next_crontab;
+            }
+        } else {
+            /* System crontab path. These can be symlinks, but the
+               symlink and the target must be owned by root. */
+            if (lstat(tabname, statbuf) < OK) {
+		log_it(fname, getpid(), "LSTAT FAILED", tabname);
+		goto next_crontab;
+            }
+            if (statbuf->st_uid != ROOT_UID) {
+                log_it(fname, getpid(), "WRONG SYMLINK OWNER", tabname);
+		goto next_crontab;
+            }
+            if ((crontab_fd = open(tabname, O_RDONLY, 0)) < OK) {
+		/* crontab not accessible?
+		 */
+		log_it(fname, getpid(), "CAN'T OPEN", tabname);
+		goto next_crontab;
+            }
 
+            if (fstat(crontab_fd, statbuf) < OK) {
+		log_it(fname, getpid(), "FSTAT FAILED", tabname);
+		goto next_crontab;
+            }
+            /* Check to make sure that the crontab is owned by root */
+            if (statbuf->st_uid != ROOT_UID) {
+                log_it(fname, getpid(), "WRONG FILE OWNER", tabname);
+		goto next_crontab;
+            }
+        }
         /*
          * The link count check is not sufficient (the owner may
          * delete their original link, reducing the link count back to
          * 1), but this is all we've got.
          */
-	if (pw &&
-	    (!S_ISREG(statbuf->st_mode) ||
-	    statbuf->st_nlink != 1 ||
-	    (statbuf->st_mode & 07777) != 0600)) {
-		log_it(fname, getpid(), "WRONG INODE INFO", tabname);
- 		goto next_crontab;
- 	}
-
-
 	Debug(DLOAD, ("\t%s:", fname))
 	u = find_user(old_db, fname);
 	if (u != NULL) {
