@@ -8,7 +8,7 @@ PATH=/sbin:/bin:/usr/sbin:/usr/bin
 LOG=/var/log
 TMP=/var/log/setuid.new.tmp
 
-umask 077
+umask 027
 cd /
 
 . /etc/checksecurity.conf
@@ -17,9 +17,6 @@ if [ "$CHECKSECURITY_DISABLE" = "TRUE" ] ; then
     exit
 fi
 
-#
-# Check for NFS/AFS mounts that are not nosuid/nodev
-#
 #
 # Check for NFS/AFS mounts that are not nosuid/nodev
 #
