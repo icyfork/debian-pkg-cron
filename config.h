@@ -43,7 +43,8 @@
 			 */
 
 #define MAILCMD _PATH_SENDMAIL					/*-*/
-#define MAILARGS "%s -i -FCronDaemon -odi -oem  %s"		/*-*/
+/* #define MAILARGS "%s -i -FCronDaemon -odi -oem  %s"		/*-*/
+#define MAILARGS "%s -i -FCronDaemon -oem  %s"		/*-*/
 			/* -i    = don't terminate on "." by itself
                          * -Fx	 = set full-name of sender
 			 * -odi	 = Option Deliverymode Interactive
