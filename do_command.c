@@ -202,9 +202,12 @@ child_process(e, u)
 		/* grandchild process.  make std{in,out} be the ends of
 		 * pipes opened by our daddy; make stderr go to stdout.
 		 */
-		close(STDIN);	dup2(stdin_pipe[READ_PIPE], STDIN);
-		close(STDOUT);	dup2(stdout_pipe[WRITE_PIPE], STDOUT);
-		close(STDERR);	dup2(STDOUT, STDERR);
+		/* Closes are unnecessary -- let dup2() do it */
+
+		  /* close(STDIN) */; dup2(stdin_pipe[READ_PIPE], STDIN);
+		  /* close(STDOUT) */;  dup2(stdout_pipe[WRITE_PIPE], STDOUT);
+		  /* close(STDERR)*/; dup2(STDOUT, STDERR);
+
 
 		/* close the pipes we just dup'ed.  The resources will remain.
 		 */
