@@ -1,3 +1,9 @@
+cron (3.0pl1-85) unstable; urgency=low
+
+  * Umm, yeah, need the 'install' file in CVS. 
+
+ -- Steve Greenland <stevegr@debian.org>  Wed, 28 Jul 2004 15:31:28 -0500
+
 cron (3.0pl1-84) unstable; urgency=high
 
   * Urgency "high" to make the sudden freeze. 
