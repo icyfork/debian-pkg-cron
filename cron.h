@@ -66,8 +66,8 @@
 #define	OK_EXIT		0	/* exit() with this is considered 'normal' */
 #define	MAX_FNAME	100	/* max length of internally generated fn */
 #define	MAX_COMMAND	1000	/* max length of internally generated cmd */
-#define	MAX_ENVSTR	1000	/* max length of envvar=value\0 strings */
-#define	MAX_TEMPSTR	100	/* obvious */
+#define	MAX_TEMPSTR	1000	/* max length of envvar=value\0 strings */
+#define	MAX_ENVSTR	MAX_TEMPSTR	/* DO NOT change - buffer overruns otherwise */
 #define	MAX_UNAME	20	/* max length of username, should be overkill */
 #define	ROOT_UID	0	/* don't change this, it really must be root */
 #define	ROOT_USER	"root"	/* ditto */
@@ -205,6 +205,7 @@ int		job_runqueue __P((void)),
 		get_char __P((FILE *)),
 		get_string __P((char *, int, FILE *, char *)),
 		swap_uids __P((void)),
+		swap_uids_back __P((void)),
 		load_env __P((char *, FILE *)),
 		cron_pclose __P((FILE *)),
 		strcmp_until __P((char *, char *, int)),

@@ -46,7 +46,12 @@ static	void	usage __P((void)),
 
 static void
 usage() {
-	fprintf(stderr, "usage:  %s [-x debugflag[,...]]\n", ProgramName);
+	char **dflags;
+
+	fprintf(stderr, "usage:  %s [-x [", ProgramName);
+	for(dflags = DebugFlagNames; *dflags; dflags++)
+		fprintf(stderr, "%s%s", *dflags, dflags[1] ? "," : "]");
+	fprintf(stderr, "]\n");
 	exit(ERROR_EXIT);
 }
 

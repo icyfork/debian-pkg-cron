@@ -53,7 +53,10 @@ strdup(str)
 {
 	char	*temp;
 
-	temp = malloc(strlen(str) + 1);
+	if ((temp = malloc(strlen(str) + 1)) == NULL) {
+		errno = ENOMEM;
+		return NULL;
+	}
 	(void) strcpy(temp, str);
 	return temp;
 }
@@ -227,7 +230,7 @@ setenv(name, value, overwrite)
 		return -1;
 	}
 
-	sprintf("%s=%s", name, value);
+	sprintf(tmp, "%s=%s", name, value);
 	return putenv(tmp);	/* intentionally orphan 'tmp' storage */
 }
 #endif

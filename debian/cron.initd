@@ -1,0 +1,11 @@
+#!/bin/sh
+# Start/stop the cron daemon.
+
+test -f /usr/sbin/cron || exit 0
+
+case "$1" in
+start)	start-stop-daemon --start --verbose --exec /usr/sbin/cron ;;
+stop)	start-stop-daemon --stop --verbose --exec /usr/sbin/cron ;;
+*)	echo "Usage: /etc/init.d/cron start|stop"; exit 1 ;;
+esac
+exit 0

@@ -1,0 +1,29 @@
+Source: cron
+Section: admin
+Priority: important
+Maintainer: Steve Greenland <stevegr@master.debian.org>
+Standards-Version: 2.1.1.0
+
+Package: cron
+Architecture: any
+Depends: ${shlibs:Depends}, bsdutils
+Recommends: smail | sendmail | mail-transport-agent
+Suggests:
+Conflicts:
+Provides:
+Description: management of regular background processing
+ cron is a background process (`daemon') that runs programs at regular
+ intervals (for example, every minute, day, week or month); which
+ processes are run and at what times are specified in the `crontab'.
+ .
+ Users may also install crontabs so that processes are run on
+ their behalf, though this feature can be disabled or restricted to
+ particular users.
+ .
+ Output from the commands is usually mailed to the system administrator
+ (or to the user in question); you should probably install a mail system
+ as well so that you can receive these messages.
+ .
+ This cron package is configured by default to do various standard
+ system maintenance tasks, such as ensuring that logfiles do not
+ grow endlessly and overflow the disk.

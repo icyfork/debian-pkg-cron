@@ -24,17 +24,24 @@ cron \- daemon to execute scheduled commands (Vixie Cron)
 .SH SYNOPSIS
 cron
 .SH DESCRIPTION
-.I Cron
-should be started from /etc/rc or /etc/rc.local.  It will return immediately,
-so you don't need to start it with '&'.
+.I cron
+is started automatically from /etc/init.d on entering multi-user
+runlevels.
 .PP
-.I Cron
-searches /var/cron/tabs for crontab files which are named after accounts in
-/etc/passwd; crontabs found are loaded into memory.
-.I Cron
-also searches for /etc/crontab which is in a different format (see
+.I cron
+searches its spool area (/var/spool/cron/crontabs) for crontab
+files (which are named after accounts in
+/etc/passwd); crontabs found are loaded into memory.  Note that
+crontabs in this directory should not be accessed directly -
+the
+.I crontab
+command should be used to access and update them.
+
+.I cron
+also reads /etc/crontab, which is in a slightly different format (see
 .IR crontab(5)).
-.I Cron
+
+.I cron
 then wakes up every minute, examining all stored crontabs, checking each
 command to see if it should be run in the current minute.  When executing
 commands, any output is mailed to the owner of the crontab (or to the user
@@ -51,7 +58,7 @@ will then examine the modtime on all crontabs and reload those which have
 changed.  Thus
 .I cron
 need not be restarted whenever a crontab file is modified.  Note that the
-.IR Crontab (1)
+.IR crontab (1)
 command updates the modtime of the spool directory whenever it changes a
 crontab.
 .SH "SEE ALSO"

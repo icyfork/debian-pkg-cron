@@ -1,0 +1,68 @@
+.\" -*- nroff -*-
+.TH CHECKSECURITY 8 "11 August 1996" "Debian Linux"
+.SH NAME
+checksecurity \- check for changes to setuid programs
+.SH SYNOPSIS
+.B checksecurity
+.SH DESCRIPTION
+The
+.B checksecurity
+command scans the mounted files systems (subject to the filter defined
+in /etc/checksecurity.conf) and compares the list of setuid programs to the
+list created on the previous run. Any changes are printed to standard
+output.
+.PP
+.B checksecurity
+is run by 
+.B cron
+on a daily basis, so typically changes would be mailed to root.
+.SH CONFIGURATION
+The
+.B checksecurity.conf
+file defines the 
+.B CHECKSECURITY_FILTER
+environment variable which is the argument of 'grep -vE' applied to
+the output of the  
+.B mount
+command. In other words, the value of
+.B CHECKSECURITY_FILTER
+is a regular expression that removes matching lines from those
+file systems that will be scanned. The default value removes
+all file systems of type 
+.I proc, msdos, sio9660, ncpfs,
+and
+.I smbfs
+file systems, 
+.I nfs
+and
+.I afs
+file systems that are mounted with the
+.I nodev 
+and either
+.I noexec
+or
+.I nosuid 
+options, anything mounted on /dev/fd*, and anything mounted
+on /mnt.
+.PP
+The
+.B checksecurity.conf
+file is sourced from 
+.B checksecurity,
+so you could do some fairly tricky things to define 
+.B CHECKSECURITY_FILTER.
+.SH FILES
+.TP
+.I /etc/checksecurity.conf
+checksecurity configuration file
+.TP
+.I /var/log/setuid.today
+setuid files from the most recent run
+.TP
+.I /var/log/setuid.yesterday
+setuid files from the previous run
+
+
+
+
+

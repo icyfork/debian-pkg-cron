@@ -26,7 +26,7 @@ crontab [ -u user ] file
 .br
 crontab [ -u user ] { -l | -r | -e }
 .SH DESCRIPTION
-.I Crontab
+.I crontab
 is the program used to install, deinstall or list the tables
 used to drive the
 .IR cron (8)
@@ -83,8 +83,8 @@ from the editor, the modified crontab will be installed automatically.
 crontab(5), cron(8)
 .SH FILES
 .nf
-/var/cron/allow
-/var/cron/deny
+/var/spool/cron/allow
+/var/spool/cron/deny
 .fi
 .SH STANDARDS
 The

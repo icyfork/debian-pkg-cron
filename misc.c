@@ -453,6 +453,21 @@ allowed(username)
 #endif
 }
 
+#if defined(DEBIAN)
+#if defined(SYSLOG)
+
+#include <signal.h>
+#include <setjmp.h>
+static sigjmp_buf pipe_alarm;
+
+static void
+sig_pipe(int signo)
+{
+  siglongjmp(pipe_alarm, 1);
+}
+
+#endif
+#endif
 
 void
 log_it(username, xpid, event, detail)
@@ -470,6 +485,12 @@ log_it(username, xpid, event, detail)
 
 #if defined(SYSLOG)
 	static int		syslog_open = 0;
+#if defined(DEBIAN)
+  struct sigaction act, 
+    oact={NULL, 0, 0, NULL};
+  int caught_sig_pipe = 0; 
+
+#endif
 #endif
 
 #if defined(LOG_FILE)
@@ -513,7 +534,22 @@ log_it(username, xpid, event, detail)
 #endif /*LOG_FILE*/
 
 #if defined(SYSLOG)
+
+#if defined(DEBIAN)
+	if (sigsetjmp(pipe_alarm, 1) != 0)
+	  {
+	    caught_sig_pipe = 1;
+	  }
+
+      if (!syslog_open || caught_sig_pipe) {
+	/* If we hit SIGPIPE, close it so the open works */
+	if (caught_sig_pipe) {
+	  closelog();
+	}
+
+#else
 	if (!syslog_open) {
+#endif
 		/* we don't use LOG_PID since the pid passed to us by
 		 * our client may not be our own.  therefore we want to
 		 * print the pid ourselves.
@@ -526,7 +562,22 @@ log_it(username, xpid, event, detail)
 		syslog_open = TRUE;		/* assume openlog success */
 	}
 
+#if defined(DEBIAN)
+	/* Catch the SIGPIPE signal *
+      if (!caught_sig_pipe) /* Make sure we only do this once per pass */
+	{
+	  act.sa_handler = sig_pipe;
+	  sigemptyset(&act.sa_mask);
+	  sigaction(SIGPIPE, &act ,&oact);
+	}
+
+#endif
+
 	syslog(LOG_INFO, "(%s) %s (%s)\n", username, event, detail);
+
+#if defined(DEBIAN)
+      sigaction(SIGPIPE, &oact, NULL);
+#endif
 
 #endif /*SYSLOG*/
 
@@ -622,7 +673,8 @@ mkprints(src, len)
 {
 	register char *dst = malloc(len*4 + 1);
 
-	mkprint(dst, src, len);
+	if (dst)
+		mkprint(dst, src, len);
 
 	return dst;
 }
@@ -654,7 +706,7 @@ arpadate(clock)
 #endif /*MAIL_DATE*/
 
 
-#ifdef HAVE_SAVED_SUIDS
+#ifdef HAVE_SAVED_UIDS
 static int save_euid;
 int swap_uids() { save_euid = geteuid(); return seteuid(getuid()); }
 int swap_uids_back() { return seteuid(save_euid); }

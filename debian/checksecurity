@@ -1,0 +1,31 @@
+#!/bin/sh
+# Security checks script - run daily out of the system crontab
+
+set -e
+
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+
+LOG=/var/log
+TMP=/var/log/setuid.new.tmp
+
+umask 077
+cd /
+
+. /etc/checksecurity.conf
+
+find `mount | grep -vE "$CHECKSECURITY_FILTER" | cut -d ' ' -f 3` \
+     -xdev \( -type f -perm +06000 -o -type b -o -type c \) -ls \
+  | sort >$TMP
+
+cd $LOG
+
+test -f setuid.today || touch setuid.today
+
+if ! cmp -s setuid.today $TMP >/dev/null
+then
+	echo "`hostname` changes to setuid programs and devices:"
+	diff setuid.today $TMP || [ $? = 1 ]
+	mv setuid.today setuid.yesterday
+	mv $TMP setuid.today
+fi
+rm -f $TMP

@@ -50,35 +50,35 @@
 DESTROOT	=	$(DESTDIR)/usr
 DESTSBIN	=	$(DESTROOT)/sbin
 DESTBIN		=	$(DESTROOT)/bin
-DESTMAN		=	$(DESTROOT)/share/man
+DESTMAN		=	$(DESTROOT)/man
 #<<need bitstring.h>>
 INCLUDE		=	-I.
 #INCLUDE	=
 #<<need getopt()>>
 LIBS		=
 #<<optimize or debug?>>
-#OPTIM		=	-O
-OPTIM		=	-g
+OPTIM		=	-O2
+#OPTIM		=	-g
 #<<ATT or BSD or POSIX?>>
 # (ATT untested)
 #COMPAT		=	-DATT
 #(BSD is only needed if <sys/params.h> does not define it, as on ULTRIX)
 #COMPAT		=	-DBSD
 # (POSIX)
-#COMPAT		=	-DPOSIX
+COMPAT		=	-DPOSIX
 #<<lint flags of choice?>>
 LINTFLAGS	=	-hbxa $(INCLUDE) $(COMPAT) $(DEBUGGING)
 #<<want to use a nonstandard CC?>>
 #CC		=	vcc
 #<<manifest defines>>
-DEFS		=
+DEFS = -DDEBIAN
 #(SGI IRIX systems need this)
 #DEFS		=	-D_BSD_SIGNALS -Dconst=
 #<<the name of the BSD-like install program>>
 #INSTALL = installbsd
 INSTALL = install
 #<<any special load flags>>
-LDFLAGS		=
+LDFLAGS		=	-s
 #################################### end configurable stuff
 
 SHELL		=	/bin/sh
@@ -113,13 +113,14 @@ crontab		:	$(CRONTAB_OBJ)
 			$(CC) $(LDFLAGS) -o crontab $(CRONTAB_OBJ) $(LIBS)
 
 install		:	all
-			$(INSTALL) -c -m  111 -o root -s cron    $(DESTSBIN)/
-			$(INSTALL) -c -m 4111 -o root -s crontab $(DESTBIN)/
+			$(INSTALL) -c -m  755 -o root -s cron    $(DESTSBIN)/
+			$(INSTALL) -c -m 4755 -o root -s crontab $(DESTBIN)/
 			sh putman.sh crontab.1 $(DESTMAN)
 			sh putman.sh cron.8    $(DESTMAN)
 			sh putman.sh crontab.5 $(DESTMAN)
 
-clean		:;	rm -f *.o cron crontab a.out core tags *~ #*
+clean		:
+			rm -f *.o cron crontab a.out core tags *~ #*
 
 kit		:	$(SHAR_SOURCE)
 			makekit -m -s99k $(SHAR_SOURCE)

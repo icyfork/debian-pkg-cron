@@ -102,7 +102,7 @@ load_database(old_db)
 
 	while (NULL != (dp = readdir(dir))) {
 		char	fname[MAXNAMLEN+1],
-			tabname[MAXNAMLEN+1];
+			tabname[MAXPATHLEN];
 
 		/* avoid file names beginning with ".".  this is good
 		 * because we would otherwise waste two guaranteed calls
@@ -206,7 +206,10 @@ process_crontab(uname, fname, tabname, statbuf, new_db, old_db)
 	if (strcmp(fname, "*system*") && !(pw = getpwnam(uname))) {
 		/* file doesn't have a user in passwd file.
 		 */
-		log_it(fname, getpid(), "ORPHAN", "no passwd entry");
+		if (strncmp(fname, "tmp.", 4)) {
+			/* don't log these temporary files */
+			log_it(fname, getpid(), "ORPHAN", "no passwd entry");
+		}
 		goto next_crontab;
 	}
 

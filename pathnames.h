@@ -28,7 +28,7 @@
 			 * to; SPOOL_DIR, ALLOW_FILE, DENY_FILE, and LOG_FILE
 			 * are all relative to this directory.
 			 */
-#define CRONDIR		"/var/cron"
+#define CRONDIR		"/var/spool/cron"
 #endif
 
 			/* SPOOLDIR is where the crontabs live.
@@ -39,7 +39,7 @@
 			 * newer than they were last time around (or which
 			 * didn't exist last time around...)
 			 */
-#define SPOOL_DIR	"tabs"
+#define SPOOL_DIR	"crontabs"
 
 			/* undefining these turns off their features.  note
 			 * that ALLOW_FILE and DENY_FILE must both be defined
@@ -49,7 +49,7 @@
 			 */
 #define	ALLOW_FILE	"allow"		/*-*/
 #define DENY_FILE	"deny"		/*-*/
-#define LOG_FILE	"log"		/*-*/
+/* #define LOG_FILE	"log"		  -*/
 
 			/* where should the daemon stick its PID?
 			 */
@@ -58,7 +58,7 @@
 #else
 # define PIDDIR "/etc/"
 #endif
-#define PIDFILE		"%scron.pid"
+#define PIDFILE		"%scrond.pid"
 
 			/* 4.3BSD-style crontab */
 #define SYSCRONTAB	"/etc/crontab"
@@ -78,4 +78,8 @@
 
 #ifndef _PATH_DEFPATH
 # define _PATH_DEFPATH "/usr/bin:/bin"
+#endif
+
+#ifndef _PATH_DEFPATH_ROOT
+# define _PATH_DEFPATH_ROOT "/usr/sbin:/usr/bin:/sbin:/bin"
 #endif

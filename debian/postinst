@@ -1,0 +1,8 @@
+#!/bin/sh
+set -e
+# suid manager, for those who wish it.
+if [ -x /usr/sbin/suidregister ]; then
+	suidregister -s cron /usr/bin/crontab root root 4755
+fi
+update-rc.d cron defaults 89 11 >/dev/null
+start-stop-daemon --start --quiet --oknodo --exec /usr/sbin/cron

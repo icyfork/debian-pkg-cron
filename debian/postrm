@@ -1,0 +1,6 @@
+#!/bin/sh
+set -e
+if [ $1 = purge ]; then update-rc.d cron remove >/dev/null; fi
+if [ -x /usr/sbin/suidunregister ]; then
+	suidunregister -s cron /usr/bin/crontab
+fi

@@ -1,0 +1,4 @@
+#!/bin/sh
+# /etc/cron.monthly/standard: standard monthly maintenance script
+
+savelog -g adm -m 644 -u root -c 6 /var/adm/wtmp >/dev/null

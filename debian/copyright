@@ -1,0 +1,34 @@
+Copyright 1988,1990,1993,1994 by Paul Vixie;
+All rights reserved
+
+Distribute freely, except: don't remove my name from the source or
+documentation (don't take credit for my work), mark your changes (don't
+get me blamed for your possible bugs), don't alter or remove this
+notice.  May be sold if buildable source is provided to buyer.  No
+warrantee of any kind, express or implied, is included with this
+software; use at your own risk, responsibility for damages (if any) to
+anyone resulting from the use of this software rests entirely with the
+user.
+
+
+
+Modifications for Debian GNU/Linux Copyright 1994 Ian Jackson;
+checksecurity script:
+Copyright (C) 1994 Ian Jackson
+Copyright (C) 1996, 1997 Steve Greenland
+
+The `checksecurity' script and its associated files (checksecurity.8
+and checksecurity.conf) are free software; you can redistribute it
+and/or modify it under the terms of the GNU General Public License as
+published by the Free Software Foundation; either version 2, or (at
+your option) any later version.
+
+This program is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+General Public License for more details.
+
+You should have received a copy of the GNU General Public License with
+your Debian GNU/Linux system, in /usr/doc/copyright/GPL.  If not,
+write to the Free Software Foundation, Inc., 675 Mass Ave, Cambridge,
+MA 02139, USA.

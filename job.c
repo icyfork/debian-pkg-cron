@@ -45,7 +45,8 @@ job_add(e, u)
 		if (j->e == e && j->u == u) { return; }
 
 	/* build a job queue element */
-	j = (job*)malloc(sizeof(job));
+	if ((j = (job*)malloc(sizeof(job))) == NULL)
+		return;
 	j->next = (job*) NULL;
 	j->e = e;
 	j->u = u;
