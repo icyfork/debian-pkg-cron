@@ -1,3 +1,17 @@
+cron (3.0pl1-45) frozen unstable; urgency=high
+
+  * Updated README and README.Debian w.r.t. file locations.
+  * Updated crontab.1 w.r.t. location of allow and deny files.
+  * Fixed problem in postinst when new install (instead of upgrade) 
+  (closes:Bug#21426)
+  * Smarter algorithm for checking /etc/cron.d for changes, no longer
+  spins up laptop disks every minute. Thanks to Alexander "Shurik" 
+  Shumakovitch for the fix.
+  * Re-did checksecurity to only report NFS/AFS insecure mounts
+  instead of running find on them (suggestion from Gregory Stark).
+
+ -- Steve Greenland <stevegr@master.debian.org>  Sun, 26 Apr 1998 13:41:51 -0500
+
 cron (3.0pl1-44) unstable; urgency=low
 
   * Fixed standards version reference.

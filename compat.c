@@ -76,7 +76,7 @@ strerror(error)
 		return sys_errlist[error];
 	}
 
-	sprintf(buf, "Unknown error: %d", error);
+	snprintf(buf, 32, "Unknown error: %d", error);
 	return buf;
 }
 #endif
@@ -221,16 +221,18 @@ setenv(name, value, overwrite)
 	int overwrite;
 {
 	char *tmp;
+ 	int tmp_size;
 
 	if (overwrite && getenv(name))
 		return -1;
 
-	if (!(tmp = malloc(strlen(name) + strlen(value) + 2))) {
+	tmp_size = strlen(name) + strlen(value) + 2;
+ 	if (!(tmp = malloc(tmp_size))) {
 		errno = ENOMEM;
 		return -1;
 	}
 
-	sprintf(tmp, "%s=%s", name, value);
+ 	snprintf(tmp, tmp_size, "%s=%s", name, value);
 	return putenv(tmp);	/* intentionally orphan 'tmp' storage */
 }
 #endif

@@ -214,7 +214,7 @@ load_database(old_db)
 			continue;
 
 		(void) strcpy(fname, dp->d_name);
-		sprintf(tabname, CRON_TAB(fname));
+		snprintf(tabname, MAXNAMLEN+1, CRON_TAB(fname));
 
 		process_crontab(fname, fname, tabname,
 				&statbuf, &new_db, old_db);

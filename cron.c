@@ -109,6 +109,9 @@ main(argc, argv)
 			/* child process */
 			log_it("CRON",getpid(),"STARTUP","fork ok");
 			(void) setsid();
+			fclose(stdin);
+			fclose(stdout);
+			fclose(stderr);
 			break;
 		default:
 			/* parent process should just die */
@@ -287,6 +290,10 @@ sigchld_handler(x) {
 static void
 sighup_handler(x) {
 	log_close();
+
+	/* we should use sigaction for proper signal blocking as this 
+	   has a race, but... */
+	signal(SIGHUP, sighup_handler);
 }
 
 

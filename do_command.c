@@ -436,7 +436,7 @@ child_process(e, u)
 			if (mailto && status) {
 				char buf[MAX_TEMPSTR];
 
-				sprintf(buf,
+				snprintf(buf, MAX_TEMPSTR,
 			"mailed %d byte%s of output but got status 0x%04x\n",
 					bytes, (bytes==1)?"":"s",
 					status);

@@ -263,11 +263,11 @@ acquire_daemonlock(closeflag)
 		char	buf[MAX_TEMPSTR];
 		int	fd, otherpid;
 
-		(void) sprintf(pidfile, PIDFILE, PIDDIR);
+		(void) snprintf(pidfile, MAX_FNAME, PIDFILE, PIDDIR);
 		if ((-1 == (fd = open(pidfile, O_RDWR|O_CREAT, 0644)))
 		    || (NULL == (fp = fdopen(fd, "r+")))
 		    ) {
-			sprintf(buf, "can't open or create %s: %s",
+			snprintf(buf, MAX_TEMPSTR, "can't open or create %s: %s",
 				pidfile, strerror(errno));
 			fprintf(stderr, "%s: %s\n", ProgramName, buf);
 			log_it("CRON", getpid(), "DEATH", buf);
@@ -278,7 +278,7 @@ acquire_daemonlock(closeflag)
 			int save_errno = errno;
 
 			fscanf(fp, "%d", &otherpid);
-			sprintf(buf, "can't lock %s, otherpid may be %d: %s",
+			snprintf(buf, MAX_TEMPSTR, "can't lock %s, otherpid may be %d: %s",
 				pidfile, otherpid, strerror(save_errno));
 			fprintf(stderr, "%s: %s\n", ProgramName, buf);
 			log_it("CRON", getpid(), "DEATH", buf);
@@ -482,7 +482,7 @@ log_it(username, xpid, event, detail)
 	TIME_T			now = time((TIME_T) 0);
 	register struct tm	*t = localtime(&now);
 #endif /*LOG_FILE*/
-
+	int 			msg_size;
 #if defined(SYSLOG)
 	static int		syslog_open = 0;
 #if defined(DEBIAN)
@@ -498,11 +498,14 @@ log_it(username, xpid, event, detail)
 #if defined(LOG_FILE)
 	/* we assume that MAX_TEMPSTR will hold the date, time, &punctuation.
 	 */
-	msg = malloc(strlen(username)
-		     + strlen(event)
-		     + strlen(detail)
-		     + MAX_TEMPSTR);
-
+	msg_size = strlen(username) + strlen(event) + strlen(detail) + MAX_TEMPSTR;
+	msg = malloc(msg_size);
+	if (msg == NULL) {
+	    /* damn, out of mem and we did not test that before... */
+	    fprintf(stderr, "%s: Run OUT OF MEMORY while %s\n",
+		    ProgramName, __FUNCTION__);
+	    return;
+	}
 	if (LogFD < OK) {
 		LogFD = open(LOG_FILE, O_WRONLY|O_APPEND|O_CREAT, 0600);
 		if (LogFD < OK) {
@@ -514,16 +517,16 @@ log_it(username, xpid, event, detail)
 		}
 	}
 
-	/* we have to sprintf() it because fprintf() doesn't always write
+	/* we have to snprintf() it because fprintf() doesn't always write
 	 * everything out in one chunk and this has to be atomically appended
 	 * to the log file.
 	 */
-	sprintf(msg, "%s (%02d/%02d-%02d:%02d:%02d-%d) %s (%s)\n",
+	snprintf(msg, msg_size, "%s (%02d/%02d-%02d:%02d:%02d-%d) %s (%s)\n",
 		username,
 		t->tm_mon+1, t->tm_mday, t->tm_hour, t->tm_min, t->tm_sec, pid,
 		event, detail);
 
-	/* we have to run strlen() because sprintf() returns (char*) on old BSD
+	/* we have to run strlen() because snprintf() returns (char*) on old BSD
 	 */
 	if (LogFD < OK || write(LogFD, msg, strlen(msg)) < OK) {
 		if (LogFD >= OK)
@@ -657,8 +660,10 @@ mkprint(dst, src, len)
 			*dst++ = '^';
 			*dst++ = '?';
 		} else {			/* parity character */
-			sprintf(dst, "\\%03o", ch);
-			dst += 4;
+		    /* well, the following snprintf is paranoid, but that will
+		     * keep grep happy */
+		    snprintf(dst, 5, "\\%03o", ch);
+		    dst += 4;
 		}
 	}
 	*dst = '\0';
@@ -694,7 +699,7 @@ arpadate(clock)
 	struct tm *tm = localtime(&t);
 	static char ret[30];	/* zone name might be >3 chars */
 	
-	(void) sprintf(ret, "%s, %2d %s %2d %02d:%02d:%02d %s",
+	(void) snprintf(ret, 30, "%s, %2d %s %2d %02d:%02d:%02d %s",
 		       DowNames[tm->tm_wday],
 		       tm->tm_mday,
 		       MonthNames[tm->tm_mon],

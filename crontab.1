@@ -31,7 +31,7 @@ is the program used to install, deinstall or list the tables
 used to drive the
 .IR cron (8)
 daemon in Vixie Cron.  Each user can have their own crontab, and though
-these are files in /var/spool/crontabs,
+these are files in /var/spool/cron/crontabs,
 they are not intended to be edited directly.
 .PP
 If the
@@ -120,9 +120,18 @@ The
 command conforms to IEEE Std1003.2-1992 (``POSIX'').  This new command syntax
 differs from previous versions of Vixie Cron, as well as from the classic
 SVR3 syntax.
+
 .SH DIAGNOSTICS
 A fairly informative usage message appears if you run it with a bad command
 line.
+
+.SH BUGS
+Although cron requires that each entry in a crontab end in a newline
+character, the neither the crontab command nor the cron daemon will
+detect this error. Instead, the crontab will appear load
+normally. However, the command will never run. The best choice is to
+ensure that your crontab has a blank line and the end.
+
 .SH AUTHOR
 .nf
 Paul Vixie <paul@vix.com>

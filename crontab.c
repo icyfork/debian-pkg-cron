@@ -255,7 +255,7 @@ list_cmd() {
 #endif
 
 	log_it(RealUser, Pid, "LIST", User);
-	(void) sprintf(n, CRON_TAB(User));
+	(void) snprintf(n, MAX_FNAME, CRON_TAB(User));
 	if (!(f = fopen(n, "r"))) {
 		if (errno == ENOENT)
 			fprintf(stderr, "no crontab for %s\n", User);
@@ -301,7 +301,7 @@ delete_cmd() {
 	char	n[MAX_FNAME];
 
 	log_it(RealUser, Pid, "DELETE", User);
-	(void) sprintf(n, CRON_TAB(User));
+	(void) snprintf(n, MAX_FNAME, CRON_TAB(User));
 	if (unlink(n)) {
 		if (errno == ENOENT)
 			fprintf(stderr, "no crontab for %s\n", User);
@@ -334,7 +334,7 @@ edit_cmd() {
 	mode_t		um;
 
 	log_it(RealUser, Pid, "BEGIN EDIT", User);
-	(void) sprintf(n, CRON_TAB(User));
+	(void) snprintf(n, MAX_FNAME, CRON_TAB(User));
 	if (!(f = fopen(n, "r"))) {
 		if (errno != ENOENT) {
 			perror(n);
@@ -457,7 +457,7 @@ edit_cmd() {
 				ProgramName);
 			exit(ERROR_EXIT);
 		}
-		sprintf(q, "%s %s", editor, Filename);
+		snprintf(q, MAX_TEMPSTR, "%s %s", editor, Filename);
 		execlp(_PATH_BSHELL, _PATH_BSHELL, "-c", q, NULL);
 		perror(editor);
 		exit(ERROR_EXIT);
@@ -550,8 +550,8 @@ replace_cmd() {
 		return (-2);
 	}
 
-	(void) sprintf(n, "tmp.%d", Pid);
-	(void) sprintf(tn, CRON_TAB(n));
+	(void) snprintf(n, MAX_FNAME, "tmp.%d", Pid);
+	(void) snprintf(tn, MAX_FNAME, CRON_TAB(n));
 	if (!(tmp = fopen(tn, "w+"))) {
 		perror(tn);
 		return (-2);
@@ -639,7 +639,7 @@ replace_cmd() {
 		return (-2);
 	}
 
-	(void) sprintf(n, CRON_TAB(User));
+	(void) snprintf(n, sizeof(n), CRON_TAB(User));
 	if (rename(tn, n)) {
 		fprintf(stderr, "%s: error renaming %s to %s\n",
 			ProgramName, tn, n);

@@ -143,8 +143,10 @@ load_env(envstr, f)
 	filepos = ftell(f);
 	fileline = LineNumber;
 	skip_comments(f);
-	if (EOF == get_string(envstr, MAX_ENVSTR, f, "\n"))
+	if (EOF == get_string(envstr, MAX_ENVSTR - 1, f, "\n"))
 		return (ERR);
+
+    envstr[MAX_ENVSTR - 1] = '\0';
 
 	Debug(DPARS, ("load_env, read <%s>\n", envstr))
 
