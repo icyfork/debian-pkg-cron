@@ -44,7 +44,7 @@ static const struct pam_conv conv = {
 
 #ifdef WITH_SELINUX
 #include <selinux/selinux.h>
-#include <selinux/get_context_list.h>
+/* #include <selinux/get_context_list.h> */
 #endif
 
 
@@ -331,17 +331,14 @@ child_process(e, u)
 			fprintf(stdout,"error");
 #endif
 #ifdef WITH_SELINUX
-			if (is_selinux_enabled()) {
-			  security_context_t scontext;
-			  if (get_default_context(u->name, NULL, &scontext)) {
-			    fprintf(stderr, "execle_secure: couldn't get security context for user %s\n", u->name);
-			    _exit(ERROR_EXIT);
-			  }
-			  if (setexeccon(scontext) < 0) {
-			    fprintf(stderr, "Could not set exec context to %s for user  %s\n", scontext,u->name);
-			    _exit(ERROR_EXIT);
-			  }
-			  freecon(scontext);
+			if (is_selinux_enabled() > 0) {
+                            security_context_t scontext;
+                            if (setexeccon(u->scontext) < 0) {
+                                if (security_getenforce() > 0) {
+                                    fprintf(stderr, "Could not set exec context to %s for user  %s\n", scontext,u->name);
+                                    _exit(ERROR_EXIT);
+                                }
+                            }
 			}
 #endif
                         execle(shell, shell, "-c", e->cmd, (char *)0, jobenv);

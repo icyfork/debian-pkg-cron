@@ -40,11 +40,12 @@
 #include "config.h"
 #include "externs.h"
 
-#ifdef WITH_SELINUX 
-#define SYSUSERNAME "system_u"
-#else
-#define SYSUSERNAME "root"
+#ifdef WITH_SELINUX
+#include <selinux/selinux.h>
 #endif
+
+#define SYSUSERNAME "root"
+
 
 	/* these are really immutable, and are
 	 *   defined for symbolic convenience only
@@ -186,6 +187,9 @@ typedef	struct _user {
 	char		*name;
 	time_t		mtime;		/* last modtime of crontab */
 	entry		*crontab;	/* this person's crontab */
+#ifdef WITH_SELINUX
+        security_context_t scontext;    /* SELinux security context */
+#endif
 } user;
 
 typedef	struct _cron_db {
@@ -236,7 +240,7 @@ char		*env_get __P((char *, char **)),
 		**env_copy __P((char **)),
 		**env_set __P((char **, char *));
 
-user		*load_user __P((int, struct passwd *, char *)),
+user		*load_user __P((int, struct passwd *, char *, char *, char *)),
 		*find_user __P((cron_db *, char *));
 
 entry		*load_entry __P((FILE *, void (*)(),
