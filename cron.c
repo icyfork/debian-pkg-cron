@@ -83,6 +83,13 @@ main(argc, argv)
 #endif
 	(void) signal(SIGHUP, sighup_handler);
 
+        /* Reopen stdin in case some idiot closed it before starting
+           us - it will only be closed, but not having it open here
+           screws up other things that will be opened */
+        if (fdopen(0,"r") == NULL) {
+            (void) open("dev/null", 0);
+        }
+
 	acquire_daemonlock(0);
 	set_cron_uid();
 	set_cron_cwd();
