@@ -36,8 +36,10 @@ then
 fi
 
 cd /var/lib/dpkg
-if ! cmp -s status.yesterday.0 status
+if cmp -s status.yesterday.0 status
 then
+    :
+else
 	cp -p status status.yesterday
 	savelog -c 7 status.yesterday >/dev/null
 fi

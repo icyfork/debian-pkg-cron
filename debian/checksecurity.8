@@ -1,5 +1,5 @@
 .\" -*- nroff -*-
-.TH CHECKSECURITY 8 "11 August 1996" "Debian Linux"
+.TH CHECKSECURITY 8 "2 February 1997" "Debian Linux"
 .SH NAME
 checksecurity \- check for changes to setuid programs
 .SH SYNOPSIS
@@ -19,7 +19,12 @@ on a daily basis, so typically changes would be mailed to root.
 .SH CONFIGURATION
 The
 .B checksecurity.conf
-file defines the 
+file defines two configuration variables:
+.B CHECKSECURITY_FILTER
+and
+.BR CHECKSECURITY_NOFINDERRORS .
+.PP
+The 
 .B CHECKSECURITY_FILTER
 environment variable which is the argument of 'grep -vE' applied to
 the output of the  

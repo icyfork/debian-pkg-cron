@@ -71,7 +71,8 @@ LINTFLAGS	=	-hbxa $(INCLUDE) $(COMPAT) $(DEBUGGING)
 #<<want to use a nonstandard CC?>>
 #CC		=	vcc
 #<<manifest defines>>
-DEFS = -DDEBIAN
+# The -DUSE_SIGCHLD is needed for the Alpha port
+DEFS = -DDEBIAN -DUSE_SIGCHLD
 #(SGI IRIX systems need this)
 #DEFS		=	-D_BSD_SIGNALS -Dconst=
 #<<the name of the BSD-like install program>>

@@ -47,10 +47,12 @@ binary-arch:	checkroot build
 	install -m 755 debian/checksecurity debian/tmp/usr/sbin/.
 	install -m 644 debian/checksecurity.conf debian/tmp/etc/.
 	install -m 644 debian/checksecurity.8 debian/tmp/usr/man/man8/.
+	install -m 755 debian/cronanacron debian/tmp/usr/sbin/.
         # Rest is normal deb-make
 	make install DESTDIR=`pwd`/debian/tmp
 	# Must have debmake installed for this to work. 
-	debstd -m $(package) CHANGES FEATURES THANKS README
+	#debstd -m $(package) CHANGES FEATURES THANKS README
+	debstd -m CHANGES FEATURES THANKS README
 	dpkg-gencontrol
 	chown -R root.root debian/tmp
 	chmod -R g-ws,u+w,a+r debian/tmp

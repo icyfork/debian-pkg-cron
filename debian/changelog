@@ -1,3 +1,14 @@
+cron (3.0pl1-39) unstable; urgency=low
+
+  * Added configuration variable to eliminate error messages from
+    checksecurity's find command 
+  * Better integration with anacron: suggest anacron, call anacron
+    on a regular basis so that it can keeps it's status up-to-date. New
+    file /usr/sbin/cronanacron.
+  * Call savelog for /var/adm/btmp from /etc/cron.monthly/standard.
+	
+ -- Steve Greenland <stevegr@master.debian.org>  Sun, 24 Aug 1997 18:52:55 -0500
+
 cron (3.0pl1-38) stable unstable; urgency=low
 
   * When upgrading from -36 or -36.1, stop old cron daemon

@@ -8,7 +8,7 @@ Package: cron
 Architecture: any
 Depends: ${shlibs:Depends}, bsdutils
 Recommends: smail | sendmail | mail-transport-agent
-Suggests:
+Suggests: anacron
 Conflicts:
 Provides:
 Description: management of regular background processing

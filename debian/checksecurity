@@ -13,9 +13,19 @@ cd /
 
 . /etc/checksecurity.conf
 
+if [ "$CHECKSECURITY_NOFINDERRORS" = "TRUE" ] ; then
+	exec 9>&2
+	exec 2>/dev/null
+fi
+
+
 find `mount | grep -vE "$CHECKSECURITY_FILTER" | cut -d ' ' -f 3` \
      -xdev \( -type f -perm +06000 -o -type b -o -type c \) -ls \
   | sort >$TMP
+
+if [ "$CHECKSECURITY_NOFINDERRORS" = "TRUE" ] ; then
+	exec 2>&9
+fi
 
 cd $LOG
 
