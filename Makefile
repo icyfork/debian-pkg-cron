@@ -50,7 +50,7 @@
 DESTROOT	=	$(DESTDIR)/usr
 DESTSBIN	=	$(DESTROOT)/sbin
 DESTBIN		=	$(DESTROOT)/bin
-DESTMAN		=	$(DESTROOT)/man
+DESTMAN		=	$(DESTROOT)/share/man
 #<<need bitstring.h>>
 INCLUDE		=	-I.
 #INCLUDE	=
