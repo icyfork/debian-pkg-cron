@@ -184,7 +184,11 @@ typedef	struct _user {
 
 typedef	struct _cron_db {
 	user		*head, *tail;	/* links */
-	time_t		mtime;		/* last modtime on spooldir */
+	time_t		user_mtime;     /* last modtime on spooldir */
+	time_t		sys_mtime;      /* last modtime on system crontab */
+#ifdef DEBIAN
+	time_t		sysd_mtime;     /* last modtime on system crondir */
+#endif
 } cron_db;
 
 
