@@ -64,17 +64,17 @@ checksecurity >setuid.changes
 # Check to see if any files are in lost+found directories and warn admin
 #
 # Get a list of the (potential) ext2 l+f directories
-lflist=`df -P --type=ext2  |awk '/\/dev\// {printf "%s/lost+found ", $6}'`
+lflist=`df -P --type=ext2  |awk '$6 == "/" {$6 = ""} /\/dev\// {printf "%s/lost+found ", $6}'`
 
 # In each directory, look for files
 for lfdir in $lflist ; do
     if [ -d "$lfdir" ] ; then
-	more_lost_found=`ls -1  "$lfdir" | grep -v 'lost+found$'`
+	more_lost_found=`ls -1  "$lfdir" | grep -v 'lost+found$' | sed 's/^/    /'`
 	if [ -n "$more_lost_found" ] ; then
 	    lost_found="$lost_found
 
 $lfdir:
-    $more_lost_found"
+$more_lost_found"
 	    # NOTE: above weird line breaks in string are intentional!
         fi
     fi
