@@ -150,10 +150,11 @@ load_entry(file, error_func, pw, envp)
 			bit_nset(e->dow, 0, (LAST_DOW-FIRST_DOW+1));
 		} else if (!strcmp("hourly", cmd)) {
 			bit_set(e->minute, 0);
-			bit_set(e->hour, (LAST_HOUR-FIRST_HOUR+1));
+			bit_nset(e->hour, 0, (LAST_HOUR-FIRST_HOUR+1));
 			bit_nset(e->dom, 0, (LAST_DOM-FIRST_DOM+1));
 			bit_nset(e->month, 0, (LAST_MONTH-FIRST_MONTH+1));
 			bit_nset(e->dow, 0, (LAST_DOW-FIRST_DOW+1));
+			e->flags |= HR_STAR;
 		} else {
 			ecode = e_timespec;
 			goto eof;
@@ -161,6 +162,8 @@ load_entry(file, error_func, pw, envp)
 	} else {
 		Debug(DPARS, ("load_entry()...about to parse numerics\n"))
 
+		if (ch == '*')
+			e->flags |= MIN_STAR;
 		ch = get_list(e->minute, FIRST_MINUTE, LAST_MINUTE,
 			      PPC_NULL, ch, file);
 		if (ch == EOF) {
@@ -171,6 +174,8 @@ load_entry(file, error_func, pw, envp)
 		/* hours
 		 */
 
+		if (ch == '*')
+			e->flags |= HR_STAR;
 		ch = get_list(e->hour, FIRST_HOUR, LAST_HOUR,
 			      PPC_NULL, ch, file);
 		if (ch == EOF) {
@@ -240,6 +245,9 @@ load_entry(file, error_func, pw, envp)
 			goto eof;
 		}
 		Debug(DPARS, ("load_entry()...uid %d, gid %d\n",e->uid,e->gid))
+	} else if (ch == '*') {
+		ecode = e_cmd;
+		goto eof;
 	}
 
 	e->uid = pw->pw_uid;
