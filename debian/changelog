@@ -1,3 +1,17 @@
+cron (3.0pl1-62) unstable; urgency=medium
+
+  * Change tracking of crontab directory mod times to deal with directories
+  with mtimes in the future. Thanks to Florian Lohoff for tracking down
+  the cause of this rare yet long-standing bug. 
+  (closes:#51202, #57356, #64198, #77353)
+  * Run @reboot jobs only on reboot instead of cron restart. 
+  (closes:#74762, #77563)
+  * Clarify which directory the lost+found files are in.
+  * Protect against reading other people's crontabs via temp file symlink
+  in crontab -e.
+
+ -- Steve Greenland <stevegr@debian.org>  Sat, 27 Jan 2001 17:01:43 -0600
+
 cron (3.0pl1-61) unstable; urgency=high
 
   * Fix usage message in cron.init.
