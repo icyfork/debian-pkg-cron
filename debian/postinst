@@ -57,7 +57,7 @@ if ! dpkg-statoverride --list /usr/bin/crontab > /dev/null ; then
     chmod 1730 /var/spool/cron/crontabs 
     cd $crondir/crontabs
     for ct in * ; do
-        chown $ct:crontab $ct
+        if [ -f $ct ] ; then  chown $ct:crontab $ct ; fi
     done
 fi
 

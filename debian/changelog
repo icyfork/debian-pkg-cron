@@ -1,3 +1,9 @@
+cron (3.0pl1-76) unstable; urgency=low
+
+  * Fix postinst bug for no user crontabs (closes: #208433, #208435, #208448)
+
+ -- Steve Greenland <stevegr@debian.org>  Tue,  2 Sep 2003 18:05:31 -0500
+
 cron (3.0pl1-75) unstable; urgency=low
 
   * Make crontab setgid 'crontab' rather than setuid 'root' (closes: #18333)
