@@ -21,7 +21,8 @@ static char rcsid[] = "$Id: do_command.c,v 2.12 1994/01/15 20:43:43 vixie Exp $"
 
 
 #include "cron.h"
-#include <sys/signal.h>
+#include <signal.h>
+#include <grp.h>
 #if defined(sequent)
 # include <sys/universe.h>
 #endif
@@ -126,13 +127,21 @@ child_process(e, u)
 	 * command, and subsequent characters are the additional input to
 	 * the command.  Subsequent %'s will be transformed into newlines,
 	 * but that happens later.
+	 *
+	 * If there are escaped %'s, remove the escape character.
 	 */
 	/*local*/{
 		register int escaped = FALSE;
 		register int ch;
+		register char *p;
 
-		for (input_data = e->cmd;  ch = *input_data;  input_data++) {
+		for (input_data = p = e->cmd; (ch = *input_data);
+		    input_data++, p++) {
+			if (p != input_data)
+				*p = ch;
 			if (escaped) {
+				if (ch == '%' || ch == '\\')
+					*--p = ch;
 				escaped = FALSE;
 				continue;
 			}
@@ -145,6 +154,7 @@ child_process(e, u)
 				break;
 			}
 		}
+		*p = '\0';
 	}
 
 	/* fork again, this time so we can exec the user's command.
@@ -292,7 +302,7 @@ child_process(e, u)
 		 *	%  -> \n
 		 *	\x -> \x	for all x != %
 		 */
-		while (ch = *input_data++) {
+		while ((ch = *input_data++) != '\0') {
 			if (escaped) {
 				if (ch != '%')
 					putc('\\', out);
@@ -378,7 +388,7 @@ child_process(e, u)
 
 				(void) gethostname(hostname, MAXHOSTNAMELEN);
 				(void) snprintf(mailcmd, sizeof(mailcmd),
-				    MAILARGS, MAILCMD, mailto);
+				    MAILARGS, MAILCMD);
 				if (!(mail = cron_popen(mailcmd, "w"))) {
 					perror(MAILCMD);
 					(void) _exit(ERROR_EXIT);
@@ -390,7 +400,7 @@ child_process(e, u)
 					e->cmd);
 # if defined(MAIL_DATE)
 				fprintf(mail, "Date: %s\n",
-					arpadate(&TargetTime));
+					arpadate(&StartTime));
 # endif /* MAIL_DATE */
 				for (env = e->envp;  *env;  env++)
 					fprintf(mail, "X-Cron-Env: <%s>\n",
