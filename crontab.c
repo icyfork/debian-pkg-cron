@@ -58,7 +58,7 @@ static char	*Options[] = { "???", "list", "delete", "edit", "replace" };
 static	PID_T		Pid;
 static	char		User[MAX_UNAME], RealUser[MAX_UNAME];
 static	char		Filename[MAX_FNAME];
-static	FILE		*NewCrontab;
+static	FILE		*NewCrontab = NULL;
 static	int		CheckErrorCount;
 static	enum opt_t	Option;
 static	struct passwd	*pw;
@@ -125,6 +125,12 @@ main(argc, argv)
 	case opt_replace:	if (replace_cmd() < 0)
 					exitstatus = ERROR_EXIT;
 				break;
+				/* The following was added to shut
+				 -Wall up, but it will never be hit,
+				 because the option parser will catch
+				 it */
+	case opt_unknown: usage("unknown option specified");
+	                  break;
 	}
 	exit(0);
 	/*NOTREACHED*/
@@ -291,7 +297,7 @@ list_cmd() {
 	      if (EOF == ch)
 		break;
 	      if ('#' != ch) {
-		putc(ch, NewCrontab);
+		putchar(ch);
 		break;
 	      }
 	      while (EOF != (ch = get_char(f)))
