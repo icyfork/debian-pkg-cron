@@ -13,7 +13,7 @@ stop)	echo -n "Stopping periodic command scheduler: cron"
         echo "."
         ;;
 restart) echo -n "Restarting periodic command scheduler: cron"
-        start-stop-daemon --stop --quiet --pidfile /var/run/crond.pid --exec /usr/sbin/cron
+        start-stop-daemon --stop --retry 5 --quiet --pidfile /var/run/crond.pid --exec /usr/sbin/cron
         start-stop-daemon --start --quiet --pidfile /var/run/crond.pid --exec /usr/sbin/cron
         echo "."
         ;;
