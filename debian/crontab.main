@@ -7,10 +7,9 @@ SHELL=/bin/sh
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 
 # m h dom mon dow user	command
-25 6	* * *	root	run-parts --report /etc/cron.daily
-47 6	* * 7	root	run-parts --report /etc/cron.weekly
-52 6	1 * *	root	run-parts --report /etc/cron.monthly
+25 6	* * *	root	test -e /usr/sbin/anacron || run-parts --report /etc/cron.daily
+47 6	* * 7	root	test -e /usr/sbin/anacron || run-parts --report /etc/cron.weekly
+52 6	1 * *	root	test -e /usr/sbin/anacron || run-parts --report /etc/cron.monthly
 #
-# Removed invocation of anacron, as this is now handled by a 
-# /etc/cron.d file
+
 
