@@ -43,13 +43,15 @@
 			 */
 
 #define MAILCMD _PATH_SENDMAIL					/*-*/
-#define MAILARGS "%s -i -FCronDaemon -odi -oem -or0s -t %s"		/*-*/
+#define MAILARGS "%s -i -FCronDaemon -odi -oem  %s"		/*-*/
 			/* -i    = don't terminate on "." by itself
                          * -Fx	 = set full-name of sender
 			 * -odi	 = Option Deliverymode Interactive
 			 * -oem	 = Option Errors Mailedtosender
-			 * -or0s = Option Readtimeout -- don't time out
  			 * -t    = read recipient from header of message
+			 * -or0s = Option Readtimeout -- don't time out
+			 * XXX: sendmail doesn't allow -or0s when invoked
+			 * by joe user.  --okir
 			 */
 
 /* #define MAILCMD "/bin/mail"			-*/
