@@ -2,8 +2,9 @@
 # The PAM configuration file for the cron daemon
 #
 
-account    required   pam_unix.so
-auth       required   pam_unix.so nullok
+@include common-auth
 auth       required   pam_env.so
-session    required   pam_unix.so
+@include common-account
+@include common-session
+
 
