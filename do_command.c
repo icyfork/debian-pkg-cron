@@ -221,6 +221,8 @@ child_process(e, u)
 #if defined(USE_PAM)
 	retcode = pam_start("cron", usernm, &conv, &pamh);
 	PAM_FAIL_CHECK;
+	retcode = pam_set_item(pamh, PAM_TTY, "cron");
+	PAM_FAIL_CHECK;
 	retcode = pam_acct_mgmt(pamh, PAM_SILENT);
 	PAM_FAIL_CHECK;
 	retcode = pam_open_session(pamh, PAM_SILENT);
