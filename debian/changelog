@@ -1,3 +1,36 @@
+cron (3.0pl1-43) unstable; urgency=medium
+
+  * Removed support for TMPDIR. This is due to the problem it causes
+    with emacs -- emacs does different things with it's backup files
+    depending on whether or not the file is in /tmp. Emacs probably ought
+    to use TMPDIR instead of /tmp in its check. I've opened a "wishlist"
+    bug for crontab to support TMPDIR. 
+    (closes: Bug#15985)
+  * When USE_SIGCHLD is defined, before running user process, set handling 
+    for SIGCHLD to SIG_DFL, not SIG_IGN. Despite documentation that the
+    default for SIGCHLD is ignore, the behaviour is different.
+    (closes:Bug#17564,Bug#9075,Bug#16436,Bug#17814)
+  * Moved allow and deny files from /var/spool/cron to /etc/cron.{allow,deny}
+    (closes:Bug#14970)
+  * filenames in /etc/cron.d must comply with run-parts naming convention -
+    alpha-numeric, underscore, or hyphen. This ensures that conffile
+    remains (e.g. package.dpkg-dist) files don't get run.
+  * removed cronanacron command from /etc/crontab and distribution -- 
+    replaced by /etc/cron.d/anacron file (from anacron package, not cron).
+  * Documented /etc/cron.d dir in manpage and readme.debian
+  * modified checksecurity.conf to not check auto file systems. 
+    (closes:Bug#8702)
+  * crontab -u `whoami` now works. (closes:Bug#8702)
+  * documented CRONTAB_NOHEADER in crontab.1
+  * /etc/crontab now uses run-parts(8) --report switch. (closes:Bug#18273)
+  * fixed initialization of oact in misc.c. (closes:Bug#17134)
+  * converted to use debhelper rather than debmake.
+  * changed date format in checksecurity so that we don't get false positives
+    after six months. (closes:Bug#19025)
+  * remove /etc/cron.{allow,deny} on purge
+
+ -- Steve Greenland <stevegr@master.debian.org>  Mon,  9 Mar 1998 01:31:13 -0600
+
 cron (3.0pl1-42) unstable; urgency=low
 
   * Don't output header on 'crontab -l' if CRONTAB_NOHEADER is 'Y' (Bug#15642)
