@@ -1,4 +1,11 @@
-cron (3.0pl1-46) frozen unstable; urgency=medium
+cron (3.0pl1-47) frozen unstable; urgency=high
+
+  * Removed close of {stdin,stdout,stderr}, as it appears that
+  some cron users expect it.
+
+ -- Steve Greenland <stevegr@master.debian.org>  Mon,  2 Nov 1998 09:25:44 -0600
+
+Cron (3.0pl1-46) frozen unstable; urgency=medium
 
   * changed mention of /var/spool/crontabs to /var/spool/cron/crontabs, and
   added example /etc/crontab. (closes:Bug#28458,Bug#23101)

@@ -109,9 +109,9 @@ main(argc, argv)
 			/* child process */
 			log_it("CRON",getpid(),"STARTUP","fork ok");
 			(void) setsid();
-			fclose(stdin);
-			fclose(stdout);
-			fclose(stderr);
+			/* fclose(stdin); */
+			/* fclose(stdout); */
+			/* fclose(stderr); */
 			break;
 		default:
 			/* parent process should just die */
