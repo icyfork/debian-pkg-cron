@@ -56,6 +56,7 @@ binary-arch: build
 	dh_installdocs FEATURES THANKS README debian/README.anacron
 #	dh_installexamples
 #	dh_installmenu
+	dh_installpam
 	dh_installinit --noscripts
 	# Can't use dh_installcron because we don't have "normal" naming
 	# convention
