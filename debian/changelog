@@ -1,3 +1,20 @@
+cron (3.0pl1-82) unstable; urgency=low
+
+  * Added /etc/cron.d/.placeholder to prevent dpkg from removing the
+    directory when all packages using /etc/cron.d are purged. Likewise to
+    corn.weekly (which needs it), and cron.daily and cron.monthly (which
+    don't, but I like consistency.) (closes: #217760)
+  * Add '--retry 5' to the stop part of /etc/init.d/cron restart, so that
+    cron is completely stopped before attempting restart. (closes: #223945)
+  * Add cron.hourly directory (closes:#200848, #219338, #226710)
+  * Support the LSB naming convention for /etc/cron.d (closes: #171587)
+  * Move cron.d manual section out of DEBIAN SPECIFIC, since many
+    distributions now support this. (closes:#2277770)
+  * Clarify that environment setting are not re-expanded (closes: #223570)
+  * Some crontab(5) man page fixups (closes: #200100)
+
+ -- Steve Greenland <stevegr@debian.org>  Sun, 18 Jan 2004 16:20:59 -0600
+
 cron (3.0pl1-81) unstable; urgency=low
 
   * Only protect owner/group setting on individual user crontabs by
