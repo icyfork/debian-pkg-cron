@@ -24,7 +24,9 @@ static char rcsid[] = "$Id: database.c,v 2.8 1994/01/15 20:43:43 vixie Exp $";
 
 
 #include "cron.h"
+#define __USE_GNU /* For O_NOFOLLOW */
 #include <fcntl.h>
+#undef __USE_GNU
 #include <sys/stat.h>
 #include <sys/file.h>
 
@@ -338,7 +340,7 @@ process_crontab(uname, fname, tabname, statbuf, new_db, old_db)
 		goto next_crontab;
 	}
 
-	if ((crontab_fd = open(tabname, O_RDONLY, 0)) < OK) {
+	if ((crontab_fd = open(tabname, O_RDONLY|O_NOFOLLOW, 0)) < OK) {
 		/* crontab not accessible?
 		 */
 		log_it(fname, getpid(), "CAN'T OPEN", tabname);
@@ -349,6 +351,29 @@ process_crontab(uname, fname, tabname, statbuf, new_db, old_db)
 		log_it(fname, getpid(), "FSTAT FAILED", tabname);
 		goto next_crontab;
 	}
+        /* Check to make sure that the crontab is owned by the correct user
+           (or root) */
+
+	if (pw &&
+	    statbuf->st_uid != pw->pw_uid &&
+	    statbuf->st_uid != ROOT_UID) {
+		log_it(fname, getpid(), "WRONG FILE OWNER", tabname);
+		goto next_crontab;
+	}
+
+        /*
+         * The link count check is not sufficient (the owner may
+         * delete their original link, reducing the link count back to
+         * 1), but this is all we've got.
+         */
+	if (pw &&
+	    (!S_ISREG(statbuf->st_mode) ||
+	    statbuf->st_nlink != 1 ||
+	    (statbuf->st_mode & 07777) != 0600)) {
+		log_it(fname, getpid(), "WRONG INODE INFO", tabname);
+ 		goto next_crontab;
+ 	}
+
 
 	Debug(DLOAD, ("\t%s:", fname))
 	u = find_user(old_db, fname);

@@ -47,7 +47,6 @@ static char rcsid[] = "$Id: crontab.c,v 2.13 1994/01/17 03:20:37 vixie Exp $";
 
 #define NHEADER_LINES 3
 
-
 enum opt_t	{ opt_unknown, opt_list, opt_delete, opt_edit, opt_replace };
 
 #if DEBUGGING
@@ -109,7 +108,6 @@ main(argc, argv)
 	setlinebuf(stderr);
 #endif
 	parse_args(argc, argv);		/* sets many globals, opens a file */
-	set_cron_uid();
 	set_cron_cwd();
 	if (!allowed(User)) {
 		fprintf(stderr,
@@ -392,12 +390,6 @@ create_tmp_crontab()
                 return -1;
         }
 
-        if (chown(Directory, getuid(), getgid()) < 0) {
-                perror(Directory);
-                Directory[0] = '\0';
-                return -1;
-        }
-
         /* Now create the actual temporary crontab file */
         if (snprintf(Filename, MAX_FNAME, "%s/crontab", Directory)
             >= MAX_FNAME) {
@@ -433,7 +425,7 @@ open_tmp_crontab(fsbuf)
 		perror("fstat");
 		return -1;
 	}
-	if (statbuf.st_uid != getuid() || statbuf.st_gid != getgid()) {
+	if (statbuf.st_uid != getuid()) {
 		fprintf(stderr, "Temporary crontab no longer owned by you.\n");
 		return -1;;
 	}
@@ -536,14 +528,6 @@ edit_cmd() {
 	}
 
 	(void) umask(um);
-#ifdef HAS_FCHOWN
-	if (fchown(t, getuid(), getgid()) < 0) {
-#else
-	if (chown(Filename, getuid(), getgid()) < 0) {
-#endif
-		perror("fchown");
-		goto fatal;
-	}
 	if (!(NewCrontab = fdopen(t, "w"))) {
 		perror("fdopen");
 		goto fatal;
@@ -595,27 +579,36 @@ edit_cmd() {
 		editor = EDITOR;
 	}
 
- again:
 
 	if (fclose(NewCrontab) != 0) {
 		perror(Filename);
                 goto fatal;
 	}
 
+again: /* Loop point for retrying edit after error */
+
 	/* Turn off signals. */
 	(void)signal(SIGHUP, SIG_IGN);
 	(void)signal(SIGINT, SIG_IGN);
 	(void)signal(SIGQUIT, SIG_IGN);
+
+        /* Give up privileges while editing */
+        swap_uids();
+
 	switch (pid = fork()) {
 	case -1:
 		perror("fork");
 		goto fatal;
 	case 0:
 		/* child */
-		if (setuid(getuid()) < 0) {
-			perror("setuid(getuid())");
-			exit(ERROR_EXIT);
-		}
+                if (setgid(getgid()) < 0) {
+                        perror("setgid(getgid())");
+                        exit(ERROR_EXIT);
+                }
+                if (setuid(getuid()) < 0) {
+                        perror("setuid(getuid())");
+                        exit(ERROR_EXIT);
+                }
 		if (chdir("/tmp") < 0) {
 			perror("chdir(/tmp)");
 			exit(ERROR_EXIT);
@@ -664,6 +657,9 @@ edit_cmd() {
 	(void)signal(SIGINT, SIG_DFL);
 	(void)signal(SIGQUIT, SIG_DFL);
 	(void)signal(SIGTSTP, SIG_DFL);
+
+        /* Need privs again */
+        swap_uids_back();
 
         switch (open_tmp_crontab(&fsbuf)) {
         case -1:
@@ -743,21 +739,12 @@ replace_cmd() {
 	time_t	now = time(NULL);
 	char	**envp = env_init();
 	mode_t	um;
-	int	saved_uid;
 
 	if (envp == NULL) {
 		fprintf(stderr, "%s: Cannot allocate memory.\n", ProgramName);
 		return (-2);
 	}
 
-	/* Assume privilege.  This way we can only receive signals on our
-	   input - the ones listed below (or from root - root's problem, not
-	   ours). */
-	saved_uid = getuid();
-	if (setuid(geteuid()) < 0) {
-		perror("setuid");
-		return -2;
-	}
 
 	/* Assumes Linux-style signal handlers (takes int, returns void) */
 	/* Signal handlers, to ensure we do not leave temp files in the
@@ -771,7 +758,7 @@ replace_cmd() {
 	(void) snprintf(tn, MAX_FNAME, CRON_TAB("tmp.XXXXXX"));
 	um = umask(077);
 	fd = mkstemp(tn);
-	if (!fd) {
+	if (fd < 0) {
 		perror(tn);
 		return(-2);
 	}
@@ -832,22 +819,9 @@ replace_cmd() {
 	if (CheckErrorCount != 0) {
 		fprintf(stderr, "errors in crontab file, can't install.\n");
 		fclose(tmp);  unlink(tn);
-		/* Give up privilege, in case we loop. */
-		if (setreuid(saved_uid, -1) < 0)
-			return (-2);
 		return (-1);
 	}
 
-#ifdef HAS_FCHOWN
-	if (fchown(fileno(tmp), ROOT_UID, -1) < OK)
-#else
-	if (chown(tn, ROOT_UID, -1) < OK)
-#endif
-	{
-		perror("chown");
-		fclose(tmp);  unlink(tn);
-		return (-2);
-	}
 
 #ifdef HAS_FCHMOD
 	if (fchmod(fileno(tmp), 0600) < OK)
@@ -855,16 +829,26 @@ replace_cmd() {
 	if (chmod(tn, 0600) < OK)
 #endif
 	{
-		perror("chown");
+		perror("chmod");
 		fclose(tmp);  unlink(tn);
 		return (-2);
 	}
+
 
 	if (fclose(tmp) == EOF) {
 		perror("fclose");
 		unlink(tn);
 		return (-2);
 	}
+
+        /* Root on behalf of another user must set file owner to that user */
+        if (getuid() == ROOT_UID && strcmp(User, RealUser) != 0) {
+            if (chown(tn, pw->pw_uid, -1) != 0) {
+                perror("chown");
+                unlink(tn);
+                return -2;
+            }
+        }
 
 	(void) snprintf(n, sizeof(n), CRON_TAB(User));
 	if (rename(tn, n)) {
@@ -874,14 +858,11 @@ replace_cmd() {
 		unlink(tn);
 		return (-2);
 	}
+
+
 	log_it(RealUser, Pid, "REPLACE", User);
 
 	poke_daemon();
-
-	/* Give up privilege, just in case. */
-	/* Don't need to check for error; nothing happens beyond here but a log entry,
-	   and the failure message is incorrect after the rename above. */
-	setreuid(saved_uid, -1);
 
 	return (0);
 }

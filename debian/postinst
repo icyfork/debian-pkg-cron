@@ -48,4 +48,17 @@ if [ -x /etc/init.d/cron ]; then
 	fi
 fi
 
+# Fixup crontab binary, directory and files for new group 'crontab'.
+
+if ! dpkg-statoverride --list /usr/bin/crontab > /dev/null ; then
+    chgrp crontab /usr/bin/crontab
+    chmod g+s /usr/bin/crontab
+    chgrp crontab /var/spool/cron/crontabs 
+    chmod 1730 /var/spool/cron/crontabs 
+    cd $crondir/crontabs
+    for ct in * ; do
+        chown $ct:crontab $ct
+    done
+fi
+
 #DEBHELPER#
