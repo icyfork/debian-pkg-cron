@@ -58,6 +58,7 @@ static char	*Options[] = { "???", "list", "delete", "edit", "replace" };
 static	PID_T		Pid;
 static	char		*User, *RealUser;
 static	char		Filename[MAX_FNAME];
+static	char		Directory[MAX_FNAME];
 static	FILE		*NewCrontab = NULL;
 static	int		CheckErrorCount;
 static	enum opt_t	Option;
@@ -70,6 +71,10 @@ static	void		list_cmd __P((void)),
 			parse_args __P((int c, char *v[]));
 static	int		replace_cmd __P((void));
 
+/* Support edit command */
+static  int             create_tmp_crontab __P((void));
+static  int             open_tmp_crontab __P((struct stat *fsbuf));
+static  void            cleanup_tmp_crontab __P((void));
 
 static void
 usage(msg)
@@ -355,6 +360,149 @@ check_error(msg)
 }
 
 
+/* The next several function implement 'crontab -e' */
+
+/* Returns -1 on error, or fd to tempfile. */
+static int
+create_tmp_crontab()
+{
+        const char *template = "/crontab.XXXXXX";
+        int t;
+        int nfd;
+        char *tmp;
+
+        /* Create the temp directory. Note that since crontab is
+           setuid(root), TMPDIR only work for root. */
+	if ((tmp=getenv("TMPDIR")) && strlen(tmp) < MAX_FNAME) {
+	  strcpy(Directory, tmp);
+	} else {
+	  strcpy(Directory,"/tmp");
+	}
+
+        if (strlen(Directory) + strlen(template) < MAX_FNAME) {
+                strcat(Directory, template);
+        } else {
+                fprintf(stderr, "TMPDIR value is to long -- exiting\n");
+                Directory[0] = '\0';
+                return -1;
+        }
+
+        if (!mkdtemp(Directory)) {
+                perror(Directory);
+                Directory[0] = '\0';
+                return -1;
+        }
+
+        if (chown(Directory, getuid(), getgid()) < 0) {
+                perror(Directory);
+                Directory[0] = '\0';
+                return -1;
+        }
+
+        /* Now create the actual temporary crontab file */
+        if (snprintf(Filename, MAX_FNAME, "%s/crontab", Directory)
+            >= MAX_FNAME) {
+                fprintf(stderr, "Temporary filename too long - aborting\n");
+                Filename[0] = '\0';
+                return -1;
+        }
+        if ((nfd=open(Filename, O_CREAT|O_EXCL|O_WRONLY, 0600)) == -1) {
+                perror(Filename);
+                Filename[0] = '\0';
+                return -1;
+        }
+        return nfd;
+}
+
+/* Re-open the new (temporary) crontab, and check to make sure that
+   no-one is playing games. Return 0 on success, -1 on error. (Why not
+   just fopen() and stat()? Because there's no guarantee that you
+   fopen()ed the file you stat()ed.) */
+static int
+open_tmp_crontab(fsbuf)
+      struct stat *fsbuf;
+{
+        int t;
+        struct stat statbuf;
+
+        if ((t=open(Filename, O_RDONLY)) < 0) {
+                perror("Can't open tempfile after edit");
+                return -1;
+        }
+
+	if (fstat(t, &statbuf) < 0) {
+		perror("fstat");
+		return -1;
+	}
+	if (statbuf.st_uid != getuid() || statbuf.st_gid != getgid()) {
+		fprintf(stderr, "Temporary crontab no longer owned by you.\n");
+		return -1;;
+	}
+
+        if (!S_ISREG(statbuf.st_mode)) {
+                fprintf(stderr, "The temporary crontab must remain a regular file");
+                return -1;
+        }
+
+        if (statbuf.st_mtime == fsbuf->st_mtime) {
+                return 1; /* No change to file */
+        }
+
+        NewCrontab = fdopen(t, "r");
+        if (!NewCrontab) {
+                perror("fdopen(): after edit");
+                return -1;
+        }
+        return 0;
+}
+
+/* We can't just delete Filename, because the editor might have
+   created other temporary files in there. If there's an error, we
+   just bail, and let the user/admin deal with it.*/
+
+static void
+cleanup_tmp_crontab(void) 
+{
+        DIR *dp;
+        struct dirent *ep;
+        char fname[MAX_FNAME];
+
+        if (Directory[0] == '\0') {
+                return;
+        }
+
+        /* Delete contents */
+        dp = opendir (Directory);
+        if (dp == NULL) {
+                perror(Directory);
+                return;
+        }
+
+        while (ep = readdir (dp)) {
+                if (!strcmp(ep->d_name, ".") ||
+                    !strcmp(ep->d_name, "..")) {
+                        continue;
+                }
+                if (snprintf(fname, MAX_FNAME, "%s/%s",
+                             Directory, ep->d_name) >= MAX_FNAME) {
+                        fprintf(stderr, "filename too long to delete: %s/%s",
+                                Directory, ep->d_name);
+                        return;
+                }
+                if (unlink(fname)) {
+                        perror(ep->d_name);
+                        return;
+                }
+        }
+        (void) closedir (dp);
+
+        if (rmdir(Directory)) {
+                perror(Directory);
+                return;
+        }
+        return;
+}
+
 static void
 edit_cmd() {
 	char		n[MAX_FNAME], q[MAX_TEMPSTR], *editor;
@@ -365,6 +513,7 @@ edit_cmd() {
 	WAIT_T		waiter;
 	PID_T		pid, xpid;
 	mode_t		um;
+        int             fatalf;
 
 	log_it(RealUser, Pid, "BEGIN EDIT", User);
 	(void) snprintf(n, MAX_FNAME, CRON_TAB(User));
@@ -382,24 +531,13 @@ edit_cmd() {
 	}
 
 	um = umask(077);
-#if 0
-	/* The support for TMPDIR is temporarily removed, because of
-	   interactions with emacs */
-	if (getenv("TMPDIR")) {
-	  strcpy(Filename, getenv("TMPDIR"));
-	} else {
-	  strcpy(Filename,"/tmp");
-	}
-#else
-	  strcpy(Filename,"/tmp");
-#endif
-	 
-	(void) sprintf(Filename+strlen(Filename), "/crontab.XXXXXXXXXX");
-	if ((t = mkstemp(Filename)) == -1) {
-		perror(Filename);
-		(void) umask(um);
+
+        if ((t=create_tmp_crontab()) < 0) {
+                fprintf(stderr, "Creation of temporary crontab file failed - aborting\n");
+                (void) umask(um);
 		goto fatal;
 	}
+
 	(void) umask(um);
 #ifdef HAS_FCHOWN
 	if (fchown(t, getuid(), getgid()) < 0) {
@@ -409,7 +547,7 @@ edit_cmd() {
 		perror("fchown");
 		goto fatal;
 	}
-	if (!(NewCrontab = fdopen(t, "r+"))) {
+	if (!(NewCrontab = fdopen(t, "w"))) {
 		perror("fdopen");
 		goto fatal;
 	}
@@ -439,32 +577,20 @@ edit_cmd() {
 		while (EOF != (ch = get_char(f)))
 			putc(ch, NewCrontab);
 	fclose(f);
-	if (fflush(NewCrontab) < OK) {
-		perror(Filename);
-		exit(ERROR_EXIT);
-	}
-	if (fstat(t, &fsbuf) < 0) {
-		perror("unable to fstat temp file");
-		goto fatal;
-	}
- again:
-	rewind(NewCrontab);
+
 	if (ferror(NewCrontab)) {
 		fprintf(stderr, "%s: error while writing new crontab to %s\n",
 			ProgramName, Filename);
- fatal:		unlink(Filename);
-		exit(ERROR_EXIT);
-	}
-	if (fstat(t, &statbuf) < 0) {
-		perror("fstat");
-		goto fatal;
-	}
-	if (statbuf.st_dev != fsbuf.st_dev || statbuf.st_ino != fsbuf.st_ino) {
-		fprintf(stderr, "temp file must be edited in place\n");
-		exit(ERROR_EXIT);
 	}
 
-	mtime = statbuf.st_mtime;
+	if (fstat(t, &fsbuf) < 0) {
+		perror("unable to stat temp file");
+		goto fatal;
+	}
+
+
+
+        /* Okay, edit the file */
 
 	if ((!(editor = getenv("VISUAL")))
 	 && (!(editor = getenv("EDITOR")))
@@ -472,13 +598,12 @@ edit_cmd() {
 		editor = EDITOR;
 	}
 
-	/* we still have the file open.  editors will generally rewrite the
-	 * original file rather than renaming/unlinking it and starting a
-	 * new one; even backup files are supposed to be made by copying
-	 * rather than by renaming.  if some editor does not support this,
-	 * then don't use it.  the security problems are more severe if we
-	 * close and reopen the file around the edit.
-	 */
+ again:
+
+	if (fclose(NewCrontab) != 0) {
+		perror(Filename);
+                goto fatal;
+	}
 
 	/* Turn off signals. */
 	(void)signal(SIGHUP, SIG_IGN);
@@ -542,19 +667,22 @@ edit_cmd() {
 	(void)signal(SIGINT, SIG_DFL);
 	(void)signal(SIGQUIT, SIG_DFL);
 	(void)signal(SIGTSTP, SIG_DFL);
-	if (statbuf.st_dev != fsbuf.st_dev || statbuf.st_ino != fsbuf.st_ino) {
-		fprintf(stderr, "temp file must be edited in place\n");
-		exit(ERROR_EXIT);
-	}
-	if (fstat(t, &statbuf) < 0) {
-		perror("fstat");
-		goto fatal;
-	}
-	if (mtime == statbuf.st_mtime) {
-		fprintf(stderr, "%s: no changes made to crontab\n",
-			ProgramName);
-		goto remove;
-	}
+
+        switch (open_tmp_crontab(&fsbuf)) {
+        case -1:
+                fprintf(stderr, "Error while editing crontab\n");
+                goto fatal;
+        case 1:
+                fprintf(stderr, "No modification made\n");
+                goto remove;
+        case 0:
+                break;
+        default:
+                fprintf(stderr,
+                        "stevegr@debian.org fscked up. Send him a nasty note\n");
+                break;
+        }
+
 	fprintf(stderr, "%s: installing new crontab\n", ProgramName);
 	switch (replace_cmd()) {
 	case 0:
@@ -585,10 +713,16 @@ edit_cmd() {
 		    ProgramName);
 		goto fatal;
 	}
+
  remove:
-	unlink(Filename);
+        cleanup_tmp_crontab();
  done:
 	log_it(RealUser, Pid, "END EDIT", User);
+        return;
+ fatal:
+        cleanup_tmp_crontab();
+        unlink(Filename);
+        exit(ERROR_EXIT);
 }
 
 static char tn[MAX_FNAME];
