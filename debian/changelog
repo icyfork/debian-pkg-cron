@@ -1,10 +1,17 @@
-cron (3.0pl1-84) unstable; urgency=low
+cron (3.0pl1-84) unstable; urgency=high
 
-  * Integrate SE-Linux packages, create new binary package cron-se. 
-    (closes:193644)
-  * 
+  * Urgency "high" to make the sudden freeze. 
+  * Exit with failure status from crontab when action fails (thanks to
+    Christoph Berg for noticing and the patch) (closes: #229604)
+  * Require anacron to be executable (closes: #240822)
+  * Set ttyname to prevent pam_access confusion. Problem and solution from
+    Daniel Kobras (it's nice to get both!) (closes: #254845)
+  * Fix reference to syslogd(8) in cron.8 (closes: #246580)
+  * Fix awkward construction in crontab.5 (closes: #252420)
+  * Cleanup explanation of LOGNAME in crontab.5 (closes: #257672)
+  * Don't use --exec in start-stop-daemon calls.
 
- --
+ -- Steve Greenland <stevegr@debian.org>  Mon, 26 Jul 2004 10:40:22 -0500
 
 cron (3.0pl1-83) unstable; urgency=low
 
@@ -16,7 +23,7 @@ cron (3.0pl1-82) unstable; urgency=low
 
   * Added /etc/cron.d/.placeholder to prevent dpkg from removing the
     directory when all packages using /etc/cron.d are purged. Likewise to
-    corn.weekly (which needs it), and cron.daily and cron.monthly (which
+    cron.weekly (which needs it), and cron.daily and cron.monthly (which
     don't, but I like consistency.) (closes: #217760)
   * Add '--retry 5' to the stop part of /etc/init.d/cron restart, so that
     cron is completely stopped before attempting restart. (closes: #223945)
