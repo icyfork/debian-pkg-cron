@@ -140,8 +140,9 @@ load_entry(file, error_func, pw, envp)
 			bit_set(e->minute, 0);
 			bit_set(e->hour, 0);
 			bit_nset(e->dom, 0, (LAST_DOM-FIRST_DOM+1));
+			e->flags |= DOM_STAR;
 			bit_nset(e->month, 0, (LAST_MONTH-FIRST_MONTH+1));
-			bit_set(e->dow, 0);
+			bit_nset(e->dow, 0,0);
 		} else if (!strcmp("daily", cmd) || !strcmp("midnight", cmd)) {
 			bit_set(e->minute, 0);
 			bit_set(e->hour, 0);
