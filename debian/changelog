@@ -1,3 +1,9 @@
+cron (3.0pl1-86) unstable; urgency=high
+
+  * And yes, still needs urgency=high.
+
+ -- Steve Greenland <stevegr@debian.org>  Wed, 28 Jul 2004 15:43:18 -0500
+
 cron (3.0pl1-85) unstable; urgency=low
 
   * Umm, yeah, need the 'install' file in CVS. 
