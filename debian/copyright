@@ -11,6 +11,8 @@ anyone resulting from the use of this software rests entirely with the
 user.
 
 
+The original source for this package may be obtained from 
+ftp://ftp.vix.com/pub/vixie/cron-3.0.
 
 Modifications for Debian GNU/Linux Copyright 1994 Ian Jackson;
 checksecurity script:
