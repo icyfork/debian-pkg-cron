@@ -7,10 +7,10 @@ Build-Depends: debhelper, libpam0g-dev
 
 Package: cron
 Architecture: any
-Depends: ${shlibs:Depends}, bsdutils, debianutils (>=1.7)
+Depends: ${shlibs:Depends}, debianutils (>=1.7)
 Recommends: exim | smail | sendmail | mail-transport-agent
 Suggests: anacron (>=2.0-1), logrotate, lockfile-progs
-Conflicts:
+Conflicts: suidmanager (<< 0.50)
 Provides:
 Description: management of regular background processing
  cron is a background process (`daemon') that runs programs at regular
