@@ -1,3 +1,10 @@
+cron (3.0pl1-65) unstable; urgency=high
+
+  * Close reboot file /var/run/crond.reboot after creating it, duh. Leaving
+  it open allowed possible writes from cron jobs.
+
+ -- Steve Greenland <stevegr@debian.org>  Mon, 26 Feb 2001 09:47:34 -0600
+
 cron (3.0pl1-64) unstable; urgency=high
   * The "President's Birthday" release.
   * Add checks for setuid() failures, to avoid running user jobs as root.
