@@ -1,3 +1,11 @@
+cron (3.0pl1-69) unstable; urgency=low
+
+  * Don't run checksecurity on any partition mount nosuid or noexec.
+  (closes:#98160)
+  * Don't run on devpts, either.
+  
+ -- Steve Greenland <stevegr@debian.org>  Sun, 20 May 2001 13:48:15 -0500
+
 cron (3.0pl1-68) unstable; urgency=low
 
   * Finally tracked down the problem with @{reboot,hourly,etc.} commands
