@@ -9,8 +9,7 @@ LOCKFILE=/var/lock/cron.daily
 umask 022
 
 #
-# Avoid running more than one at a time -- could happen if the
-# checksecurity script lands on a network drive.
+# Avoid running more than one at a time 
 #
 
 if [ -x /usr/bin/lockfile-create ] ; then
@@ -56,11 +55,6 @@ if cd $bak ; then
 	    savelog -c 7 dpkg.status >/dev/null
     fi
 fi
-cd /var/log
-umask 027
-savelog -c 7 -m 640 -u root -g adm setuid.changes >/dev/null
-checksecurity >setuid.changes
-
 #
 # Check to see if any files are in lost+found directories and warn admin
 #

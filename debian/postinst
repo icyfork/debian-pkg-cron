@@ -22,17 +22,6 @@ for fname in allow deny ; do
     fi
 done
 #
-# Check for upgrades from very old versions
-#
-if [ "$1" = "configure" -a -n "$2" ] && dpkg --compare-versions "$2" lt "3.0pl1-43" ; then
-    echo " "
-    echo "The format of the setuid.today file (output from checksecurity) has"
-    echo "changed. This means that the first run of checksecurity after the "
-    echo "upgrade will produce a diff on every every file affected".
-    pausemessage="T"
-fi
-
-#
 # Move dpkg status file backups, if necessary/possible.
 #
 ( cd /var/lib/dpkg ;

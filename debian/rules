@@ -6,12 +6,12 @@
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
-DEB_OPTIM= -O2 -Wall
+DEB_OPTIM= -O2 -Wall -Wno-comment
 DEB_INSTALL = install
 DEB_DEBUG_DEFS = -DDEBUGGING=0
 
 ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
-  DEB_OPTIM = -g -Wall 
+  DEB_OPTIM = -g -Wall -Wno-comment
   DEB_DEBUG_DEFS= -DDEBUGGING=1
 endif
 ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
@@ -66,8 +66,6 @@ binary-arch: build
 
 	# Add here commands to install the files into debian/tmp
 	$(MAKE) install DESTDIR=`pwd`/debian/tmp OPTIM="$(DEB_OPTIM)" INSTALL="$(DEB_INSTALL)" DEBUG_DEFS="$(DEB_DEBUG_DEFS)"
-	install -m 755 debian/checksecurity debian/tmp/usr/sbin/.
-	install -m 644 debian/checksecurity.conf debian/tmp/etc/.
 
 	cp -p debian/$(CONFFILES) debian/conffiles
 	dh_installdocs FEATURES THANKS README debian/README.anacron

@@ -14,10 +14,6 @@ Makefile and pathnames.h, and the addition of support for the Debian
 package maintenance scheme in the form of various files (now in the
 debian directory).
 
-The `checksecurity' script installed in /usr/sbin in the binary distribution
-(found in ./debian in the source) was (probably) written by Ian Jackson,
-and has been modified by Steve Greenland.
-
 File locations that are different than that indicated in 
 the cron distributions README:
 
