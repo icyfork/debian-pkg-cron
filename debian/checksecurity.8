@@ -10,7 +10,17 @@ The
 command scans the mounted files systems (subject to the filter defined
 in /etc/checksecurity.conf) and compares the list of setuid programs to the
 list created on the previous run. Any changes are printed to standard
-output.
+output. Also, it generates a list of 
+.I nfs
+and 
+.I afs
+filesystems that are mounted insecurely (i.e. they are missing the 
+.I nodev 
+and either the
+.I noexec
+or
+.I nosuid 
+flags).
 .PP
 .B checksecurity
 is run by 
@@ -19,11 +29,12 @@ on a daily basis, and the output stored in /var/log/setuid.changes.
 .SH CONFIGURATION
 The
 .B checksecurity.conf
-file defines three configuration variables:
+file defines four configuration variables:
 .BR CHECKSECURITY_FILTER ,
 .BR CHECKSECURITY_NOFINDERRORS ,
+.BR CHECKSECURITY_DISABLE ,
 and
-.BR CHECKSECURITY_DISABLE .
+.BR CHECKSECURITY_NONFSAFS .
 .PP
 The 
 .B CHECKSECURITY_FILTER
@@ -35,20 +46,11 @@ command. In other words, the value of
 is a regular expression that removes matching lines from those
 file systems that will be scanned. The default value removes
 all file systems of type 
-.I proc, msdos, sio9660, ncpfs,
+.I proc, msdos, sio9660, ncpfs, nfs, afs,
 and
 .I smbfs
 file systems, 
-.I nfs
-and
-.I afs
-file systems that are mounted with the
-.I nodev 
-and either
-.I noexec
-or
-.I nosuid 
-options, anything mounted on /dev/fd*, and anything mounted
+anything mounted on /dev/fd*, and anything mounted
 on /mnt or /amd.
 .PP
 The
@@ -70,6 +72,20 @@ The
 environment variable, if set to the literal "TRUE", disables
 checksecurity entirely, as a sop to those who think it's safe to allow
 random mounting of NFS and AFS disks without the nosuid or noexec flags.
+.PP
+The
+.B CHECKSECURITY_NONFSAFS
+environment variable, if set to the literal "TRUE", disables the message about 
+.I nfs
+and
+.I afs
+file systems that are mounted without the
+.I nodev 
+and either the
+.I noexec
+or
+.I nosuid 
+options.
 .SH FILES
 .TP
 .I /etc/checksecurity.conf

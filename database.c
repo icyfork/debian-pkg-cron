@@ -37,6 +37,7 @@ static	void		process_crontab __P((char *, char *, char *,
 					     cron_db *, cron_db *));
 #ifdef DEBIAN
 static int valid_name (char *filename);
+static user *get_next_system_crontab __P((user *));
 #endif
 void
 load_database(old_db)
@@ -73,7 +74,7 @@ load_database(old_db)
 #ifdef DEBIAN
 	/* Check mod time of SYSCRONDIR. This won't tell us if a file
          * in it changed, but will capture deletions, which the individual
-         * file check won't 
+         * file check won't
 	 */
 	if (stat(SYSCRONDIR, &syscrond_stat) < OK) {
 		log_it("CRON", getpid(), "STAT FAILED", SYSCRONDIR);
@@ -81,41 +82,36 @@ load_database(old_db)
 	}
 	syscrond_files_mtime = syscrond_stat.st_mtime;
 
-	/* track times of package crontabs in SYSCRONDIR.
+	/* If SYSCRONDIR was modified, we know that something is changed and
+	 * there is no need for any further checks. If it wasn't, we should
+	 * pass through the old list of files in SYSCRONDIR and check their
+	 * mod time. Therefore a stopped hard drive won't be spun up, since
+	 * we avoid reading of SYSCRONDIR and don't change its access time.
+	 * This is especially important on laptops with APM.
 	 */
-	if (!(dir = opendir(SYSCRONDIR))) {
-		log_it("CRON", getpid(), "OPENDIR FAILED", SYSCRONDIR);
-		(void) exit(ERROR_EXIT);
+	if (old_db->mtime >= syscrond_files_mtime) {
+		user *systab;
+
+		Debug(DLOAD, ("[%d] system dir mtime unch, check files now.\n",
+			      getpid()))
+
+		for (systab = old_db->head;
+			(systab = get_next_system_crontab (systab)) != NULL;
+			systab = systab->next) {
+
+			sprintf(syscrond_fname, "%s/%s", SYSCRONDIR,
+							 systab->name + 8);
+
+			Debug(DLOAD, ("\t%s:", syscrond_fname))
+
+			if (stat(syscrond_fname, &syscrond_stat) < OK)
+				syscrond_stat.st_mtime = 0;
+			syscrond_files_mtime = TMAX(syscrond_files_mtime,
+						     syscrond_stat.st_mtime);
+
+			Debug(DLOAD, (" [checked]\n"))
+		}
 	}
-
-	while (NULL != (dp = readdir(dir))) {
-		char	fname[MAXNAMLEN+1],
-			tabname[MAXPATHLEN];
-
-		/* avoid file names beginning with ".".  this is good
-		 * because we would otherwise waste two guaranteed calls
-		 * to stat() for . and .., and also because package names
-		 * starting with a period are just too nasty to consider.
-		 */
-		if (dp->d_name[0] == '.')
-		  continue;
-		
-		/* skipfile names with letters outside the set
-		 * [A-Za-z0-9_-], like run-parts.
-		 */
-		if (!valid_name(dp->d_name))
-		  continue;
-		    
-		sprintf(syscrond_fname, "%s/%s", SYSCRONDIR, dp->d_name);
-
-		if (stat(syscrond_fname, &syscrond_stat) < OK)
-		  syscrond_stat.st_mtime = 0;
-
-		syscrond_files_mtime = TMAX(syscrond_files_mtime, 
-					     syscrond_stat.st_mtime);
-
-	}
-	closedir(dir);
 #endif /* DEBIAN */
 
 	/* if spooldir's mtime has not changed, we don't need to fiddle with
@@ -126,8 +122,8 @@ load_database(old_db)
 	 * time this function is called.
 	 */
 #ifdef DEBIAN
-	if (old_db->mtime == TMAX(statbuf.st_mtime, 
-				  TMAX(syscron_stat.st_mtime, 
+	if (old_db->mtime == TMAX(statbuf.st_mtime,
+				  TMAX(syscron_stat.st_mtime,
 				       syscrond_files_mtime))) {
 #else
 	if (old_db->mtime == TMAX(statbuf.st_mtime, syscron_stat.st_mtime)) {
@@ -175,7 +171,7 @@ load_database(old_db)
 		 */
 		if (dp->d_name[0] == '.')
 			continue;
-		
+
 		/* skipfile names with letters outside the set
 		 * [A-Za-z0-9_-], like run-parts.
 		 */
@@ -191,7 +187,7 @@ load_database(old_db)
 		   current contents are irrelevant */
 		process_crontab("root", fname, tabname,
 				&statbuf, &new_db, old_db);
-		
+
 	}
 	closedir(dir);
 #endif
@@ -390,7 +386,7 @@ static int valid_name (char *filename)
       return 0;
     ++filename;
   }
-  
+
   return 1;
 }
 
@@ -406,8 +402,19 @@ static int valid_name (char *filename)
       return 0;
     ++filename;
   }
-  
+
   return 1;
 }
 #endif
+
+static user *
+get_next_system_crontab (curtab)
+	user	*curtab;
+{
+	for ( ; curtab != NULL; curtab = curtab->next)
+		if (!strncmp(curtab->name, "*system*", 8) && curtab->name [8])
+			break;
+	return curtab;
+}
+
 #endif

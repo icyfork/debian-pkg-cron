@@ -27,17 +27,17 @@ done
 #
 # we can do this since all crons are 3.0pl1.
 #
-if [ "$1" = "configure"  -a "${2#3.0pl1-}" -lt "43" ] ; then
+upver=99
+if [ -n "$2" ] ; then
+  upver=${2#3.0pl1-}
+fi
+
+if [ "$1" = "configure" -a "$upver" -lt "43" ] ; then
     echo " "
     echo "The format of the setuid.today file (output from checksecurity) has"
     echo "changed. This means that the first run of checksecurity after the "
     echo "upgrade will produce a diff on every every file affected".
     pausemessage="T"
-fi
-if [ "$pausemessage" = "T" ] ; then
-    echo " "
-    echo "Press <return> to continue"
-    read junkstuff
 fi
 
 start-stop-daemon --start --quiet --oknodo --exec /usr/sbin/cron

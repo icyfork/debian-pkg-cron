@@ -24,6 +24,12 @@ December 27, 1993
 [V1.0 was May 6, 1987]
 Paul Vixie
 
+[Note from Debian cron maintainer: This is the original README from
+the the vixie-cron package. The location of many cron files has been
+changed in order to comply with Debian policy and common sense -- look
+in the cron(8), crontab(1) and crontab(5) man pages for more info, as
+well as the README.Debian file in this directory.]
+
 This is a version of 'cron' that is known to run on BSD 4.[23] systems.  It
 is functionally based on the SysV cron, which means that each user can have
 their own crontab file (all crontab files are stored in a read-protected

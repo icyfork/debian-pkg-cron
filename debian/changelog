@@ -1,3 +1,13 @@
+cron (3.0pl1-44) unstable; urgency=low
+
+  * Fixed standards version reference.
+  * Fixed init script "comment", sigh. Let this be a warning to you: NEVER EVER
+  change a file with doing a complete test, even if it is "just a comment".
+  (closes:Bug#19466,Bug#19492,Bug#19479,Bug#19595,Bug#19725,Bug#19840,
+  Bug#19845,Bug19852). Sheesh. 
+
+ -- Steve Greenland <stevegr@master.debian.org>  Tue, 17 Mar 1998 21:55:03 -0600
+
 cron (3.0pl1-43) unstable; urgency=medium
 
   * Removed support for TMPDIR. This is due to the problem it causes

@@ -17,6 +17,31 @@ if [ "$CHECKSECURITY_DISABLE" = "TRUE" ] ; then
     exit
 fi
 
+#
+# Check for NFS/AFS mounts that are not nosuid/nodev
+#
+#
+# Check for NFS/AFS mounts that are not nosuid/nodev
+#
+if [ ! "$CHECKSECURITY_NONFSAFS" = "TRUE" ] ; then
+   # temporarily disable error exit, as grep may give errors if no nfs/afs
+   # are mounted.
+   set +e
+   nfssys=`mount | grep -E 'nfs|afs' | grep -vE '\(.*(nosuid|noexec).*nodev.*\)'`
+   nfssyscnt=`echo $nfssys |grep "[a-z]"| wc -l`
+   set -e
+   if [ $nfssyscnt -gt 0 ] ; then
+      echo "The following NFS or AFS filesystems are mounted insecurely:"
+      echo ""
+      echo $nfssys
+      echo ""
+      echo "If this is intentional and you have supreme confidence in the"
+      echo "security of the server for these file systems, you may disable"
+      echo "this message by editing the value of CHECKSECURITY_NONFSAFS in"
+      echo "the file /etc/checksecurity.conf."
+   fi
+fi
+
 if [ "$CHECKSECURITY_NOFINDERRORS" = "TRUE" ] ; then
 	exec 9>&2
 	exec 2>/dev/null

@@ -18,6 +18,16 @@ The `checksecurity' script installed in /usr/sbin in the binary distribution
 (found in ./debian in the source) was (probably) written by Ian Jackson,
 and has been modified by Steve Greenland.
 
+File locations that are different than that indicated in 
+the cron distributions README:
+
+user crontabs: /var/spool/cron/crontabs/*
+log file:      /var/log/cron.log
+allow file:    /etc/cron.allow
+deny file:     /etc/cron.deny
+
+Note that the location of the log file can be changed via syslog.conf.
+
 1998: Added reading of crontab fragments from /etc/cron.d to support
 other Debian package cron requirements. Files follow /etc/crontab
 format (i.e. with user field), must meet run-parts(8) naming

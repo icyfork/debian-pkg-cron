@@ -44,7 +44,7 @@ binary-arch: build
 	dh_installdocs FEATURES THANKS README
 #	dh_installexamples
 #	dh_installmenu
-	dh_installinit
+	dh_installinit --noscripts
 	# Can't use dh_installcron because we don't have "normal" naming
 	# convention
 	install -m 644 debian/crontab.main debian/tmp/etc/crontab
