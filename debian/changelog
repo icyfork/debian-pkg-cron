@@ -1,3 +1,10 @@
+cron (3.0pl1-79) unstable; urgency=low
+
+  * Don't exit postinst when user is unkown (closes: #208432)
+  * Remove spurious debug messages (closes: #211117)
+
+ -- Steve Greenland <stevegr@debian.org>  Tue, 16 Sep 2003 08:26:17 -0500
+
 cron (3.0pl1-78) unstable; urgency=low
 
   * Okay, I think the owner/group fixup in for setgid crontabs is finally
