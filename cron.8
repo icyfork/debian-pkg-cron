@@ -83,6 +83,10 @@ new time immediately.
 .PP
 Clock changes of more than 3 hours are considered to be corrections to
 the clock, and the new time is used immediately.
+.PP
+.I cron
+logs its action to the syslog facility 'cron', and logging may be
+controlled using the standard syslog(8) facility.
 .SH DEBIAN SPECIFIC
 .I cron
 treats the files in /etc/cron.d as extensions to the /etc/crontab file (they
@@ -95,7 +99,8 @@ should be named after the package that supplies them. Files must
 conform to the same naming convention as used by run-parts(8): they
 must consist solely of upper- and lower-case letters, digits, underscores,
 and hyphens. Like /etc/crontab, the files in the /etc/cron.d directory are
-monitored for changes.
+monitored for changes. In general, the admin should not use /etc/cron.d/,
+but use the standard system crontab /etc/crontab.
 .SH "SEE ALSO"
 crontab(1), crontab(5)
 .SH AUTHOR
