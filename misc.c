@@ -455,8 +455,11 @@ allowed(username)
 #endif
 }
 
-#if defined(DEBIAN)
 #if defined(SYSLOG)
+
+static int syslog_open = 0;
+
+#if defined(DEBIAN)
 
 #include <signal.h>
 #include <setjmp.h>
@@ -468,8 +471,8 @@ sig_pipe(int signo)
   siglongjmp(pipe_alarm, 1);
 }
 
-#endif
-#endif
+#endif /* DEBIAN */
+#endif /* SYSLOG */
 
 void
 log_it(username, xpid, event, detail)
@@ -486,16 +489,13 @@ log_it(username, xpid, event, detail)
 	int 			msg_size;
 #endif /*LOG_FILE*/
 
-#if defined(SYSLOG)
-	static int		syslog_open = 0;
-#if defined(DEBIAN)
+#if defined(SYSLOG) && defined(DEBIAN)
   struct sigaction act, oact;
   int caught_sig_pipe = 0; 
 
   oact.sa_handler = NULL;
   sigemptyset(&oact.sa_mask);
   oact.sa_flags =  0;
-#endif
 #endif
 
 #if defined(LOG_FILE)
@@ -549,27 +549,30 @@ log_it(username, xpid, event, detail)
 	    caught_sig_pipe = 1;
 	  }
 
-      if (!syslog_open || caught_sig_pipe) {
-	/* If we hit SIGPIPE, close it so the open works */
-	if (caught_sig_pipe) {
-	  closelog();
-	}
+	if (!syslog_open || caught_sig_pipe) {
+	  /* If we hit SIGPIPE, close it so the open works */
+	  if (caught_sig_pipe) {
+	    closelog();
+	  }
 
 #else
-	if (!syslog_open) {
+	  if (!syslog_open) {
 #endif
-		/* we don't use LOG_PID since the pid passed to us by
-		 * our client may not be our own.  therefore we want to
-		 * print the pid ourselves.
-		 */
-# ifdef LOG_DAEMON
-		openlog(ProgramName, LOG_PID, LOG_CRON);
+	    /* we don't use LOG_PID since the pid passed to us by
+	     * our client may not be our own.  therefore we want to
+	     * print the pid ourselves.
+	     */
+	    /* SteveG says: That comment is not consistent with the
+	       code, and makes no sense -- I suspect it's a remnant
+	       of a cut-n-paster... */
+# ifdef LOG_CRON
+	    openlog(ProgramName, LOG_PID, LOG_CRON);
 # else
-		openlog(ProgramName, LOG_PID);
+	    openlog(ProgramName, LOG_PID);
 # endif
-		syslog_open = TRUE;		/* assume openlog success */
-	}
-
+	    syslog_open = TRUE;		/* assume openlog success */
+	  }
+	  
 #if defined(DEBIAN)
 	/* Catch the SIGPIPE signal */
       if (!caught_sig_pipe) /* Make sure we only do this once per pass */
@@ -600,10 +603,16 @@ log_it(username, xpid, event, detail)
 
 void
 log_close() {
+#if defined(LOG_FILE)
 	if (LogFD != ERR) {
 		close(LogFD);
 		LogFD = ERR;
 	}
+#endif
+#if defined(SYSLOG)
+	closelog();
+	syslog_open = 0;
+#endif
 }
 
 
