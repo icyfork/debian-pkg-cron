@@ -1,3 +1,16 @@
+cron (3.0pl1-51) unstable; urgency=low
+
+  * Changed default of "crontab -l" to NOT list the extra header lines. May
+  obtain original behaviour by setting "CRONTAB_NOHEADER=N".
+  * Fixed comment in misc.c that accidentally cause the SIGPIPE handler to
+  be reset more often than necessary.
+  * Don't checksecurity on ntfs file systems (closes:#33079)
+  * Added '-i' flag to sendmail command (closes:#36338)
+  * Added check for files in /lost+found (closes:#29791)
+  * Added preferential invocation of anacron for cron.{daily,weekly,monthly}
+
+ -- Steve Greenland <stevegr@master.debian.org>  Thu, 27 May 1999 17:37:54 -0500
+
 cron (3.0pl1-50) frozen unstable; urgency=low
 
   * Fixed rules file *again* so that crontab suidness doesn't get
