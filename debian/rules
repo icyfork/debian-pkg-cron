@@ -6,7 +6,7 @@
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
-DEB_OPTIM= -O2 -Wall -Wno-comment
+DEB_OPTIM= -O2 -g -Wall -Wno-comment
 DEB_INSTALL = install
 DEB_DEBUG_DEFS = -DDEBUGGING=0
 
@@ -83,6 +83,7 @@ binary-arch: build
 	dh_installmanpages crontab.1 crontab.5 cron.8 bitstring.3
 #	dh_undocumented
 	dh_installchangelogs CHANGES
+	dh_installdebconf
 	dh_strip
 	dh_compress
 	dh_fixperms
