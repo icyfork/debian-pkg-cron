@@ -39,7 +39,7 @@ if cd $bak ; then
 	cmp -s passwd.bak /etc/passwd || (cp -p /etc/passwd passwd.bak &&
 					  chmod 600 passwd.bak)
 	cmp -s group.bak /etc/group || (cp -p /etc/group group.bak &&
-					chmod 600 passwd.bak)
+					chmod 600 group.bak)
         if [ -f /etc/shadow ] ; then
 	  cmp -s shadow.bak /etc/shadow || (cp -p /etc/shadow shadow.bak &&
                                             chmod 600 shadow.bak)
@@ -64,8 +64,8 @@ checksecurity >setuid.changes
 #
 # Check to see if any files are in lost+found directories and warn admin
 #
-# Get a list of the (potential) ext2 l+f directories
-lflist=`df -P --type=ext2  |awk '$6 == "/" {$6 = ""} /\/dev\// {printf "%s/lost+found ", $6}'`
+# Get a list of the (potential) ext2 and ext3 l+f directories
+lflist=`df -P --type=ext2 --type=ext3 |awk '$6 == "/" {$6 = ""} /\/dev\// {printf "%s/lost+found ", $6}'`
 
 # In each directory, look for files
 for lfdir in $lflist ; do
