@@ -60,6 +60,8 @@ binary-arch: build
 	dh_fixperms
 	# dh_suidregister -- deliberately commented out, as it causes
 	# /usr/bin/crontab to be shipped non-suid.
+	# so does dh_fixperms when not run under fakeroot. sigh.
+	chmod u+s debian/tmp/usr/bin/crontab
 	dh_installdeb
 	dh_shlibdeps
 	dh_gencontrol

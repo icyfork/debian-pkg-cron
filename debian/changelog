@@ -1,3 +1,9 @@
+cron (3.0pl1-49) frozen unstable; urgency=low
+
+  * Check for /etc/shadow and /etc/gshadow separately (closes:Bug#30232)
+
+ -- Steve Greenland <stevegr@master.debian.org>  Wed,  2 Dec 1998 21:30:00 -0600
+
 cron (3.0pl1-48) frozen unstable; urgency=low
 
   * Fixed rules file so that crontab doesn't get suid bit removed by latest
