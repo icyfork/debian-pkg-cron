@@ -319,14 +319,6 @@ load_entry(file, error_func, pw, envp)
 	 */ 
 	ch = get_string(cmd, MAX_COMMAND, file, "\n");
 
-	/* a file without a \n before the EOF is rude, so we'll complain...
-	 */
-	if (ch == EOF) {
-		ecode = e_cmd;
-                log_it("CRON",getpid(),"DEBUG","detected early eof");
-		goto eof;
-	}
-
 	/* got the command in the 'cmd' string; save it in *e.
 	 */
 	if ((e->cmd = strdup(cmd)) == NULL) {

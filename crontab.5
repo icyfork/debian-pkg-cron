@@ -99,9 +99,6 @@ The system crontab (/etc/crontab) uses the same format, except that
 the username for the command is specified after the time and
 date fields and before the command. The fields may be separated
 by spaces or tabs.
-Note that if the line does not have a trailing newline character, the
-entire line will be silently ignored by both crontab and cron; the command
-will never be executed.
 .PP
 Commands are executed by
 .IR cron (8)
