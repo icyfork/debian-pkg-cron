@@ -33,6 +33,10 @@ if cd $bak
 then
 	cmp -s passwd.bak /etc/passwd || cp -p /etc/passwd passwd.bak
 	cmp -s group.bak  /etc/group  || cp -p /etc/group  group.bak
+        if [ -f /etc/shadow ] ; then
+	  cmp -s shadow.bak  /etc/shadow  || cp -p /etc/shadow  shadow.bak
+	  cmp -s gshadow.bak  /etc/gshadow  || cp -p /etc/gshadow  gshadow.bak
+	fi
 fi
 
 cd /var/lib/dpkg

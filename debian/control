@@ -1,8 +1,8 @@
 Source: cron
 Section: admin
 Priority: important
-Maintainer: Steve Greenland <stevegr@master.debian.org>
-Standards-Version: 2.4.0.0
+Maintainer: Steve Greenland <stevegr@debian.org>
+Standards-Version: 2.4.1.4
 
 Package: cron
 Architecture: any

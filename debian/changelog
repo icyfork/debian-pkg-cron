@@ -1,3 +1,18 @@
+cron (3.0pl1-46) frozen unstable; urgency=medium
+
+  * changed mention of /var/spool/crontabs to /var/spool/cron/crontabs, and
+  added example /etc/crontab. (closes:Bug#28458,Bug#23101)
+  * Incorporated buffer overflow patches. (closes:Bug#26705,Bug#26749) 
+  * Added backup of /etc/shadow and /etc/gshadow in cron.daily/standard.
+  (closes:Bug#25853)
+  * Better daemonization (close stdin,stdout,stderr). (closes:Bug#23231)
+  * Do cron.daily a little earlier, try to avoid overlap with cron.weekly.
+  (closes:Bug#23023)
+  * Added note in crontab.1 and crontab.5 about trailing newline requirement.
+  (closes:Bug#16132)
+
+ -- Steve Greenland <stevegr@master.debian.org>  Sun,  1 Nov 1998 19:10:45 -0600
+
 cron (3.0pl1-45) frozen unstable; urgency=high
 
   * Updated README and README.Debian w.r.t. file locations.
