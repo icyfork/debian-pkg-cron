@@ -1,3 +1,18 @@
+cron (3.0pl1-78) unstable; urgency=low
+
+  * Okay, I think the owner/group fixup in for setgid crontabs is finally
+    as right as it's going to be. It will work for usernames with spaces,
+    and if the user doesn't exist (e.g. old crontab for a deleted user),
+    it will print an error message but not exit, which I think is okay. If
+    you have a username with a newline in it, then you deserve to lose,
+    and you will (closes: #210838).
+  * Allow cron to run in foreground. Possibly useful for running it under
+    monitoring tools like runit, monit, daemontools, etc. Thanks to Erich
+    Schubert for the patch (closes: #108492)
+  * Use the PAM environment settings, if so configured. (closes: #203737)
+
+ -- Steve Greenland <stevegr@debian.org>  Sun, 14 Sep 2003 16:53:36 -0500
+
 cron (3.0pl1-77) unstable; urgency=low
 
   * Smarter fix-up of crontabs groups (closes: #208555)
