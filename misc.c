@@ -478,13 +478,14 @@ log_it(username, xpid, event, detail)
 	char	*event;
 	char	*detail;
 {
-	PID_T			pid = xpid;
 #if defined(LOG_FILE)
+	PID_T			pid = xpid;
 	char			*msg;
 	TIME_T			now = time((TIME_T) 0);
 	register struct tm	*t = localtime(&now);
-#endif /*LOG_FILE*/
 	int 			msg_size;
+#endif /*LOG_FILE*/
+
 #if defined(SYSLOG)
 	static int		syslog_open = 0;
 #if defined(DEBIAN)
@@ -591,7 +592,7 @@ log_it(username, xpid, event, detail)
 #if DEBUGGING
 	if (DebugFlags) {
 		fprintf(stderr, "log_it: (%s %d) %s (%s)\n",
-			username, pid, event, detail);
+			username, xpid, event, detail);
 	}
 #endif
 }
