@@ -77,6 +77,10 @@ binary-arch: build
 	# convention
 	install -m 644 debian/crontab.main debian/tmp/etc/crontab
 	install -m 644 debian/placeholder debian/tmp/etc/cron.d/.placeholder
+	install -m 644 debian/placeholder debian/tmp/etc/cron.hourly/.placeholder
+	install -m 644 debian/placeholder debian/tmp/etc/cron.daily/.placeholder
+	install -m 644 debian/placeholder debian/tmp/etc/cron.weekly/.placeholder
+	install -m 644 debian/placeholder debian/tmp/etc/cron.monthly/.placeholder
 	install -m 755 debian/standard.daily \
                        debian/tmp/etc/cron.daily/standard
 	install -m 755 debian/standard.monthly \
