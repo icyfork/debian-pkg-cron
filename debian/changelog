@@ -1,3 +1,15 @@
+cron (3.0pl1-81) unstable; urgency=low
+
+  * Only protect owner/group setting on individual user crontabs by
+    version, the setgid setting of /usr/bin/crontab needs to happen every
+    time (unless the admin has set something with
+    dpkg-statoverride. (closes: #210838)
+  * Change cron init script so that '/etc/init.d/cron {stop,restart}' only
+    kill off the parent daemon, not currently running cron jobs. Much
+    thanks to Dean Gaudet for the patch. (closes: #211849)
+
+ -- Steve Greenland <stevegr@debian.org>  Sun, 21 Sep 2003 16:37:16 -0500
+
 cron (3.0pl1-80) unstable; urgency=low
 
   * Kill one last spurious syslog() (closes: #211117, #211245)
