@@ -84,5 +84,5 @@ else
 	mv $TMPSETUID setuid.today
         chown root.adm setuid.today
 fi
-rm -r $TMPDIFF
+rm -f $TMPDIFF
 rm -f $TMPSETUID
