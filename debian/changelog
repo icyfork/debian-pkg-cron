@@ -1,3 +1,13 @@
+cron (3.0pl1-61) unstable; urgency=high
+
+  * Fix usage message in cron.init.
+  * Use pam only on non-Hurd. (closes:#75408)
+  * Move dpkg status backups to /var/backups.
+  * Apply security fix for temp file attack, thanks to Daniel Jacobowitz.
+  * Made /etc/pam.d/cron a conffile.
+
+ -- Steve Greenland <stevegr@debian.org>  Fri, 17 Nov 2000 16:06:03 -0600
+
 cron (3.0pl1-60) unstable; urgency=low
 
   * Re-set log to LOG_CRON after PAM changes it to LOG_AUTH.(closes:#70028)
