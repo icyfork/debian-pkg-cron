@@ -1,3 +1,17 @@
+cron (3.0pl1-74) unstable; urgency=low
+
+  * Split out the checksecurity script et. al. to seperate package
+    'checksecurity'
+  * Detect missing or stupid stepsize (e.g. */ or 7-9/0) (closes: #183650)
+  * Allow for crontab editors that don't write to the same file. Finally.
+    (closes: #149908)
+  * Don't weird out if VISUAL or EDITOR is set to "" (closes: #148809)
+  * Fixed several documentation/script typos and clarifications
+    (closes: #149448)
+  * Standards-Version 3.5.9
+
+ -- Steve Greenland <stevegr@debian.org>  Sun,  1 Jun 2003 15:02:23 -0500
+
 cron (3.0pl1-73) unstable; urgency=low
 
   * Fixed spelling error in control file (Hi, Matt!) (closes: #124523)
