@@ -2,12 +2,13 @@ Source: cron
 Section: admin
 Priority: important
 Maintainer: Steve Greenland <stevegr@debian.org>
-Standards-Version: 3.0.1
+Standards-Version: 3.2.0
+Build-Depends: debhelper, libpam0g-dev
 
 Package: cron
 Architecture: any
 Depends: ${shlibs:Depends}, bsdutils, debianutils (>=1.7)
-Recommends: smail | sendmail | mail-transport-agent
+Recommends: exim | smail | sendmail | mail-transport-agent
 Suggests: anacron (>=2.0-1), logrotate, lockfile-progs
 Conflicts:
 Provides:
