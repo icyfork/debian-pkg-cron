@@ -23,8 +23,35 @@ static char rcsid[] = "$Id: user.c,v 2.8 1994/01/15 20:43:43 vixie Exp $";
  */
 
 
+#include <syslog.h>
+#include <string.h>
 #include "cron.h"
 
+#ifdef DEBIAN
+/* Function used to log errors in crontabs from cron daemon. (User
+   crontabs are checked before they're accepted, but system crontabs
+   are not. */
+static char *err_user=NULL;
+
+void
+crontab_error(msg)
+     char *msg;
+{
+  const char *fn;
+  /* Figure out the file name from the username */
+  if (0 == strcmp(err_user,"*system*")) {
+    syslog(LOG_ERR|LOG_CRON,"Error: %s; while reading %s", msg, SYSCRONTAB);
+  } else if (0 == strncmp(err_user,"*system*",8)) {
+    fn = err_user+8;
+    syslog(LOG_ERR|LOG_CRON,"Error: %s; while reading %s/%s", msg, 
+	   SYSCRONDIR,fn);
+  } else {
+    syslog(LOG_ERR|LOG_CRON, "Error: %s; while reading crontab for user %s",
+	   msg, err_user);
+  }
+}
+
+#endif
 
 void
 free_user(u)
@@ -93,7 +120,13 @@ load_user(crontab_fd, pw, name)
 			u = NULL;
 			goto done;
 		case FALSE:
+#ifdef DEBIAN
+			err_user = name;
+			e = load_entry(file, crontab_error, pw, envp);
+			err_user = NULL;
+#else
 			e = load_entry(file, NULL, pw, envp);
+#endif
 			if (e) {
 				e->next = u->crontab;
 				u->crontab = e;

@@ -29,7 +29,7 @@ if [ ! "$CHECKSECURITY_NONFSAFS" = "TRUE" ] ; then
    # temporarily disable error exit, as grep may give errors if no nfs/afs
    # are mounted.
    set +e
-   nfssys=`mount | grep -E 'nfs|afs' | grep -vE '\(.*(nosuid|noexec).*nodev.*\)'`
+   nfssys=`mount | grep -E 'type (nfs|afs)' | grep -vE '\(.*(nosuid|noexec).*nodev.*\)'`
    nfssyscnt=`echo $nfssys |grep "[a-z]"| wc -l`
    set -e
    if [ $nfssyscnt -gt 0 ] ; then
