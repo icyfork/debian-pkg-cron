@@ -94,19 +94,15 @@ it makes the sequence
 crontab -l | crontab -
 .PP
 non-idempotent -- you keep adding copies of the header. This causes
-pain to scripts that use sed to edit a crontab. Therefore, setting
-the environment variable 
+pain to scripts that use sed to edit a crontab. Therefore, the default
+behaviour of the 
+.B -l
+option has been changed to not output such header. You may obtain the
+original behaviour by setting the environment variable 
 .B CRONTAB_NOHEADER
-to 'Y' will cause the
+to 'N', which will cause the
 .I crontab -l
-command to prune the extraneous header. The reason it was not made the
-default is that at present, some other Debian packages have scripts that
-feed the output of 
-.I crontab -l
-to a sed command that just chops the first three lines, assuming it will
-be the unwanted header. This special behaviour 
-.B will
-be made the default on a future release (probably for Debian 2.1).
+command to emit the extraneous header.
 .SH "SEE ALSO"
 crontab(5), cron(8)
 .SH FILES
@@ -130,7 +126,7 @@ Although cron requires that each entry in a crontab end in a newline
 character, the neither the crontab command nor the cron daemon will
 detect this error. Instead, the crontab will appear load
 normally. However, the command will never run. The best choice is to
-ensure that your crontab has a blank line and the end.
+ensure that your crontab has a blank line at the end.
 
 .SH AUTHOR
 .nf
