@@ -568,7 +568,7 @@ log_it(username, xpid, event, detail)
 	}
 
 #if defined(DEBIAN)
-	/* Catch the SIGPIPE signal *
+	/* Catch the SIGPIPE signal */
       if (!caught_sig_pipe) /* Make sure we only do this once per pass */
 	{
 	  act.sa_handler = sig_pipe;
