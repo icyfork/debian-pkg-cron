@@ -105,7 +105,7 @@
 
 #if DEBUGGING
 # define Debug(mask, message) \
-			if ( (DebugFlags & (mask) ) == (mask) ) \
+			if ( (DebugFlags & (mask) )  ) \
 				printf message;
 #else /* !DEBUGGING */
 # define Debug(mask, message) \
