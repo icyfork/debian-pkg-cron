@@ -18,6 +18,8 @@ The `checksecurity' script installed in /usr/sbin in the binary distribution
 (found in ./debian in the source) was (probably) written by Ian Jackson,
 and has been modified by Steve Greenland.
 
+1998: Added reading of crontab fragments from /etc/cron.d to support
+other Debian package cron requirements
 
 This package is now maintained by Steve Greenland
 <stevegr@master.debian.org>.

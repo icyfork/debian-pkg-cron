@@ -57,8 +57,8 @@ INCLUDE		=	-I.
 #<<need getopt()>>
 LIBS		=
 #<<optimize or debug?>>
-OPTIM		=	-O2
-#OPTIM		=	-g
+#OPTIM		=	-O2
+OPTIM		=	-g
 #<<ATT or BSD or POSIX?>>
 # (ATT untested)
 #COMPAT		=	-DATT
@@ -72,14 +72,14 @@ LINTFLAGS	=	-hbxa $(INCLUDE) $(COMPAT) $(DEBUGGING)
 #CC		=	vcc
 #<<manifest defines>>
 # The -DUSE_SIGCHLD is needed for the Alpha port
-DEFS = -DDEBIAN -DUSE_SIGCHLD -DDEBUGGING=0
+DEFS = -DDEBIAN -DUSE_SIGCHLD -DDEBUGGING=1
 #(SGI IRIX systems need this)
 #DEFS		=	-D_BSD_SIGNALS -Dconst=
 #<<the name of the BSD-like install program>>
 #INSTALL = installbsd
 INSTALL = install
 #<<any special load flags>>
-LDFLAGS		=	-s
+#LDFLAGS		=	-s
 #################################### end configurable stuff
 
 SHELL		=	/bin/sh

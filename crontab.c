@@ -248,6 +248,10 @@ list_cmd() {
 	char	n[MAX_FNAME];
 	FILE	*f;
 	int	ch;
+#ifdef DEBIAN
+	int     x;
+	char    *ctnh;
+#endif
 
 	log_it(RealUser, Pid, "LIST", User);
 	(void) sprintf(n, CRON_TAB(User));
@@ -262,6 +266,29 @@ list_cmd() {
 	/* file is open. copy to stdout, close.
 	 */
 	Set_LineNum(1)
+#ifdef DEBIAN
+	  /* DEBIAN: Don't list header lines if CRONTAB_NOHEADER is
+	     'Y'. Later we'll change this to the default */
+	  /* ignore the top few comments since we probably put them there.
+	   */
+	  if ((ctnh = getenv("CRONTAB_NOHEADER")) &&
+	      toupper(*ctnh) == 'Y') {
+	    for (x = 0;  x < NHEADER_LINES;  x++) {
+	      ch = get_char(f);
+	      if (EOF == ch)
+		break;
+	      if ('#' != ch) {
+		putc(ch, NewCrontab);
+		break;
+	      }
+	      while (EOF != (ch = get_char(f)))
+		if (ch == '\n')
+		  break;
+	      if (EOF == ch)
+		break;
+	    }
+	  }
+#endif
 	while (EOF != (ch = get_char(f)))
 		putchar(ch);
 	fclose(f);

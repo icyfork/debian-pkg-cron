@@ -51,7 +51,6 @@ binary-arch:	checkroot build
         # Rest is normal deb-make
 	make install DESTDIR=`pwd`/debian/tmp
 	# Must have debmake installed for this to work. 
-	#debstd -m $(package) CHANGES FEATURES THANKS README
 	debstd -m CHANGES FEATURES THANKS README
 	dpkg-gencontrol
 	chown -R root.root debian/tmp

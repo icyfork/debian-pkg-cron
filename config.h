@@ -29,6 +29,7 @@
  */
 
 #ifndef DEBUGGING
+#error DEBUGGING not defined
 #define DEBUGGING 1	/* 1 or 0 -- do you want debugging code built in? */
 #endif
 

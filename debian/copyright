@@ -15,7 +15,7 @@ user.
 Modifications for Debian GNU/Linux Copyright 1994 Ian Jackson;
 checksecurity script:
 Copyright (C) 1994 Ian Jackson
-Copyright (C) 1996, 1997 Steve Greenland
+Copyright (C) 1996, 1997, 1998 Steve Greenland
 
 The `checksecurity' script and its associated files (checksecurity.8
 and checksecurity.conf) are free software; you can redistribute it

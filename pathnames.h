@@ -62,7 +62,10 @@
 
 			/* 4.3BSD-style crontab */
 #define SYSCRONTAB	"/etc/crontab"
-
+#ifdef DEBIAN
+                        /* where package specific crontabs live */ 
+#define SYSCRONDIR      "/etc/cron.d"
+#endif
 			/* what editor to use if no EDITOR or VISUAL
 			 * environment variable specified.
 			 */

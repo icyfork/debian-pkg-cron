@@ -1,3 +1,11 @@
+cron (3.0pl1-41) unstable; urgency=low
+
+  * Updated crontab to use /usr/bin/editor if EDITOR and VISUAL undefined.
+  * Added support for TMPDIR from crontab (Bug#9309)
+  * Compress /usr/doc/cron/changelog.Debian -- this time for sure! (Bug#15296)
+
+ -- Steve Greenland <stevegr@master.debian.org>  Fri, 28 Nov 1997 13:47:03 -0600
+
 cron (3.0pl1-40) unstable; urgency=low
 
   * Correct directory reference in standard.monthly to /var/log 

@@ -48,10 +48,14 @@ static void
 usage() {
 	char **dflags;
 
+#if DEBUGGING
 	fprintf(stderr, "usage:  %s [-x [", ProgramName);
 	for(dflags = DebugFlagNames; *dflags; dflags++)
 		fprintf(stderr, "%s%s", *dflags, dflags[1] ? "," : "]");
 	fprintf(stderr, "]\n");
+#else
+	fprintf(stderr, "usage: %s\n", ProgramName);
+#endif
 	exit(ERROR_EXIT);
 }
 

@@ -41,12 +41,17 @@ void
 load_database(old_db)
 	cron_db		*old_db;
 {
-	DIR		*dir;
+        DIR		*dir;
 	struct stat	statbuf;
 	struct stat	syscron_stat;
 	DIR_T   	*dp;
 	cron_db		new_db;
 	user		*u, *nu;
+#ifdef DEBIAN
+	struct stat     syscrond_stat;
+	time_t          syscrond_files_mtime;
+        char            syscrond_fname[MAXPATHLEN+1];
+#endif
 
 	Debug(DLOAD, ("[%d] load_database()\n", getpid()))
 
@@ -64,6 +69,48 @@ load_database(old_db)
 	if (stat(SYSCRONTAB, &syscron_stat) < OK)
 		syscron_stat.st_mtime = 0;
 
+#ifdef DEBIAN
+	/* Check mod time of SYSCRONDIR. This won't tell us if a file
+         * in it changed, but will capture deletions, which the individual
+         * file check won't 
+	 */
+	if (stat(SYSCRONDIR, &syscrond_stat) < OK) {
+		log_it("CRON", getpid(), "STAT FAILED", SYSCRONDIR);
+		(void) exit(ERROR_EXIT);
+	}
+	syscrond_files_mtime = syscrond_stat.st_mtime;
+
+	/* track times of package crontabs in SYSCRONDIR.
+	 */
+	if (!(dir = opendir(SYSCRONDIR))) {
+		log_it("CRON", getpid(), "OPENDIR FAILED", SYSCRONDIR);
+		(void) exit(ERROR_EXIT);
+	}
+
+	while (NULL != (dp = readdir(dir))) {
+		char	fname[MAXNAMLEN+1],
+			tabname[MAXPATHLEN];
+
+		/* avoid file names beginning with ".".  this is good
+		 * because we would otherwise waste two guaranteed calls
+		 * to stat() for . and .., and also because package names
+		 * starting with a period are just too nasty to consider.
+		 */
+		if (dp->d_name[0] == '.')
+		  continue;
+		
+		sprintf(syscrond_fname, "%s/%s", SYSCRONDIR, dp->d_name);
+
+		if (stat(syscrond_fname, &syscrond_stat) < OK)
+		  syscrond_stat.st_mtime = 0;
+
+		syscrond_files_mtime = TMAX(syscrond_files_mtime, 
+					     syscrond_stat.st_mtime);
+
+	}
+	closedir(dir);
+#endif /* DEBIAN */
+
 	/* if spooldir's mtime has not changed, we don't need to fiddle with
 	 * the database.
 	 *
@@ -71,7 +118,13 @@ load_database(old_db)
 	 * so is guaranteed to be different than the stat() mtime the first
 	 * time this function is called.
 	 */
+#ifdef DEBIAN
+	if (old_db->mtime == TMAX(statbuf.st_mtime, 
+				  TMAX(syscron_stat.st_mtime, 
+				       syscrond_files_mtime))) {
+#else
 	if (old_db->mtime == TMAX(statbuf.st_mtime, syscron_stat.st_mtime)) {
+#endif
 		Debug(DLOAD, ("[%d] spool dir mtime unch, no load needed.\n",
 			      getpid()))
 		return;
@@ -82,7 +135,12 @@ load_database(old_db)
 	 * actually changed.  Whatever is left in the old database when
 	 * we're done is chaff -- crontabs that disappeared.
 	 */
+#ifdef DEBIAN
+	new_db.mtime = TMAX(statbuf.st_mtime, TMAX(syscron_stat.st_mtime,
+						   syscrond_files_mtime));
+#else
 	new_db.mtime = TMAX(statbuf.st_mtime, syscron_stat.st_mtime);
+#endif
 	new_db.head = new_db.tail = NULL;
 
 	if (syscron_stat.st_mtime) {
@@ -90,6 +148,40 @@ load_database(old_db)
 				SYSCRONTAB, &syscron_stat,
 				&new_db, old_db);
 	}
+
+#ifdef DEBIAN
+	/* Read all the package crontabs. */
+	if (!(dir = opendir(SYSCRONDIR))) {
+		log_it("CRON", getpid(), "OPENDIR FAILED", SYSCRONDIR);
+		(void) exit(ERROR_EXIT);
+	}
+
+	while (NULL != (dp = readdir(dir))) {
+		char	fname[MAXNAMLEN+1],
+		        tabname[MAXPATHLEN];
+
+
+		/* avoid file names beginning with ".".  this is good
+		 * because we would otherwise waste two guaranteed calls
+		 * to stat() for . and .., and also because package names
+		 * starting with a period are just too nasty to consider.
+		 */
+		if (dp->d_name[0] == '.')
+			continue;
+		
+		/* Generate the "fname" */
+		(void) strcpy(fname,"*system*");
+		(void) strcat(fname, dp->d_name);
+		sprintf(tabname,"%s/%s", SYSCRONDIR, dp->d_name);
+
+		/* statbuf is used as working storage by process_crontab() --
+		   current contents are irrelevant */
+		process_crontab("root", fname, tabname,
+				&statbuf, &new_db, old_db);
+		
+	}
+	closedir(dir);
+#endif
 
 	/* we used to keep this dir open all the time, for the sake of
 	 * efficiency.  however, we need to close it in every fork, and
@@ -203,7 +295,13 @@ process_crontab(uname, fname, tabname, statbuf, new_db, old_db)
 	int		crontab_fd = OK - 1;
 	user		*u;
 
+#ifdef DEBIAN
+	/* If the name begins with *system*, don't worry about password -
+	 it's part of the system crontab */
+	if (strncmp(fname, "*system*", 8) && !(pw = getpwnam(uname))) {
+#else
 	if (strcmp(fname, "*system*") && !(pw = getpwnam(uname))) {
+#endif
 		/* file doesn't have a user in passwd file.
 		 */
 		if (strncmp(fname, "tmp.", 4)) {
