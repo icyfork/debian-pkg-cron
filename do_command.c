@@ -46,6 +46,32 @@ static const struct pam_conv conv = {
 static void		child_process __P((entry *, user *)),
 			do_univ __P((user *));
 
+/* Build up the job environment from the PAM environment plus the
+   crontab environment */
+static char ** build_env(char **cronenv)
+{
+        char **jobenv = cronenv;
+#if defined(USE_PAM)
+        char **pamenv = pam_getenvlist(pamh);
+        char *cronvar;
+        int count = 0;
+
+        jobenv = env_copy(pamenv);
+
+        /* Now add the cron environment variables. Since env_set()
+           overwrites existing variables, this will let cron's
+           environment settings override pam's */
+
+        while ((cronvar = cronenv[count++])) {
+                syslog(LOG_ERR, "Adding %s", cronvar);
+                if (!(jobenv = env_set(jobenv, cronvar))) {
+                        syslog(LOG_ERR, "Adding failed!");
+                        return NULL;
+                }
+        }
+#endif
+    return jobenv;
+}
 
 void
 do_command(e, u)
@@ -280,7 +306,9 @@ child_process(e, u)
 		/* exec the command.
 		 */
 		{
-			char	*shell = env_get("SHELL", e->envp);
+                        char    **jobenv = build_env(e->envp); 
+                        char	*shell = env_get("SHELL", jobenv);
+                        syslog(LOG_ERR, "have shell='%s'", shell);
 
 # if DEBUGGING
 			if (DebugFlags & DTEST) {
@@ -298,7 +326,7 @@ child_process(e, u)
 			}
 			fprintf(stdout,"error");
 #endif
-			execle(shell, shell, "-c", e->cmd, (char *)0, e->envp);
+                        execle(shell, shell, "-c", e->cmd, (char *)0, jobenv);
 			fprintf(stderr, "execl: couldn't exec `%s'\n", shell);
 			perror("execl");
 			_exit(ERROR_EXIT);

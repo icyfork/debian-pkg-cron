@@ -73,6 +73,17 @@ commands in ``this'' crontab.  If MAILTO is defined (and non-empty), mail is
 sent to the user so named.  If MAILTO is defined but empty (MAILTO=""), no
 mail will be sent.  Otherwise mail is sent to the owner of the crontab.
 .PP
+On the Debian GNU/Linux system, cron supports the
+.B pam_env
+module, and loads the environment specified by 
+.IR /etc/security/pam_env.conf .
+However, the PAM setting do
+.B NOT
+override the settings described above nor any settings in the 
+.I crontab
+file itself. Note in particular that if you want a PATH other than
+"/usr/bin:/bin", you will need to set it in the crontab file.
+.PP
 The format of a cron command is very much the V7 standard, with a number of
 upward-compatible extensions.  Each line has five time and date fields,
 followed by a command, followed by a newline character ('\n').  
