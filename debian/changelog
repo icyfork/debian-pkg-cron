@@ -1,3 +1,14 @@
+cron (3.0pl1-64) unstable; urgency=high
+  * The "President's Birthday" release.
+  * Add checks for setuid() failures, to avoid running user jobs as root.
+  (closes:#85609, #86775) 
+  * Add portability flag -P to df (in /etc/cron.daily/standard) to 
+  avoid problem with long device names. (closes:#86851)
+  * Convert from suidmanager to dpkg --statoverride.
+  * Remove unnecessary dependency on bsdutils (it's Essential)
+
+ -- Steve Greenland <stevegr@debian.org>  Wed, 21 Feb 2001 15:51:20 -0600
+
 cron (3.0pl1-63) unstable; urgency=medium
 
   * Fix mistaken diagnostic in crontab ("Reached end of file 
