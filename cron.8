@@ -23,10 +23,16 @@
 cron \- daemon to execute scheduled commands (Vixie Cron)
 .SH SYNOPSIS
 cron
+.RB [ -f ]
 .SH DESCRIPTION
 .I cron
 is started automatically from /etc/init.d on entering multi-user
 runlevels.
+.SH OPTIONS
+.TP 8
+.B -f
+Stay in foreground mode, don't daemonize.
+.SH NOTES
 .PP
 .I cron
 searches its spool area (/var/spool/cron/crontabs) for crontab

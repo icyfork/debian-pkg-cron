@@ -99,7 +99,7 @@ main(argc, argv)
 	if (0) {
 # endif
 		(void) fprintf(stderr, "[%d] cron started\n", getpid());
-	} else {
+	} else if (!stay_foreground) {
 		switch (fork()) {
 		case -1:
 			log_it("CRON",getpid(),"DEATH","can't fork");
@@ -428,10 +428,15 @@ parse_args(argc, argv)
 {
 	int	argch;
 
-	while (EOF != (argch = getopt(argc, argv, "x:"))) {
+	stay_foreground = 0;
+
+	while (EOF != (argch = getopt(argc, argv, "fx:"))) {
 		switch (argch) {
 		default:
 			usage();
+		case 'f':
+			stay_foreground = 1;
+			break;
 		case 'x':
 			if (!set_debug_flags(optarg))
 				usage();

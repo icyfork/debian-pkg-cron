@@ -270,6 +270,8 @@ time_min timeRunning;
 time_min virtualTime;
 time_min clockTime;
 
+int	stay_foreground;
+
 # if DEBUGGING
 int	DebugFlags;
 char	*DebugFlagNames[] = {	/* sync with #defines */
