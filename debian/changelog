@@ -1,3 +1,20 @@
+cron (3.0pl1-52) unstable; urgency=low
+
+  * Applied OpenBSD patches supplied Topi Miettinen. Big change is
+  better handling of timekeeping (in particular, changes to/from daylight
+  savings time) (closes:#8499).
+  * Redirect stdin, stdout, and stderr to /dev/null.
+  (closes:#37189, #23231, #30653).
+  * Fixed bit_set()/bit_nset() confusion that caused @hourly to not work.
+  * Changed warrantee to warranty in debian/copyright (but it's still 
+  misspelled in the source files) (closes:#40312)
+  * Adjust checksecurity and cron_daily/standard to get consistent owner/perms
+  on /var/log/setuid* files. (closes:#15295)
+  * Add 'coda' to the list of nfs/afs like file systems in checksecurity.conf
+  (closes:#29909)
+
+ -- Steve Greenland <stevegr@debian.org>  Mon,  2 Aug 1999 22:21:08 -0500
+
 cron (3.0pl1-51) unstable; urgency=low
 
   * Changed default of "crontab -l" to NOT list the extra header lines. May

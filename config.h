@@ -43,21 +43,22 @@
 			 */
 
 #define MAILCMD _PATH_SENDMAIL					/*-*/
-#define MAILARGS "%s -i -FCronDaemon -odi -oem -or0s %s"		/*-*/
+#define MAILARGS "%s -i -FCronDaemon -odi -oem -or0s -t %s"		/*-*/
 			/* -i    = don't terminate on "." by itself
                          * -Fx	 = set full-name of sender
 			 * -odi	 = Option Deliverymode Interactive
 			 * -oem	 = Option Errors Mailedtosender
 			 * -or0s = Option Readtimeout -- don't time out
+ 			 * -t    = read recipient from header of message
 			 */
 
-/* #define MAILCMD "/bin/mail"			/*-*/
-/* #define MAILARGS "%s -d  %s"			/*-*/
+/* #define MAILCMD "/bin/mail"			-*/
+/* #define MAILARGS "%s -d  %s"			-*/
 			/* -d = undocumented but common flag: deliver locally?
 			 */
 
-/* #define MAILCMD "/usr/mmdf/bin/submit"	/*-*/
-/* #define MAILARGS "%s -mlrxto %s"		/*-*/
+/* #define MAILCMD "/usr/mmdf/bin/submit"	-*/
+/* #define MAILARGS "%s -mlrxto %s"		-*/
 
 /* #define MAIL_DATE				/*-*/
 			/* should we include an ersatz Date: header in
@@ -70,7 +71,7 @@
 			 * defined but neither exists, should crontab(1) be
 			 * usable only by root?
 			 */
-/*#define ALLOW_ONLY_ROOT			/*-*/
+/*#define ALLOW_ONLY_ROOT			-*/
 
 			/* if you want to use syslog(3) instead of appending
 			 * to CRONDIR/LOG_FILE (/var/cron/log, e.g.), define

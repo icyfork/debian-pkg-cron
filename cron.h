@@ -118,6 +118,10 @@
 			 LineNumber = ln; \
 			}
 
+typedef int time_min;
+
+#define SECONDS_PER_MINUTE 60
+
 #define	FIRST_MINUTE	0
 #define	LAST_MINUTE	59
 #define	MINUTE_COUNT	(LAST_MINUTE - FIRST_MINUTE + 1)
@@ -160,6 +164,8 @@ typedef	struct _entry {
 #define	DOM_STAR	0x01
 #define	DOW_STAR	0x02
 #define	WHEN_REBOOT	0x04
+#define MIN_STAR	0x08
+#define HR_STAR		0x10
 } entry;
 
 			/* the crontab database will be a list of the
@@ -255,7 +261,10 @@ char	*DowNames[] = {
 
 char	*ProgramName;
 int	LineNumber;
-time_t	TargetTime;
+time_t	StartTime;
+time_min timeRunning;
+time_min virtualTime;
+time_min clockTime;
 
 # if DEBUGGING
 int	DebugFlags;
@@ -270,7 +279,10 @@ extern	char	*copyright[],
 		*DowNames[],
 		*ProgramName;
 extern	int	LineNumber;
-extern	time_t	TargetTime;
+extern	time_t	StartTime;
+extern  time_min timeRunning;
+extern  time_min virtualTime;
+extern  time_min clockTime;
 # if DEBUGGING
 extern	int	DebugFlags;
 extern	char	*DebugFlagNames[];
