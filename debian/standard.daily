@@ -49,12 +49,12 @@ if cd $bak ; then
 	fi
 fi
 
-cd /var/lib/dpkg
-if ! cmp -s status.yesterday.0 status ; then
-	cp -p status status.yesterday
-	savelog -c 7 status.yesterday >/dev/null
+if cd $bak ; then
+    if ! cmp -s dpkg.status.0 /var/lib/dpkg/status ; then
+	    cp -p /var/lib/dpkg/status dpkg.status
+	    savelog -c 7 dpkg.status >/dev/null
+    fi
 fi
-
 cd /var/log
 umask 027
 savelog -c 7 -m 640 -u root -g adm setuid.changes >/dev/null
@@ -69,7 +69,7 @@ lflist=`df --type=ext2  |awk '/\/dev\// {printf "%s/lost+found ", $6}'`
 # In each directory, look for files
 for lfdir in $lflist ; do
     if [ -d "$lfdir" ] ; then
-	more_lost_found=`find "$lfdir" | grep -v 'lost+found$'`
+	more_lost_found=`ls -1  "$lfdir" | grep -v 'lost+found$'`
 	if [ -n "$more_lost_found" ] ; then
 	    lost_found="$lost_found
 

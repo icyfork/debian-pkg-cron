@@ -35,6 +35,18 @@ if [ "$1" = "configure" -a -n "$2" ] && dpkg --compare-versions "$2" lt "3.0pl1-
     pausemessage="T"
 fi
 
+#
+# Move dpkg status file backups, if necessary/possible.
+#
+( cd /var/lib/dpkg ;
+for oldstat in status.yesterday.* ; do
+    newstat=`echo $oldstat | sed 's/yesterday\.//'`;
+    newstat=/var/backups/dpkg.$newstat;            
+    if [ -f $oldstat -a ! -f $newstat ] ; then
+        mv $oldstat $newstat ;
+    fi                        
+done)
+
 start-stop-daemon --start --quiet --oknodo --exec /usr/sbin/cron
 
 #DEBHELPER#
