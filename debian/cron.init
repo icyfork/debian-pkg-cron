@@ -21,7 +21,8 @@ reload|force-reload) echo -n "Re-loading configuration files for periodic comman
 	# cron reloads automatically
         echo "."
         ;;
-*)	echo "Usage: /etc/init.d/cron start|stop"; exit 1 
+*)	echo "Usage: /etc/init.d/cron start|stop|restart|reload|force-reload"
+        exit 1 
         ;;
 esac
 exit 0
