@@ -1,3 +1,38 @@
+cron (3.0pl1-73) unstable; urgency=low
+
+  * Fixed spelling error in control file (Hi, Matt!) (closes: #124523)
+  * Check for existence of /etc/init.d/cron in prerm (closes:#151006)
+  * Added conflict for ancient version of lockfile-progs (closes: #123269)
+  * Added Mosix FS to list of excluded FS types in checksecurity.conf 
+    (closes: #129177)
+  * chmod group.bak instead of passwd.bak twice (closes: #130079)
+  * Added ext3 for lost+found searches (closes:#135013)
+  * Finally fixed longstanding bug where cron doesn't recognize crontab
+    changes until 1 minute later. I don't know what I was looking at before,
+    as it was trivial. I apologize to all those bothered by this problem.
+    (closes: #74524, #13952)
+  * Remove debian/preinst, used only for a fix for a pre-slink development
+    release.
+  * Added support for invoke-rc.d, patch from Andreas Metzler (closes:#162676)
+  * Finally figured out why some error messages weren't getting printed
+    for the system crontabs (/etc/crontab, /etc/cron.d/*). Added new error
+    printing function and use it when user.c calls load_entry(). 
+    (closes:#79037, #122358)
+  * Remove -odi option from invocation of /usr/sbin/sendmail. (closes:#146224)
+  * Don't run @monthly jobs every day. (closes: #150591). Ditto
+    @yearly. (Isn't it funny that despite the big whinefest about how
+    critically important the @whatever timespecs are, nobody previously
+    noticed this serious bug in the entire 7+ years I've been maintaining
+    cron?)
+  * Fix grammatical here in the cron(8) manpage. (closes: 147277)
+  * Fix spelling error in checksecurity.conf. (closes: #151601)
+  * Fix check for nfs/afs mounts in checksecurity. (closes: #157822)
+  * Replaced some tabs with spaces in crontab.5. (closes: #159912)
+  * Fix cron Makefile to not hardcode '-s' in $(INSTALL) commands.
+    (closes: #164966)
+
+ -- Steve Greenland <stevegr@debian.org>  Mon,  4 Nov 2002 18:14:45 -0600
+
 cron (3.0pl1-72) unstable; urgency=low
 
   * Add type usbdevfs to skipped "file systems" (this is /proc/bus/usb)
