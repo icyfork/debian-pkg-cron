@@ -71,9 +71,8 @@ if cmp -s setuid.today $TMPSETUID >/dev/null
 then
     :
 else
-	echo "`hostname` changes to setuid programs and devices:"
-	diff -u0 setuid.today $TMPSETUID || [ $? = 1 ]
-	diff -u0 setuid.today $TMPSETUID > $TMPDIFF || [ $? = 1 ]
+	diff -u0 setuid.today $TMPSETUID >> $TMPDIFF || [ $? = 1 ]
+	echo "`hostname` changes to setuid programs and devices:" 
 	cat $TMPDIFF 
 	
 	if [ `cat $TMPDIFF | wc -l` -gt 0 -a ! -z "$CHECKSECURITY_EMAIL" ]; then
