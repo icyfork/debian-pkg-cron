@@ -135,7 +135,7 @@ main(argc, argv)
 	case opt_unknown: usage("unknown option specified");
 	                  break;
 	}
-	exit(0);
+	exit(exitstatus);
 	/*NOTREACHED*/
 }
 	
