@@ -149,6 +149,7 @@ parse_args(argc, argv)
 	char	*argv[];
 {
 	int		argch;
+	struct stat	statbuf;
 
 	if (!(pw = getpwuid(getuid()))) {
 		fprintf(stderr, "%s: your UID isn't in the passwd file.\n",
@@ -247,6 +248,15 @@ parse_args(argc, argv)
 			}
 			if (!(NewCrontab = fopen(Filename, "r"))) {
 				perror(Filename);
+				exit(ERROR_EXIT);
+			}
+			/* Make sure we opened a normal file. */
+			if (fstat(fileno(NewCrontab), &statbuf) < 0) {
+				perror("fstat");
+				exit(ERROR_EXIT);
+			}
+			if (!S_ISREG(statbuf.st_mode)) {
+				fprintf(stderr, "%s: Not a regular file.\n", Filename);
 				exit(ERROR_EXIT);
 			}
 			if (swap_uids_back() < OK) {
@@ -562,7 +572,14 @@ edit_cmd() {
  done:
 	log_it(RealUser, Pid, "END EDIT", User);
 }
-	
+
+static char tn[MAX_FNAME];
+
+static void sig_handler(int x)
+{
+	unlink(tn);
+	exit(1);
+}	
 
 /* returns	0	on success
  *		-1	on syntax error
@@ -570,24 +587,46 @@ edit_cmd() {
  */
 static int
 replace_cmd() {
-	char	n[MAX_FNAME], envstr[MAX_ENVSTR], tn[MAX_FNAME];
+	char	n[MAX_FNAME], envstr[MAX_ENVSTR];
 	FILE	*tmp;
-	int	ch, eof;
+	int	ch, eof, fd;
 	entry	*e;
 	time_t	now = time(NULL);
 	char	**envp = env_init();
+	mode_t	um;
 
 	if (envp == NULL) {
 		fprintf(stderr, "%s: Cannot allocate memory.\n", ProgramName);
 		return (-2);
 	}
 
-	(void) snprintf(n, MAX_FNAME, "tmp.%d", Pid);
-	(void) snprintf(tn, MAX_FNAME, CRON_TAB(n));
-	if (!(tmp = fopen(tn, "w+"))) {
+	/* Assume priviledge.  This way we can only receive signals on our
+	   input - the ones listed below (or from root - root's problem, not
+	   ours). */
+	setuid(geteuid());
+
+	/* Assumes Linux-style signal handlers (takes int, returns void) */
+	/* Signal handlers, to ensure we do not leave temp files in the
+	   spool dir.  We don't remove these on exiting this function;
+	   but that's OK, we exit immediately afterwards anyway. */
+	signal(SIGHUP, sig_handler);
+	signal(SIGINT, sig_handler);
+	signal(SIGQUIT, sig_handler);
+	signal(SIGTSTP, SIG_IGN);
+
+	(void) snprintf(tn, MAX_FNAME, CRON_TAB("tmp.XXXXXX"));
+	um = umask(077);
+	fd = mkstemp(tn);
+	if (!fd) {
+		perror(tn);
+		return(-2);
+	}
+	tmp = fdopen(fd, "w+");
+	if (!tmp) {
 		perror(tn);
 		return (-2);
 	}
+	(void) umask(um);
 
 	/* write a signature at the top of the file.
 	 *
