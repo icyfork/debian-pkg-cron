@@ -198,12 +198,6 @@ child_process(e, u)
 	retcode = pam_setcred(pamh, PAM_ESTABLISH_CRED | PAM_SILENT);
 	PAM_FAIL_CHECK;
 
-#if defined(SYSLOG)
-	log_close(); /* Because pam calls openlog(3), and if don't
-                        force the cron job to re-open it, all the cron
-                        messages end up in the auth log. */
-#endif
-
 #endif
 
 	/* fork again, this time so we can exec the user's command.
