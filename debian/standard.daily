@@ -5,8 +5,34 @@
 # Modified by Steve Greenland <stevegr@master.debian.org>
 
 bak=/var/backups
-
+LOCKFILE=/var/lock/cron.daily
 umask 022
+
+#
+# Avoid running more than one at a time -- could happen if the
+# checksecurity script hands on a network drive
+#
+
+lockfile-create $LOCKFILE
+if [ $? -ne 0 ] ; then
+    cat <<EOF
+
+Unable to run /etc/cron.daily/standard because lockfile $LOCKFILE
+acquisition failed. This probably meanst that the previous days
+instance is still running. Please check and correct if necessary.
+
+EOF
+    exit 1
+fi
+
+# Keep lockfile fresh
+lockfile-touch $LOCKFILE &
+LOCKTOUCHPID="$!"
+
+#
+# Backup key system files
+#
+
 if cd $bak
 then
 	cmp -s passwd.bak /etc/passwd || cp -p /etc/passwd passwd.bak
@@ -36,7 +62,11 @@ checksecurity >setuid.changes
 #
 # Check to see if any files are in lost+found directories and warn admin
 #
-lost_found=`find /lost\+found |grep -v lost\+found\$`
+if [ -d "/lost+found" ] ; then 
+  lost_found=`find '/lost+found' |grep -v 'lost+found$'`
+else
+  lost_found=""
+fi
 if [ "$lost_found" ]; then
     cat << EOF
 Files were found in lost+found directories. This is probably
@@ -50,3 +80,8 @@ $lost_found
 EOF
 fi
 
+#
+# Clean up lockfile
+#
+kill $LOCKTOUCHPID
+lockfile-remove ./lt.lock
