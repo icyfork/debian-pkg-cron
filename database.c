@@ -440,23 +440,43 @@ next_crontab:
 
 #ifdef DEBIAN
 
-/* True or false? Is this a valid filename (upper/lower alpha, digits,
- * underscores, and hyphens only?)
- */
-#include <ctype.h>
-/* Same function, better compliance with ISO C */
-static int valid_name (char *filename)
-{
-  while (*filename) {
-    if (!(isalnum(*filename) ||
-	  (*filename == '_') ||
-	  (*filename == '-')))
-      return 0;
-    ++filename;
-  }
+#include <regex.h>
 
-  return 1;
+/* True or false? Is this a valid filename? */
+
+/* Taken from Clint Adams 'run-parts' version to support lsb style
+   names, originally GPL, but relicensed to cron license per e-mail of
+   27 September 2003. I've changed it to do regcomp() only once. */
+
+int valid_name(char *filename)
+{
+  static regex_t hierre, tradre, excsre, classicalre;
+  static donere = 0;
+
+  if (!donere) {
+      donere = 1;
+      if (regcomp(&hierre, "^_?([a-z0-9_.]+-)+[a-z0-9]+$",
+                  REG_EXTENDED | REG_NOSUB)
+          || regcomp(&excsre, "^[a-z0-9-].*dpkg-(old|dist)$",
+                     REG_EXTENDED | REG_NOSUB)
+          || regcomp(&tradre, "^[a-z0-9][a-z0-9-]*$", REG_NOSUB)
+          || regcomp(&classicalre, "^[a-zA-Z0-9_-]+$",
+                     REG_EXTENDED | REG_NOSUB)) {
+          log_it("CRON", getpid(), "REGEX FAILED", "valid_name");
+          (void) exit(ERROR_EXIT);
+      }
+  }
+  if (lsbsysinit_mode) {
+      if (!regexec(&hierre, filename, 0, NULL, 0)) {
+          return regexec(&excsre, filename, 0, NULL, 0);
+      } else {
+          return !regexec(&tradre, filename, 0, NULL, 0);
+      }
+  }
+  /* Old standard style */
+  return !regexec(&classicalre, filename, 0, NULL, 0);
 }
+
 
 static user *
 get_next_system_crontab (curtab)

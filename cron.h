@@ -271,6 +271,7 @@ time_min virtualTime;
 time_min clockTime;
 
 int	stay_foreground;
+int     lsbsysinit_mode;
 
 # if DEBUGGING
 int	DebugFlags;
@@ -284,6 +285,7 @@ extern	char	*copyright[],
 		*MonthNames[],
 		*DowNames[],
 		*ProgramName;
+extern  int     lsbsysinit_mode;
 extern	int	LineNumber;
 extern	time_t	StartTime;
 extern  time_min timeRunning;
