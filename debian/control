@@ -3,7 +3,7 @@ Section: admin
 Priority: important
 Maintainer: Steve Greenland <stevegr@debian.org>
 Standards-Version: 3.6.1
-Build-Depends: debhelper, libpam0g-dev
+Build-Depends: debhelper, libpam0g-dev, libselinux1-dev
 
 Package: cron
 Architecture: any
@@ -33,3 +33,16 @@ Description: management of regular background processing
  way that dselect handles "Recommends", but I do strongly suggest that
  you install it; it prevents /etc/cron.daily/standard from running multiple
  times if something gets jammed.
+
+Package: cron-se
+Architecture: any
+Priority: extra
+Depends: ${shlibs:Depends}, cron (=${Source-Version})
+Provides:
+Description: SE-Linux enable cron
+ cron is a background process (`daemon') that runs programs at regular
+ intervals (for example, every minute, day, week or month); which
+ processes are run and at what times are specified in the `crontab'.
+ .
+ This package provides the SE-Linux enabled versions of the cron daemon
+ and crontab program.

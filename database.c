@@ -30,6 +30,12 @@ static char rcsid[] = "$Id: database.c,v 2.8 1994/01/15 20:43:43 vixie Exp $";
 #include <sys/stat.h>
 #include <sys/file.h>
 
+#ifdef WITH_SELINUX
+#include <selinux/selinux.h>
+#include <selinux/flask.h>
+#include <selinux/av_permissions.h>
+#include <selinux/get_context_list.h>
+#endif
 
 #define TMAX(a,b) ((a)>(b)?(a):(b))
 
@@ -167,7 +173,7 @@ load_database(old_db)
 	new_db.head = new_db.tail = NULL;
 
 	if (syscron_stat.st_mtime) {
-		process_crontab("root", "*system*",
+		process_crontab(SYSUSERNAME, "*system*",
 				SYSCRONTAB, &syscron_stat,
 				&new_db, old_db);
 	}
@@ -205,7 +211,7 @@ load_database(old_db)
 
 		/* statbuf is used as working storage by process_crontab() --
 		   current contents are irrelevant */
-		process_crontab("root", fname, tabname,
+		process_crontab(SYSUSERNAME, fname, tabname,
 				&statbuf, &new_db, old_db);
 
 	}
@@ -324,6 +330,13 @@ process_crontab(uname, fname, tabname, statbuf, new_db, old_db)
 	int		crontab_fd = OK - 1;
 	user		*u;
 
+#ifdef WITH_SELINUX
+	security_context_t  file_context=NULL;
+	security_context_t   user_context=NULL;
+	struct av_decision avd;
+	int retval=0, selinux_enabled = (is_selinux_enabled() > 0);
+#endif
+
 #ifdef DEBIAN
 	/* If the name begins with *system*, don't worry about password -
 	 it's part of the system crontab */
@@ -349,6 +362,14 @@ process_crontab(uname, fname, tabname, statbuf, new_db, old_db)
 		goto next_crontab;
             }
 
+#ifdef WITH_SELINUX
+	    if (selinux_enabled) {
+		if (fgetfilecon(crontab_fd, &file_context) < OK) {
+		    log_it(fname, getpid(), "getfilecon FAILED", tabname);
+		    goto next_crontab;
+		}
+	    }
+#endif
             if (fstat(crontab_fd, statbuf) < OK) {
 		log_it(fname, getpid(), "FSTAT FAILED", tabname);
 		goto next_crontab;
@@ -385,6 +406,14 @@ process_crontab(uname, fname, tabname, statbuf, new_db, old_db)
 		goto next_crontab;
             }
 
+#ifdef WITH_SELINUX
+	    if (selinux_enabled) {
+		if (fgetfilecon(crontab_fd, &file_context) < OK) {
+		    log_it(fname, getpid(), "getfilecon FAILED", tabname);
+		    goto next_crontab;
+		}
+	    }
+#endif
             if (fstat(crontab_fd, statbuf) < OK) {
 		log_it(fname, getpid(), "FSTAT FAILED", tabname);
 		goto next_crontab;
@@ -425,6 +454,31 @@ process_crontab(uname, fname, tabname, statbuf, new_db, old_db)
 		free_user(u);
 		log_it(fname, getpid(), "RELOAD", tabname);
 	}
+#ifdef WITH_SELINUX
+	if (selinux_enabled)	{
+		/*
+		 * Since crontab files are not directly executed,
+		 * crond must ensure that the crontab file has
+		 * a context that is appropriate for the context of
+		 * the user cron job.  It performs an entrypoint
+		 * permission check for this purpose.
+		 */
+		if (get_default_context(uname, NULL, &user_context)) {
+			log_it(uname, getpid(), "NO CONTEXT", tabname);
+			goto next_crontab;
+		}
+		retval = security_compute_av(user_context, file_context,
+			SECCLASS_FILE, FILE__ENTRYPOINT, &avd);
+		freecon(user_context);
+		freecon(file_context);
+		file_context = NULL;
+
+		if (retval || ((FILE__ENTRYPOINT & avd.allowed) != FILE__ENTRYPOINT)) {
+			log_it(fname, getpid(), "ENTRYPOINT FAILED", tabname);
+			goto next_crontab;
+		}
+	}
+#endif
 	u = load_user(crontab_fd, pw, fname);
 	if (u != NULL) {
 		u->mtime = statbuf->st_mtime;
@@ -436,6 +490,12 @@ next_crontab:
 		Debug(DLOAD, (" [done]\n"))
 		close(crontab_fd);
 	}
+#ifdef WITH_SELINUX
+	if(file_context) {
+		freecon(file_context);
+		file_context = NULL;
+	}
+#endif
 }
 
 #ifdef DEBIAN

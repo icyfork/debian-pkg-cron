@@ -40,6 +40,12 @@
 #include "config.h"
 #include "externs.h"
 
+#ifdef WITH_SELINUX 
+#define SYSUSERNAME "system_u"
+#else
+#define SYSUSERNAME "root"
+#endif
+
 	/* these are really immutable, and are
 	 *   defined for symbolic convenience only
 	 * TRUE, FALSE, and ERR must be distinct

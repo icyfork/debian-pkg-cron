@@ -18,6 +18,14 @@ ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
   DEB_INSTALL += -s
 endif
 
+# SELinux
+ifeq (yes,$(SELINUX))
+  SELINUX_DEFS = -DWITH_SELINUX
+  SELINUX_LIBS = -lselinux
+endif
+
+export SELINUX_DEFS SELINUX_LIBS
+
 # Set system type (Linux, HURD, etc.)
 DEB_HOST_GNU_SYSTEM = $(shell dpkg-architecture -qDEB_HOST_GNU_SYSTEM)
 ifeq ($(DEB_HOST_GNU_SYSTEM), gnu)
@@ -33,22 +41,33 @@ endif
 export PAM_DEFS
 export PAM_LIBS
 
-build: build-stamp
-build-stamp:
+
+build: build-cron build-cron-se
+
+
+build-cron: b-cron/build-stamp
+b-cron/build-stamp:
 	dh_testdir
-
+	rm -rf b-cron
+	mkdir b-cron
 	# Add here commands to compile the package.
-	$(MAKE) OPTIM="$(DEB_OPTIM)" DEBUG_DEFS="$(DEB_DEBUG_DEFS)"
+	$(MAKE) -C b-cron -f ../Makefile OPTIM="$(DEB_OPTIM)" DEBUG_DEFS="$(DEB_DEBUG_DEFS)" VPATH=.. INCLUDE=-I.. 
+	touch $@
 
-	touch build-stamp
+build-cron-se: b-cron-se/build-stamp
+b-cron-se/build-stamp:
+	dh_testdir
+	rm -rf b-cron-se
+	mkdir b-cron-se
+	cd b-cron-se
+	# Add here commands to compile the package.
+	SELINUX_DEFS="-DWITH_SELINUX" SELINUX_LIBS=-lselinux $(MAKE) -C b-cron-se -f ../Makefile OPTIM="$(DEB_OPTIM)" DEBUG_DEFS="$(DEB_DEBUG_DEFS)" VPATH=.. INCLUDE=-I..
+	touch $@
 
 clean:
 	dh_testdir
 	dh_testroot
-	rm -f build-stamp
-
-	# Add here commands to clean up after the build process.
-	-$(MAKE) clean
+	rm -rf b-cron b-cron-se
 	rm -f debian/conffiles
 	dh_clean
 
@@ -63,9 +82,7 @@ binary-arch: build
 	dh_testroot
 	dh_clean -k
 	dh_installdirs
-
-	# Add here commands to install the files into debian/tmp
-	$(MAKE) install DESTDIR=`pwd`/debian/tmp OPTIM="$(DEB_OPTIM)" INSTALL="$(DEB_INSTALL)" DEBUG_DEFS="$(DEB_DEBUG_DEFS)"
+	dh_install
 
 	cp -p debian/$(CONFFILES) debian/conffiles
 	dh_installdocs FEATURES THANKS README debian/README.anacron
@@ -85,7 +102,7 @@ binary-arch: build
                        debian/tmp/etc/cron.daily/standard
 	install -m 755 debian/standard.monthly \
                        debian/tmp/etc/cron.monthly/standard
-	dh_installmanpages crontab.1 crontab.5 cron.8 bitstring.3
+	dh_installman crontab.1 crontab.5 cron.8
 #	dh_undocumented
 	dh_installchangelogs CHANGES
 	dh_installdebconf
