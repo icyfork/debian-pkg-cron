@@ -1,3 +1,15 @@
+cron (3.0pl1-77) unstable; urgency=low
+
+  * Smarter fix-up of crontabs groups (closes: #208555)
+  * Add dependency for adduser (closes: #208848)
+  * Support new PAM @includes for standard PAM configuration.
+  * Move note about loss of checksecurity from debconf to NEWS.Debian.gz,
+    the more appropriate place. Since that was the only use of debconf,
+    this also (closes: #195887)
+  * Add commented-out pam_limits support. (closes: 190556)
+
+ -- Steve Greenland <stevegr@debian.org>  Sat,  6 Sep 2003 18:47:02 -0500
+
 cron (3.0pl1-76) unstable; urgency=low
 
   * Fix postinst bug for no user crontabs (closes: #208433, #208435, #208448)
