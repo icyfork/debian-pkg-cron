@@ -63,7 +63,7 @@ then
     :
 else
 	echo "`hostname` changes to setuid programs and devices:"
-	diff -u setuid.today $TMPSETUID || [ $? = 1 ]
+	diff -u0 setuid.today $TMPSETUID || [ $? = 1 ]
 	mv setuid.today setuid.yesterday
 	mv $TMPSETUID setuid.today
 fi
