@@ -50,7 +50,7 @@ if cd $bak ; then
 fi
 
 cd /var/lib/dpkg
-if ! @cmp -s status.yesterday.0 status ; then
+if ! cmp -s status.yesterday.0 status ; then
 	cp -p status status.yesterday
 	savelog -c 7 status.yesterday >/dev/null
 fi
