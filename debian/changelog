@@ -1,3 +1,10 @@
+cron (3.0pl1-92) UNRELEASED; urgency=low
+
+  * Don't use SElinux on GNU/kFreeBSD, as it is Linux-specific, patch
+    from Aurelien Jarno (Closes: #325404)
+
+ -- Javier Fernandez-Sanguino Pen~a <jfs@computer.org>  Fri, 14 Oct 2005 14:29:40 +0200
+
 cron (3.0pl1-91) unstable; urgency=low
 
   * Proper fix for #324017, the previous fix was dumb. This one

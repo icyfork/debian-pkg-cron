@@ -19,14 +19,14 @@ ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
 endif
 
 # Set system type (Linux, HURD, etc.)
-DEB_HOST_GNU_SYSTEM = $(shell dpkg-architecture -qDEB_HOST_GNU_SYSTEM)
-ifeq ($(DEB_HOST_GNU_SYSTEM), gnu)
-  PAM_DEFS = 
-  PAM_LIBS =
-else
+DEB_HOST_ARCH_OS = $(shell dpkg-architecture -qDEB_HOST_ARCH_OS)
+ifeq ($(DEB_HOST_ARCH_OS), linux)
   PAM_DEFS = -DUSE_PAM
   PAM_LIBS = -lpam
   SELINUX = yes
+else
+  PAM_DEFS = 
+  PAM_LIBS =
 endif
 
 export PAM_DEFS
@@ -40,10 +40,10 @@ endif
 
 export SELINUX_DEFS SELINUX_LIBS
 
-ifeq ($(DEB_HOST_GNU_SYSTEM), gnu)
-build: build-cron
-else
+ifeq ($(DEB_HOST_ARCH_OS), linux)
 build: build-cron build-cron-se
+else
+build: build-cron
 endif
 
 build-cron: b-cron/build-stamp

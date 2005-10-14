@@ -4,7 +4,7 @@ Priority: important
 Maintainer: Javier Fernandez-Sanguino Pen~a <jfs@computer.org>
 Uploaders: Steve Greenland <stevegr@debian.org>
 Standards-Version: 3.6.1
-Build-Depends: debhelper, libpam0g-dev, libselinux1-dev [!hurd-i386]
+Build-Depends: debhelper, libpam0g-dev, libselinux1-dev [!hurd-i386 !kfreebsd-i386]
 
 Package: cron
 Architecture: any
