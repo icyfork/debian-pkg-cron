@@ -1,3 +1,11 @@
+cron (3.0pl1-91) unstable; urgency=low
+
+  * Proper fix for #324017, the previous fix was dumb. This one
+    includes fixes from Fedora which should prevent segfaults under
+    other circumstances.
+
+ -- Javier Fernandez-Sanguino Pen~a <jfs@computer.org>  Sun, 21 Aug 2005 03:14:01 +0200
+
 cron (3.0pl1-90) unstable; urgency=low
 
   * Fix SIGSEV due to a NULL free in the libselinux code, as a consequence

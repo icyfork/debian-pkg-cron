@@ -36,7 +36,7 @@ static char rcsid[] = "$Id: user.c,v 2.8 1994/01/15 20:43:43 vixie Exp $";
 
 static int get_security_context(char *name, int crontab_fd, security_context_t
                                 *rcontext, char *tabname) {
-    security_context_t scontext;
+    security_context_t scontext=NULL;
     security_context_t  file_context=NULL;
     struct av_decision avd;
     int retval=0;
@@ -50,6 +50,7 @@ static int get_security_context(char *name, int crontab_fd, security_context_t
             log_it(name, getpid(),
                    "No security context but SELinux in permissive mode,"
                    " continuing", tabname);
+	    return 0;
         }
     }
 
@@ -133,7 +134,7 @@ free_user(u)
 		free_entry(e);
 	}
 #ifdef WITH_SELINUX
-	if (u->scontext != NULL)
+	if (u->scontext)
 		freecon(u->scontext);
 #endif
 	free(u);
@@ -176,6 +177,7 @@ load_user(crontab_fd, pw, uname, fname, tabname)
 	u->crontab = NULL;
 
 #ifdef WITH_SELINUX
+	u->scontext = NULL;
         if (is_selinux_enabled() > 0) {
             char *sname=uname;
             if (pw==NULL) {

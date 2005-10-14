@@ -331,7 +331,7 @@ child_process(e, u)
 			fprintf(stdout,"error");
 #endif
 #ifdef WITH_SELINUX
-			if (is_selinux_enabled() > 0) {
+			if ((is_selinux_enabled() > 0) && (u->scontext != 0L)) {
                             security_context_t scontext;
                             if (setexeccon(u->scontext) < 0) {
                                 if (security_getenforce() > 0) {
