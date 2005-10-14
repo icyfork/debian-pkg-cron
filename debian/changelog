@@ -1,3 +1,31 @@
+cron (3.0pl1-88) unstable; urgency=low
+
+  * Taken over maintainership of this package and made the
+    "Let's clean up the bug list" release
+  * Added a debian/TODO file with some tasks not done in this upload.
+  * Use patch provided by Marc Dequenes to fix FTBFS on Hurd 
+    (due to the use of selinux) (Closes: #279429)
+  * Enable pam_limits.so in the default configuration (Closes: #300725)
+  * Fix standard.daily so it can cope with mount points with spaces 
+    (Closes: #198211)
+  * Standard.daily now warns if no lost+found directory was found in a local
+    ext2/3 filesystem (Closes: #46779) [as the other wishlists are 
+    checksecurity related]
+  * Standard.daily now will also check xfs filesystems (Closes: #279613)
+  * Fix crontab.5's example to prevent confusion to users, default shell
+    is always /bin/sh (Closes: #231172)
+  * SELinux related fixes:
+    - Applied Russell Coker patches to fix three bugs that appear when
+      using SELinux (Closes: #264320)
+    - Applied Manoj Srivastava's patches to turn on SELinux support 
+      (Closes: #315509)
+  * Add help text when creating new crontabs as suggested by Anthony Towns
+    (Closes: #18733)
+  * Use debhelper version 4 instead of the deprecated version 3, removed
+    debian/conffiles as it is no longer needed.
+
+ -- Javier Fernandez-Sanguino Pen~a <jfs@computer.org>  Tue,  5 Jul 2005 16:39:29 +0200
+
 cron (3.0pl1-87) unstable; urgency=low
 
   * Clarify wording about /etc/cron.d files in cron.8.
