@@ -1,7 +1,8 @@
 Source: cron
 Section: admin
 Priority: important
-Maintainer: Steve Greenland <stevegr@debian.org>
+Maintainer: Javier Fernandez-Sanguino Pen~a <jfs@computer.org>
+Uploaders: Steve Greenland <stevegr@debian.org>
 Standards-Version: 3.6.1
 Build-Depends: debhelper, libpam0g-dev, libselinux1-dev [!hurd-i386]
 
