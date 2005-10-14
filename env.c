@@ -40,6 +40,9 @@ env_free(envp)
 {
 	char	**p;
 
+	if(!envp)
+		return;
+
 	for (p = envp;  *p;  p++)
 		free(*p);
 	free(envp);

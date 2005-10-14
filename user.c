@@ -41,7 +41,7 @@ static int get_security_context(char *name, int crontab_fd, security_context_t
     struct av_decision avd;
     int retval=0;
 
-    rcontext = NULL;
+    *rcontext = NULL;
     if (get_default_context(name, NULL, &scontext)) {
         if (security_getenforce() > 0) {
             log_it(name, getpid(), "No SELinux security context", tabname);
@@ -152,7 +152,7 @@ load_user(crontab_fd, pw, uname, fname, tabname)
 	user	*u;
 	entry	*e;
 	int	status;
-	char	**envp, **tenvp;
+	char	**envp = NULL, **tenvp;
 
 	if (!(file = fdopen(crontab_fd, "r"))) {
 		perror("fdopen on crontab_fd in load_user");
@@ -182,6 +182,7 @@ load_user(crontab_fd, pw, uname, fname, tabname)
             }
             if (get_security_context(sname, crontab_fd, 
                                      &u->scontext, tabname) != 0 ) {
+		u->scontext = NULL;
                 free_user(u);
                 u = NULL;
                 goto done;
