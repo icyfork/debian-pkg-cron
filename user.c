@@ -133,7 +133,8 @@ free_user(u)
 		free_entry(e);
 	}
 #ifdef WITH_SELINUX
-        freecon(u->scontext);
+	if (u->scontext != NULL)
+		freecon(u->scontext);
 #endif
 	free(u);
 }
