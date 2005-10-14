@@ -1,3 +1,9 @@
+cron (3.0pl1-89) unstable; urgency=low
+
+  * Fix bashishm in cron.daily script (Closes: #323983)
+
+ -- Javier Fernandez-Sanguino Pen~a <jfs@computer.org>  Sun, 21 Aug 2005 00:12:26 +0200
+
 cron (3.0pl1-88) unstable; urgency=low
 
   * Taken over maintainership of this package and made the

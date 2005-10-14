@@ -62,7 +62,7 @@ fi
 df -P --type=ext2 --type=ext3 --type=xfs |
 awk '/\/dev\// { print }' | sed -e 's/ [[:space:]]*/ /g'  |
 while read mount block used avail perc mp; do
-	[ "$mp" == "/" ] && mp=""
+	[ "$mp" = "/" ] && mp=""
 	echo "$mp/lost+found"
 done |
 while read lfdir; do
