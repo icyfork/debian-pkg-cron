@@ -503,6 +503,7 @@ edit_cmd() {
 	WAIT_T		waiter;
 	PID_T		pid, xpid;
 	mode_t		um;
+	int             add_help_text = 0;
 
 	log_it(RealUser, Pid, "BEGIN EDIT", User);
 	(void) snprintf(n, MAX_FNAME, CRON_TAB(User));
@@ -517,6 +518,7 @@ edit_cmd() {
 			perror("/dev/null");
 			exit(ERROR_EXIT);
 		}
+		add_help_text = 1;
 	}
 
 	um = umask(077);
@@ -534,6 +536,10 @@ edit_cmd() {
 	}
 
 	Set_LineNum(1)
+
+	if (add_help_text) {
+		fprintf(NewCrontab, "# m h  dom mon dow   command\n" );
+	}
 
 	/* ignore the top few comments since we probably put them there.
 	 */
