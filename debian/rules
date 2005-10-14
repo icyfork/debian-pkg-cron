@@ -18,6 +18,20 @@ ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
   DEB_INSTALL += -s
 endif
 
+# Set system type (Linux, HURD, etc.)
+DEB_HOST_GNU_SYSTEM = $(shell dpkg-architecture -qDEB_HOST_GNU_SYSTEM)
+ifeq ($(DEB_HOST_GNU_SYSTEM), gnu)
+  PAM_DEFS = 
+  PAM_LIBS =
+else
+  PAM_DEFS = -DUSE_PAM
+  PAM_LIBS = -lpam
+  SELINUX = yes
+endif
+
+export PAM_DEFS
+export PAM_LIBS
+
 # SELinux
 ifeq (yes,$(SELINUX))
   SELINUX_DEFS = -DWITH_SELINUX
@@ -26,24 +40,11 @@ endif
 
 export SELINUX_DEFS SELINUX_LIBS
 
-# Set system type (Linux, HURD, etc.)
-DEB_HOST_GNU_SYSTEM = $(shell dpkg-architecture -qDEB_HOST_GNU_SYSTEM)
 ifeq ($(DEB_HOST_GNU_SYSTEM), gnu)
-  PAM_DEFS = 
-  PAM_LIBS =
-  CONFFILES = conffiles.nopam
+build: build-cron
 else
-  PAM_DEFS = -DUSE_PAM
-  PAM_LIBS = -lpam
-  CONFFILES = conffiles.pam
-endif
-
-export PAM_DEFS
-export PAM_LIBS
-
-
 build: build-cron build-cron-se
-
+endif
 
 build-cron: b-cron/build-stamp
 b-cron/build-stamp:
@@ -85,7 +86,6 @@ binary-arch: build
 	dh_installdirs
 	dh_install
 
-	cp -p debian/$(CONFFILES) debian/conffiles
 	dh_installdocs FEATURES THANKS README debian/README.anacron
 #	dh_installexamples
 #	dh_installmenu
@@ -93,16 +93,16 @@ binary-arch: build
 	dh_installinit --noscripts
 	# Can't use dh_installcron because we don't have "normal" naming
 	# convention
-	install -m 644 debian/crontab.main debian/tmp/etc/crontab
-	install -m 644 debian/placeholder debian/tmp/etc/cron.d/.placeholder
-	install -m 644 debian/placeholder debian/tmp/etc/cron.hourly/.placeholder
-	install -m 644 debian/placeholder debian/tmp/etc/cron.daily/.placeholder
-	install -m 644 debian/placeholder debian/tmp/etc/cron.weekly/.placeholder
-	install -m 644 debian/placeholder debian/tmp/etc/cron.monthly/.placeholder
+	install -m 644 debian/crontab.main debian/cron/etc/crontab
+	install -m 644 debian/placeholder debian/cron/etc/cron.d/.placeholder
+	install -m 644 debian/placeholder debian/cron/etc/cron.hourly/.placeholder
+	install -m 644 debian/placeholder debian/cron/etc/cron.daily/.placeholder
+	install -m 644 debian/placeholder debian/cron/etc/cron.weekly/.placeholder
+	install -m 644 debian/placeholder debian/cron/etc/cron.monthly/.placeholder
 	install -m 755 debian/standard.daily \
-                       debian/tmp/etc/cron.daily/standard
+                       debian/cron/etc/cron.daily/standard
 	install -m 755 debian/standard.monthly \
-                       debian/tmp/etc/cron.monthly/standard
+                       debian/cron/etc/cron.monthly/standard
 	dh_installman crontab.1 crontab.5 cron.8
 #	dh_undocumented
 	dh_installchangelogs CHANGES
