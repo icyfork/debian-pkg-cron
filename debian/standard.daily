@@ -58,11 +58,15 @@ fi
 #
 # Check to see if any files are in lost+found directories and warn admin
 #
-# Get a list of the (potential) ext2 and ext3 l+f directories
-lflist=`df -P --type=ext2 --type=ext3 |awk '$6 == "/" {$6 = ""} /\/dev\// {printf "%s/lost+found ", $6}'`
-
+# Get a list of the (potential) ext2, ext3 and xfs l+f directories
+df -P --type=ext2 --type=ext3 --type=xfs |
+awk '/\/dev\// { print }' | sed -e 's/ [[:space:]]*/ /g'  |
+while read mount block used avail perc mp; do
+	[ "$mp" == "/" ] && mp=""
+	echo "$mp/lost+found"
+done |
+while read lfdir; do
 # In each directory, look for files
-for lfdir in $lflist ; do
     if [ -d "$lfdir" ] ; then
 	more_lost_found=`ls -1  "$lfdir" | grep -v 'lost+found$' | sed 's/^/    /'`
 	if [ -n "$more_lost_found" ] ; then
@@ -72,9 +76,15 @@ $lfdir:
 $more_lost_found"
 	    # NOTE: above weird line breaks in string are intentional!
         fi
+    else
+    	no_lost_found="$no_lost_found
+$lfdir"
     fi
 done
 
+# NOTE: This might need to be configurable if systems abound
+# w/o lost+found out there to prevent giving out this warning
+# every day.
 if [ -n "$lost_found" ]; then
     cat << EOF
 Files were found in lost+found directories. This is probably
@@ -85,6 +95,18 @@ them if they are not important.
 
 The following files were found:
 $lost_found
+EOF
+fi
+
+if [ -n "$no_lost_found" ]; then
+    cat << EOF
+Some local filesystems do not have lost+found directories. This
+means that these filesystems will not be able to recover
+lost files when the filesystem is checked after a crash.
+Consider creating a lost+found directory with mklost+found(8).
+
+The following lost+found directories were not available:
+$no_lost_found
 EOF
 fi
 
