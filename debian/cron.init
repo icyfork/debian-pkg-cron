@@ -7,6 +7,9 @@
 # Required-Stop:     $syslog $time
 # Default-Start:     2 3 4 5
 # Default-Stop:      S 0 1 6
+# Short-Description: Regular background program processing daemon
+# Description:       Daemon to run both system and user programs at 
+#                    scheduled intervals 
 ### END INIT INFO
 
 
