@@ -1,5 +1,14 @@
 #!/bin/sh
 # Start/stop the cron daemon.
+#
+### BEGIN INIT INFO
+# Provides:          cron
+# Required-Start:    $syslog $time
+# Required-Stop:     $syslog $time
+# Default-Start:     2 3 4 5
+# Default-Stop:      S 0 1 6
+### END INIT INFO
+
 
 test -f /usr/sbin/cron || exit 0
 
