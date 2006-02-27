@@ -10,7 +10,7 @@ Package: cron
 Architecture: any
 Depends: ${shlibs:Depends}, debianutils (>=1.7), adduser
 Recommends: exim4 | postfix | mail-transport-agent
-Suggests: anacron (>=2.0-1), logrotate, lockfile-progs, checksecurity
+Suggests: anacron (>=2.0-1), logrotate, lockfile-progs, checksecurity,  lsb-base (>= 1.3-9)
 Conflicts: suidmanager (<< 0.50), lockfile-progs (<< 0.1.7)
 Provides:
 Description: management of regular background processing
