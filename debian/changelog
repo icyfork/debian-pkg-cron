@@ -2,6 +2,9 @@ cron (3.0pl1-93) unstable; urgency=low
 
   * Include patch from Ubuntu that incorporates LSB functions to the init.
     This should help have Ubuntu synchronise their changes easier.
+  * Fix FTBFS on GNU/kFreeBSD with patch from Aurelien Jarno (Closes: #338246)
+  * Add brackets to the initscript for bash completion (Closes: #350605)
+
 
  -- Javier Fernandez-Sanguino Pen~a <jfs@computer.org>  Mon, 27 Feb 2006 22:39:24 +0100
 
