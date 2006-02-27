@@ -20,25 +20,27 @@ test -f /usr/sbin/cron || exit 0
 
 #LSBNAMES='-l'  # Uncomment for LSB name support in /etc/cron.d/
 
+. /lib/lsb/init-functions
+
 case "$1" in
-start)	echo -n "Starting periodic command scheduler: cron"
+start)	log_begin_msg "Starting periodic command scheduler..."
         start-stop-daemon --start --quiet --pidfile /var/run/crond.pid --name cron --startas /usr/sbin/cron -- $LSBNAMES
-        echo "." 
+        log_end_msg $?
 	;;
-stop)	echo -n "Stopping periodic command scheduler: cron"
+stop)	log_begin_msg "Stopping periodic command scheduler..."
         start-stop-daemon --stop --quiet --pidfile /var/run/crond.pid --name cron
-        echo "."
+        log_end_msg $?
         ;;
-restart) echo -n "Restarting periodic command scheduler: cron"
+restart) log_begin_msg "Restarting periodic command scheduler..."
         start-stop-daemon --stop --retry 5 --quiet --pidfile /var/run/crond.pid --name cron
         start-stop-daemon --start --quiet --pidfile /var/run/crond.pid --name cron --startas /usr/sbin/cron -- $LSBNAMES
-        echo "."
+        log_end_msg $?
         ;;
-reload|force-reload) echo -n "Reloading configuration files for periodic command scheduler: cron"
+reload|force-reload) log_begin_msg "Reloading configuration files for periodic command scheduler..."
 	# cron reloads automatically
-        echo "."
+        log_end_msg 0
         ;;
-*)	echo "Usage: /etc/init.d/cron start|stop|restart|reload|force-reload"
+*)	log_success_msg "Usage: /etc/init.d/cron start|stop|restart|reload|force-reload"
         exit 1 
         ;;
 esac
