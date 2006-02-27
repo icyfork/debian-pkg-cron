@@ -40,7 +40,7 @@ reload|force-reload) log_begin_msg "Reloading configuration files for periodic c
 	# cron reloads automatically
         log_end_msg 0
         ;;
-*)	log_success_msg "Usage: /etc/init.d/cron start|stop|restart|reload|force-reload"
+*)	log_success_msg "Usage: /etc/init.d/cron {start|stop|restart|reload|force-reload}"
         exit 1 
         ;;
 esac
