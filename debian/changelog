@@ -1,3 +1,10 @@
+cron (3.0pl1-94) unstable; urgency=low
+
+  * Lsb-base is now priority 'required' (3.0-16) instead of 'extra' 
+    (3.0-15) so I'm moving the Suggests: up to a Depends:  (Closes #360236)
+
+ -- Javier Fernandez-Sanguino Pen~a <jfs@computer.org>  Sat,  1 Apr 2006 03:41:55 +0200
+
 cron (3.0pl1-93) unstable; urgency=low
 
   * Include patch from Ubuntu that incorporates LSB functions to the init.
