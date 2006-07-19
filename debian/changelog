@@ -1,3 +1,15 @@
+cron (3.0pl1-95) unstable; urgency=low
+
+  * Handle errors when reading crontabs so that it stops reading entries in 
+    a crontab file after a syntax error. This prevents a rogue user from
+    dumping binary files in /etc/cron.d/ or /var/spool/cron/crontabs/ and have
+    them executed by cron (but binary files under
+    /etc/cron.{daily,weekly,monthly} will still be processed as they are
+    handled by run-parts. h Thanks to Faidon Liambotis for the patch.
+    (Closes: #378153)
+
+ -- Javier Fernandez-Sanguino Pen~a <jfs@computer.org>  Wed, 19 Jul 2006 21:31:13 +0200
+
 cron (3.0pl1-94) unstable; urgency=low
 
   * Lsb-base is now priority 'required' (3.0-16) instead of 'extra' 

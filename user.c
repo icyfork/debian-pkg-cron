@@ -223,6 +223,11 @@ load_user(crontab_fd, pw, uname, fname, tabname)
 			if (e) {
 				e->next = u->crontab;
 				u->crontab = e;
+			} else {
+				/* stop processing on EOF/syntax error */
+				free_user(u);
+				u = NULL;
+				goto done;
 			}
 			break;
 		case TRUE:
