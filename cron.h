@@ -301,6 +301,7 @@ extern	time_t	StartTime;
 extern  time_min timeRunning;
 extern  time_min virtualTime;
 extern  time_min clockTime;
+extern  char     cron_default_mail_charset[MAX_ENVSTR];
 # if DEBUGGING
 extern	int	DebugFlags;
 extern	char	*DebugFlagNames[];

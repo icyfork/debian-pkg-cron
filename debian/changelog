@@ -7,6 +7,11 @@ cron (3.0pl1-95) unstable; urgency=low
     /etc/cron.{daily,weekly,monthly} will still be processed as they are
     handled by run-parts. h Thanks to Faidon Liambotis for the patch.
     (Closes: #378153)
+  * Reuse vixie-cron-4.1-_51-bz180145-mail_i18n.patch from Fedora Core in
+    order to setup a proper Content-Type when sending e-mails. The
+    Content-Type will be set to the default system locale or cron's
+    environment (if it modifies it). If the locale is undefined it will
+    default to US ASCII (Closes: #338051)
 
  -- Javier Fernandez-Sanguino Pen~a <jfs@computer.org>  Wed, 19 Jul 2006 21:31:13 +0200
 

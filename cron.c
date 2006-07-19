@@ -68,6 +68,7 @@ main(argc, argv)
 	char	*argv[];
 {
 	cron_db	database;
+	char *cs;
 
 	ProgramName = argv[0];
 
@@ -99,6 +100,16 @@ main(argc, argv)
 #if defined(POSIX)
 	setenv("PATH", _PATH_DEFPATH, 1);
 #endif
+
+       /* Get the default locale character set for the mail
+        * "Content-Type: ...; charset=" header
+        */
+       setlocale(LC_ALL,""); /* set locale to system defaults or to
+                                that specified by any  LC_* env vars */
+       if ( ( cs = nl_langinfo( CODESET ) ) != 0L )
+           strncpy( cron_default_mail_charset, cs, MAX_ENVSTR );
+       else
+           strcpy( cron_default_mail_charset, "US-ASCII" );
 
 	/* if there are no debug flags turned on, fork as a daemon should.
 	 */

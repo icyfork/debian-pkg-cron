@@ -478,6 +478,9 @@ child_process(e, u)
 				register char	**env;
 				auto char	mailcmd[MAX_COMMAND];
 				auto char	hostname[MAXHOSTNAMELEN];
+				char    *content_type = env_get("CONTENT_TYPE",jobenv),
+					*content_transfer_encoding = env_get("CONTENT_TRANSFER_ENCODING",jobenv);
+
 
 				(void) gethostname(hostname, MAXHOSTNAMELEN);
 				(void) snprintf(mailcmd, sizeof(mailcmd),
@@ -495,6 +498,36 @@ child_process(e, u)
 				fprintf(mail, "Date: %s\n",
 					arpadate(&StartTime));
 # endif /* MAIL_DATE */
+                               if ( content_type == 0L ) {
+                                       fprintf(mail, "Content-Type: text/plain; charset=%s\n",
+                                               cron_default_mail_charset
+                                              );
+                               } else {   
+				    /* user specified Content-Type header.
+				     * disallow new-lines for security reasons
+				     * (else users could specify arbitrary mail headers!)
+				     */
+				       char *nl=content_type;
+                                       size_t ctlen = strlen(content_type);
+
+                                       while(  (*nl != '\0')
+                                            && ((nl=strchr(nl,'\n')) != 0L)
+                                            && (nl < (content_type+ctlen))
+                                            ) *nl = ' ';
+                                       fprintf(mail,"Content-Type: %s\n", content_type);
+                               }
+                               if ( content_transfer_encoding != 0L ) {
+                                       char *nl=content_transfer_encoding;
+                                       size_t ctlen = strlen(content_transfer_encoding);
+                                       while(  (*nl != '\0')
+                                            && ((nl=strchr(nl,'\n')) != 0L)
+                                            && (nl < (content_transfer_encoding+ctlen))
+                                            ) *nl = ' ';
+
+                                       fprintf(mail,"Content-Transfer-Encoding: %s\n", content_transfer_encoding);
+                               }
+
+
 				for (env = e->envp;  *env;  env++)
 					fprintf(mail, "X-Cron-Env: <%s>\n",
 						*env);
