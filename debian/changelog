@@ -14,6 +14,8 @@ cron (3.0pl1-95) unstable; urgency=low
     default to US ASCII (Closes: #338051)
   * Support kfreebsd-amd64 by modifying the Build-Depends for SElinux (Closes:
     #361458)
+  * Fix typos in the crontab.1 manpage spotted by Jonas Koelker 
+   (Closes: #369153)
   * Change Steve's email in crontab.c error message to
     cron@packages.debian.org 
 
