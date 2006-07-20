@@ -678,7 +678,7 @@ again: /* Loop point for retrying edit after error */
                 break;
         default:
                 fprintf(stderr,
-                        "stevegr@debian.org fscked up. Send him a nasty note\n");
+                        "cron@packages.debian.org fscked up. Send him a nasty note\n");
                 break;
         }
 
