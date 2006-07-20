@@ -476,6 +476,7 @@ child_process(e, u)
 
 			if (mailto) {
 				register char	**env;
+                        	char    **jobenv = build_env(e->envp); 
 				auto char	mailcmd[MAX_COMMAND];
 				auto char	hostname[MAXHOSTNAMELEN];
 				char    *content_type = env_get("CONTENT_TYPE",jobenv),
