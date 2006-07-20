@@ -12,6 +12,10 @@ cron (3.0pl1-95) unstable; urgency=low
     Content-Type will be set to the default system locale or cron's
     environment (if it modifies it). If the locale is undefined it will
     default to US ASCII (Closes: #338051)
+  * Support kfreebsd-amd64 by modifying the Build-Depends for SElinux (Closes:
+    #361458)
+  * Change Steve's email in crontab.c error message to
+    cron@packages.debian.org 
 
  -- Javier Fernandez-Sanguino Pen~a <jfs@computer.org>  Wed, 19 Jul 2006 21:31:13 +0200
 
