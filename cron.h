@@ -282,6 +282,7 @@ time_min clockTime;
 
 int	stay_foreground;
 int     lsbsysinit_mode;
+char    cron_default_mail_charset[MAX_ENVSTR] = "";
 
 # if DEBUGGING
 int	DebugFlags;
