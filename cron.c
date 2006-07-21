@@ -451,7 +451,7 @@ parse_args(argc, argv)
 	stay_foreground = 0;
         lsbsysinit_mode = 0;
 
-	while (EOF != (argch = getopt(argc, argv, "lfx:"))) {
+	while (EOF != (argch = getopt(argc, argv, "lfx:L:"))) {
 		switch (argch) {
 		default:
 			usage();
@@ -465,6 +465,9 @@ parse_args(argc, argv)
                 case 'l':
                     lsbsysinit_mode = 1;
                     break;
+		case 'L':
+		    log_level = atoi(optarg);
+		    break;
 		}
 	}
 }

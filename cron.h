@@ -282,6 +282,7 @@ time_min clockTime;
 
 int	stay_foreground;
 int     lsbsysinit_mode;
+int     log_level = 1;
 char    cron_default_mail_charset[MAX_ENVSTR] = "";
 
 # if DEBUGGING
@@ -297,6 +298,7 @@ extern	char	*copyright[],
 		*DowNames[],
 		*ProgramName;
 extern  int     lsbsysinit_mode;
+extern  int     log_level;
 extern	int	LineNumber;
 extern	time_t	StartTime;
 extern  time_min timeRunning;

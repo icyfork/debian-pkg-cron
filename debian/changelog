@@ -2,20 +2,25 @@ cron (3.0pl1-95) unstable; urgency=low
 
   * Handle errors when reading crontabs so that it stops reading entries in 
     a crontab file after a syntax error. This prevents a rogue user from
-    dumping binary files in /etc/cron.d/ or /var/spool/cron/crontabs/ and have
-    them executed by cron (but binary files under
+    dumping binary files in /etc/cron.d/ or /var/spool/cron/crontabs/ 
+    and have them executed by cron (but binary files under
     /etc/cron.{daily,weekly,monthly} will still be processed as they are
-    handled by run-parts. h Thanks to Faidon Liambotis for the patch.
+    handled by run-parts. Thanks to Faidon Liambotis for the patch.
     (Closes: #378153)
   * Reuse vixie-cron-4.1-_51-bz180145-mail_i18n.patch from Fedora Core in
     order to setup a proper Content-Type when sending e-mails. The
     Content-Type will be set to the default system locale or cron's
     environment (if it modifies it). If the locale is undefined it will
     default to US ASCII (Closes: #338051)
-  * Support kfreebsd-amd64 by modifying the Build-Depends for SElinux (Closes:
-    #361458)
+    - There is no need to define a CHARSET variable now with the above
+    patch (Closes: #309150)
+  * Support kfreebsd-amd64 by modifying the Build-Depends for SElinux 
+    (Closes: #361458)
   * Fix typos in the crontab.1 manpage spotted by Jonas Koelker 
-   (Closes: #369153)
+    (Closes: #369153)
+  * Add option to control logging (-L) with patch provided by Steve Fosdick.
+    This makes it possible to log cron job finishing if you use -L 2
+    (Closes: #271747, #318247)
   * Change Steve's email in crontab.c error message to
     cron@packages.debian.org 
 

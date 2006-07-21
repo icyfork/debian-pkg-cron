@@ -248,7 +248,7 @@ child_process(e, u)
 		 * the actual user command shell was going to get and the
 		 * PID is part of the log message.
 		 */
-		/*local*/{
+		if (log_level >= 1) {
 			char *x = mkprints((u_char *)e->cmd, strlen(e->cmd));
 
 			log_it(usernm, getpid(), "CMD", x);
@@ -581,6 +581,13 @@ child_process(e, u)
 			}
 
 		} /*if data from grandchild*/
+
+		if (log_level >= 2) {
+			char *x = mkprints((u_char *)e->cmd, strlen(e->cmd));
+
+			log_it(usernm, getpid(), "END", x);
+			free(x);
+		}
 
 		Debug(DPROC, ("[%d] got EOF from grandchild\n", getpid()))
 
