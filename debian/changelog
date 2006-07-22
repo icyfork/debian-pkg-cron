@@ -1,3 +1,9 @@
+cron (3.0pl1-96) unstable; urgency=low
+
+  * Fix crontab.5 typo (changed quotes ' to ")  (Closes: #379230)
+
+ -- Javier Fernandez-Sanguino Pen~a <jfs@computer.org>  Sat, 22 Jul 2006 20:51:45 +0200
+
 cron (3.0pl1-95) unstable; urgency=low
 
   * Handle errors when reading crontabs so that it stops reading entries in 
