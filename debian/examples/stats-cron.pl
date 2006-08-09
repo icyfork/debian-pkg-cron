@@ -2,6 +2,52 @@
 #
 # Generate stats of Cron messages sent to syslog
 #
+#
+# This script can be used to generate per-user and per-task 
+# statistics in order to determine how much time do cron tasks take
+# and audit cron use. It might be useful to debug issues related
+# to cron tasks that take too much time to run, or overlap, or get executed 
+# too fast..
+#
+# Hint: In some systems, cron tasks might not properly use lockfiles to
+# prevent themselves from being run twice in a row and some "strange"
+# things might happen if the system is overloaded and a cron task takes
+# more than expected. And, no, this is not something that Cron should
+# prevent (for more information see Debian bug #194805).
+#
+# In order for this script to work 
+#
+# together with the logging enhancements included
+# in Debian's vixie cron (3.0pl1-95) that make it possible to log 
+# when do cron tasks end.
+# 
+#
+# How to use:
+# - Modify /etc/init.d/cron so that the calls to cron pass the '-L 2'
+#   argument
+#   (Hint: change lines 27 and 47 so that they end with '-- -L 2 $LSBNAMES'
+#   instead of '-- $LSBNAMES')
+#   In Debian you need cron-3.0pl1-95 or later.
+#   Note: future versions of cron might use an /etc/default/cron file
+#   to provide arguments to cron. 
+#
+# - Review /etc/syslog.conf to determine where does the output of the cron
+#   facility goes to (might be /var/log/syslog together with other messages
+#   but you can also configure syslog to store them at /var/log/cron.log)
+#
+# - Run the script (by default it will read input /var/log/syslog but you
+#   can point to other file using the '-f' switch) and review the output
+#
+# - (Optionally) If you want to analyse log files for a long period
+#   concatenate different log files, extract all CRON related entries
+#   to a file and process that.
+#  
+#   You could do, for example, this:
+#
+#   zcat -f /var/log/syslog* | grep CRON >cron-log ;  \
+#              perl stats-cron.pl -f cron-log
+#   
+#
 # This program is copyright 2006 by Javier Fernandez-Sanguino <jfs@debian.org>
 #
 #    This program is free software; you can redistribute it and/or modify
@@ -22,8 +68,17 @@
 #  http://www.gnu.org/licenses/licenses.html#GPL
 
 # TODO:
-# - Print time internal (from 'XXX' to 'XXX') base on the first and the
-#   last log entry
+# - Print time internal of file analysis (from 'XXX' to 'XXX') based on the
+#   first and the last log entry read.
+# 
+# - Detect overlaped entries for the same task (start of an entry before the
+#   previous one finished)
+#
+# - Make it possible to filter by users
+#
+# - Consider adapting to other log formats (other cron programs? Solaris?) by
+#   separating analysis and extraction in the code and making it possible
+#   to switch to different analysis methods.
 
 
 # Required modules
