@@ -2,6 +2,7 @@ cron (3.0pl1-96) unstable; urgency=low
 
   * Fix crontab.5 typo (changed quotes ' to ") that prevent a line from being
     presented (Closes: #379230)
+  * Small typo fix in cron.8
   * Introduce Steve Grubb's patch to emit audit log message on crontab denial
     based on the patch from Fedora, and adapted to Debian's cron version. The
     main difference is that audit logs are generated if cron is compiled to
