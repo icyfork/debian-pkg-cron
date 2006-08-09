@@ -39,3 +39,23 @@ to cron license above from e-mail:
 Modifications for Debian GNU/Linux Copyright 1994 Ian Jackson;
 Copyright (C) 1994 Ian Jackson
 Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004 Steve Greenland
+
+This package includes in the examples directory the  crontab2english script
+written by Sean M. Burke.  This script is Copyright 2001 Sean M. Burke
+and is distributed with the following licensing terms:
+
+This library is free software; you can redistribute it and/or
+modify it under the same terms as Perl itself.
+
+This package includes in the examples directory the stats-cron script
+written by Javier Fernandez-Sanguino.  This script is Copyright 2006
+Javier Fernandez-Sanguino and is distributed with the following licensing
+terms:
+
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+
+In Debian GNU/Linux you can find a copy of the above licenses at
+/usr/share/common-licenses.
