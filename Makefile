@@ -55,7 +55,7 @@ DESTMAN		=	$(DESTROOT)/share/man
 INCLUDE		=	-I.
 #INCLUDE	=
 #<<need getopt()>>
-LIBS		= $(PAM_LIBS) $(SELINUX_LIBS)
+LIBS		= $(PAM_LIBS) $(SELINUX_LIBS) $(AUDIT_LIBS)
 #<<optimize or debug?>>
 OPTIM		=	-O2
 #OPTIM		=	-g

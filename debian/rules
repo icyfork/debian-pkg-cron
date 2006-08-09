@@ -40,6 +40,14 @@ endif
 
 export SELINUX_DEFS SELINUX_LIBS
 
+# Audit
+ifeq (yes,$(AUDIT))
+AUDIT_LIBS = -laudit
+else
+AUDIT_LIBS = 
+endif
+export AUDIT_LIBS
+
 ifeq ($(DEB_HOST_ARCH_OS), linux)
 build: build-cron build-cron-se
 else
@@ -87,7 +95,7 @@ binary-arch: build
 	dh_install
 
 	dh_installdocs FEATURES THANKS README debian/README.anacron
-#	dh_installexamples
+	dh_installexamples debian/examples/*
 #	dh_installmenu
 	dh_installpam
 	dh_installinit --noscripts

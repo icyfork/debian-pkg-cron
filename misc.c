@@ -35,6 +35,9 @@ static char rcsid[] = "$Id: misc.c,v 2.9 1994/01/15 20:43:43 vixie Exp $";
 #include <errno.h>
 #include <string.h>
 #include <fcntl.h>
+#ifdef WITH_AUDIT
+#include <libaudit.h>
+#endif
 #if defined(SYSLOG)
 # include <syslog.h>
 #endif
@@ -430,7 +433,17 @@ allowed(username)
 {
 	static int	init = FALSE;
 	static FILE	*allow, *deny;
+	int     isallowed;
 
+        /* Root cannot be denied execution of cron jobs even if in the
+	 * 'DENY_FILE' so we return inmediately */
+        if (strcmp(username, ROOT_USER) == 0)
+                return (TRUE);
+
+	isallowed = FALSE;
+#if defined(ALLOW_ONLY_ROOT)
+	Debug(DMISC, "only root access is allowed")
+#else
 	if (!init) {
 		init = TRUE;
 #if defined(ALLOW_FILE) && defined(DENY_FILE)
@@ -444,15 +457,21 @@ allowed(username)
 	}
 
 	if (allow)
-		return (in_file(username, allow));
+		isallowed = in_file(username, allow);
 	if (deny)
-		return (!in_file(username, deny));
-
-#if defined(ALLOW_ONLY_ROOT)
-	return (strcmp(username, ROOT_USER) == 0);
-#else
-	return TRUE;
+		isallowed = !in_file(username, deny);
 #endif
+
+#ifdef WITH_AUDIT
+       /* Log an audit message if the user is rejected */ 
+       if (isallowed == FALSE) {
+               int audit_fd = audit_open();
+               audit_log_user_message(audit_fd, AUDIT_USER_START, "cron deny",
+                       NULL, NULL, NULL, 0);
+               close(audit_fd);
+       }
+#endif
+	return isallowed;
 }
 
 
