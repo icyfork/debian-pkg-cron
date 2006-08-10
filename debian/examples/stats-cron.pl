@@ -82,6 +82,12 @@
 
 
 # Required modules
+eval 'use Parse::Syslog';
+if ($@) {
+	print STDERR "ERROR: Parse::Syslog not installed, please install this Perl library\n";
+	print STDERR "ERROR: (in Debian it is provided by the 'libparse-syslog-perl' package)\n";
+	exit 1;
+}
 use Parse::Syslog;
 use Getopt::Std;
 # Parse command line
@@ -183,7 +189,7 @@ sub clear_entry {
 # to the list of timestamps for that user
 #
 	my ($timestamp, $text, $pid) = @_;
-	my ($user, $prg, $entry);
+	my ($user, $prg, $entry, $count);
 	my @array; my @stack;
 	print STDERR "DEBUG: Entering clear_entry with @_\n" if $opt_d; 
 	$user = find_user($text);
@@ -226,7 +232,7 @@ sub clear_entry {
 		}
 	}
 	# Push all remaining entries to the stack
-	$cron_entries{$user}{$prg}{'items'}="";
+	$cron_entries{$user}{$prg}{'item'}="";
 	$count = $#array + 1 ;
 	if ($opt_d) {
 		print STDERR "DEBUG: Restoring all entries (size: array $count";
@@ -234,6 +240,7 @@ sub clear_entry {
 		print STDERR ", stack $count)\n";
 	}
 	print STDERR "DEBUG: Total finished tasks: $cron_entries{$user}{$prg}{'finished'} out of $cron_entries{$user}{$prg}{'count'}\n" if defined $cron_entries{$user}{$prg}{'finished'} && $opt_d;
+	print STDERR "DEBUG: Unmatched now: $cron_entries{$user}{$prg}{'item'}\n" if $opt_d;
 	while ( $entry = pop @array ) {
 		add_cron_entry($user, $prg, $entry);
 	}
@@ -246,8 +253,8 @@ sub clear_entry {
 
 sub add_cron_entry {
 	my ($user, $prg, $entry) = @_;
-	if ( $cron_entries{$user}{$prg} ne "" ) { 
-		$cron_entries{$user}{$prg}{'item'} = join(":", $cron_entries{$user}{$prg}, $entry);
+	if ( defined ($cron_entries{$user}{$prg}) &&  $cron_entries{$user}{$prg} ne "" ) { 
+		$cron_entries{$user}{$prg}{'item'} = join(":", $cron_entries{$user}{$prg}{'item'}, $entry);
 	} else {
 		$cron_entries{$user}{$prg}{'item'} = $entry;
 	}
@@ -256,7 +263,7 @@ sub add_cron_entry {
 sub count_unmatched {
 	my ($user, $prg) = @_;
 	my ($count, @array);
-	return -1 if ! defined ( $cron_times{$user}{$prg} ); 
+	return 0 if ! defined ( $cron_entries{$user}{$prg}{'item'} ); 
 	@array = split(':', $cron_entries{$user}{$prg}{'item'});
 	$count = $#array + 1 ;
 	return $count;
@@ -264,7 +271,7 @@ sub count_unmatched {
 
 sub find_average {
 	my ($user, $prg) = @_;
-	my ($average, $count, $total, @array);
+	my ($average, $count, $total, @array, $entry);
 	$total = 0 ;
 	return -1 if ! defined ( $cron_times{$user}{$prg} ); 
 	@array = split(':', $cron_times{$user}{$prg});
@@ -278,7 +285,7 @@ sub find_average {
 
 sub find_minimum {
 	my ($user, $prg) = @_;
-	my ($minimum, @array);
+	my ($minimum, @array, $entry);
 	$minimum = -1;
 	return -1 if ! defined ( $cron_times{$user}{$prg} ); 
 	@array = split(':', $cron_times{$user}{$prg});
@@ -296,6 +303,7 @@ sub find_maximum {
 	my ($user, $prg) = @_;
 	my ($maximum, @array);
 	$maximum = -1;
+	return -1 if ! defined ( $cron_times{$user}{$prg} ); 
 	@array = split(':', $cron_times{$user}{$prg});
 	while ( defined ( $entry = pop @array ) ) {
 		if ( $maximum == -1 ) {
