@@ -1,3 +1,13 @@
+cron (3.0pl1-97) unstable; urgency=high
+
+  * Fix the behaviour of crontab so that in systems that do *not* have
+    a cron.allow file users will be allowed to use crontab, change
+    the behaviour of the previous version because it was contrary
+    to the manpage (now a user that is in *both* cron.deny and
+    cron.allow will be allowed access) (Closes: #383741)
+
+ -- Javier Fernandez-Sanguino Pen~a <jfs@computer.org>  Sat, 19 Aug 2006 10:36:48 +0200
+
 cron (3.0pl1-96) unstable; urgency=low
 
   * Fix crontab.5 typo (changed quotes ' to ") that prevent a line from being

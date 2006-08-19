@@ -456,9 +456,11 @@ allowed(username)
 #endif
 	}
 
-	if (allow)
+	if (allow) 
 		isallowed = in_file(username, allow);
-	if (deny)
+	else
+		isallowed = TRUE; /* Allow access if ALLOW_FILE does not exist */
+	if (deny && !allow)
 		isallowed = !in_file(username, deny);
 #endif
 
