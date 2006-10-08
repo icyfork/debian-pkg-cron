@@ -1,3 +1,14 @@
+cron (3.0pl1-98) unstable; urgency=low
+
+  * Fix LSB-formatted init.d meta info, thanks to Petter Reinholdtsen 
+   (Closes: #386709)
+  * Make crontab tasks run with CWD=/, to make SELinux happy, thanks to
+    Erich Shubert (Closes: #383857)
+  * Use latest lsb logging functions, thanks to David Hardeman 
+    (Closes: #384858, #389893)
+
+ -- Javier Fernandez-Sanguino Pen~a <jfs@computer.org>  Thu,  5 Oct 2006 21:03:19 +0200
+
 cron (3.0pl1-97) unstable; urgency=high
 
   * Fix the behaviour of crontab so that in systems that do *not* have
