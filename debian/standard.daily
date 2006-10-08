@@ -4,6 +4,8 @@
 # Modified by Ian Jackson <ijackson@nyx.cs.du.edu>
 # Modified by Steve Greenland <stevegr@debian.org>
 
+# Start in the root filesystem, make SElinux happy
+cd /
 bak=/var/backups
 LOCKFILE=/var/lock/cron.daily
 umask 022
