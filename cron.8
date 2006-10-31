@@ -17,13 +17,16 @@
 .\" 
 .\" $Id: cron.8,v 2.2 1993/12/28 08:34:43 vixie Exp $
 .\" 
-.TH CRON 8 "20 December 1993"
+.TH CRON 8 "31 October 2006"
 .UC 4
 .SH NAME
 cron \- daemon to execute scheduled commands (Vixie Cron)
 .SH SYNOPSIS
 cron
 .RB [ -f ]
+.RB [ -l ]
+.RB [ -L
+.IR loglevel ]
 .SH DESCRIPTION
 .I cron
 is started automatically from /etc/init.d on entering multi-user
@@ -35,6 +38,13 @@ Stay in foreground mode, don't daemonize.
 .TP
 .B -l
 Enable LSB compliant names for /etc/cron.d files
+.TP
+.B -L loglevel
+Sets the loglevel for cron. The standard logging level (1) will log 
+the start of all the cron jobs. A higher loglevel (2) will cause
+cron to log also the end of all cronjobs, which can be useful to
+audit the behaviour of tasks run by cron. Logging will be disabled
+if the \fIloglevel\fR is set to zero (0).
 .SH NOTES
 .PP
 .I cron
