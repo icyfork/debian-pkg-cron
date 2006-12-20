@@ -170,7 +170,7 @@ Percent-signs (%) in the command, unless escaped with backslash
 (\\), will be changed into newline characters, and all data
 after the first % will be sent to the command as standard
 input. There is no way to split a single command line onto multiple
-lines, ala the shell's trailing "\\".
+lines, like the shell's trailing "\\".
 .PP
 Note: The day of a command's execution can be specified by two
 fields \(em day of month, and day of week.  If both fields are
@@ -227,8 +227,9 @@ This has the username field, as used by /etc/crontab.
 .nf
 # /etc/crontab: system-wide crontab
 # Unlike any other crontab you don't have to run the `crontab'
-# command to install the new version when you edit this file.
-# This file also has a username field, that none of the other crontabs do.
+# command to install the new version when you edit this file
+# and files in /etc/cron.d. These files also have username fields,
+# that none of other the crontabs do.
 
 SHELL=/bin/sh
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin

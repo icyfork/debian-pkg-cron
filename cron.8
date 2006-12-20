@@ -69,7 +69,7 @@ field). However, they are independent of /etc/crontab: they do not, for
 example, inherit environment variable settings from it. The intended purpose
 of this feature is to allow packages that require
 finer control of their scheduling than the /etc/cron.{daily,weekly,monthly} 
-directories allow to add a crontab file to /etc/cron.d. Such files
+directories to add a crontab file to /etc/cron.d. Such files
 should be named after the package that supplies them. Files must
 conform to the same naming convention as used by 
 .IR run-parts(8) :
