@@ -1,3 +1,14 @@
+cron (3.0pl1-100) unstable; urgency=low
+
+  [ Last upload for etch fixing documentation in this package ]
+  * Describe the -L option in cron's manpage.
+  * Fix minor typos, and change Debian-specific content of manpages and
+    default crontab that could lead to user's being confounded. Explicitly say
+    that both /etc/crontab and files under /etc/cron.d/ can have users in the crontab
+    lines.  (Closes: #402934)
+
+ -- Javier Fernandez-Sanguino Pen~a <jfs@computer.org>  Wed, 20 Dec 2006 00:53:06 +0100
+
 cron (3.0pl1-99) unstable; urgency=low
 
   * Fix the test for anacron in /etc/crontab that would make cron run the
