@@ -3,10 +3,10 @@
 #
 ### BEGIN INIT INFO
 # Provides:          cron
-# Required-Start:    $syslog $time
-# Required-Stop:     $syslog $time
+# Required-Start:    $remote_fs $syslog $time
+# Required-Stop:     $remote_fs $syslog $time
 # Default-Start:     2 3 4 5
-# Default-Stop:      0 1 6
+# Default-Stop:      1
 # Short-Description: Regular background program processing daemon
 # Description:       cron is a standard UNIX program that runs user-specified 
 #                    programs at periodic scheduled times. vixie cron adds a 
