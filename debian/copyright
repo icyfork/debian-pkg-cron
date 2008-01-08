@@ -44,8 +44,9 @@ This package includes in the examples directory the  crontab2english script
 written by Sean M. Burke.  This script is Copyright 2001 Sean M. Burke
 and is distributed with the following licensing terms:
 
-This library is free software; you can redistribute it and/or
-modify it under the same terms as Perl itself.
+This library is free software; you can redistribute it and/or modify it under
+the same terms as Perl itself. In Debian GNU/Linux you can find Perl's Artistic
+license at /usr/share/common-licenses/Artistic
 
 This package includes in the examples directory the stats-cron script
 written by Javier Fernandez-Sanguino.  This script is Copyright 2006
