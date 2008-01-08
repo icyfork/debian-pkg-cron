@@ -106,7 +106,10 @@ main(argc, argv)
         */
        setlocale(LC_ALL,""); /* set locale to system defaults or to
                                 that specified by any  LC_* env vars */
-       if ( ( cs = nl_langinfo( CODESET ) ) != 0L )
+       /* Except that "US-ASCII" is preferred to "ANSI_x3.4-1968" in MIME,
+        * even though "ANSI_x3.4-1968" is the official charset name. */
+       if ( ( cs = nl_langinfo( CODESET ) ) != 0L && 
+               strcmp(cs, "ANSI_x3.4-1968") != 0 )
            strncpy( cron_default_mail_charset, cs, MAX_ENVSTR );
        else
            strcpy( cron_default_mail_charset, "US-ASCII" );
