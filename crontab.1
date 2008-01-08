@@ -24,7 +24,7 @@ crontab \- maintain crontab files for individual users (V3)
 .SH SYNOPSIS
 crontab [ -u user ] file
 .br
-crontab [ -u user ] { -l | -r | -e }
+crontab [ -u user ] { -l | -r | -e } { -i }
 .SH DESCRIPTION
 .I crontab
 is the program used to install, deinstall or list the tables
@@ -86,6 +86,11 @@ After you exit
 from the editor, the modified crontab will be installed automatically. If
 neither of the environment variables is defined, then the
 default editor /usr/bin/editor is used.
+.PP
+The
+.I -i
+option modifies the -r option to prompt the user for a 'y/Y' response
+before actually removing the crontab.
 .SH DEBIAN SPECIFIC
 The "out-of-the-box" behaviour for
 .I crontab -l

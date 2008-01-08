@@ -60,6 +60,7 @@ static	char		Filename[MAX_FNAME];
 static	char		Directory[MAX_FNAME];
 static	FILE		*NewCrontab = NULL;
 static	int		CheckErrorCount;
+static  int             PromptOnDelete;
 static	enum opt_t	Option;
 static	struct passwd	*pw;
 static	void		list_cmd __P((void)),
@@ -86,6 +87,7 @@ usage(msg)
 	fprintf(stderr, "\t-e\t(edit user's crontab)\n");
 	fprintf(stderr, "\t-l\t(list user's crontab)\n");
 	fprintf(stderr, "\t-r\t(delete user's crontab)\n");
+        fprintf(stderr, "\t-i\t(prompt before deleting user's crontab)\n");
 	exit(ERROR_EXIT);
 }
 
@@ -140,9 +142,9 @@ main(argc, argv)
 }
 	
 #if DEBUGGING
-char *getoptarg = "u:lerx:";
+char *getoptarg = "u:lerix:";
 #else
-char *getoptarg = "u:ler";
+char *getoptarg = "u:leri";
 #endif
 
 
@@ -167,6 +169,7 @@ parse_args(argc, argv)
 	}
 	Filename[0] = '\0';
 	Option = opt_unknown;
+        PromptOnDelete = 0;
 
 	while (EOF != (argch = getopt(argc, argv, getoptarg))) {
 		switch (argch) {
@@ -211,6 +214,9 @@ parse_args(argc, argv)
 			if (Option != opt_unknown)
 				usage("only one operation permitted");
 			Option = opt_edit;
+			break;
+		case 'i':
+                        PromptOnDelete = 1;
 			break;
 		default:
 			usage("unrecognized option");
@@ -288,6 +294,15 @@ list_cmd() {
 	int     x;
 	char    *ctnh;
 #endif
+        if( PromptOnDelete == 1 )
+        {
+            printf("crontab: really delete %s's crontab? ", User);
+            fflush(stdout);
+            fgets(n, MAX_FNAME-1, stdin);
+            if((n[0] != 'Y') && (n[0] != 'y'))
+                exit(0);
+        }
+
 
 	log_it(RealUser, Pid, "LIST", User);
 	(void) snprintf(n, MAX_FNAME, CRON_TAB(User));
