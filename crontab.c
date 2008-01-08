@@ -307,10 +307,12 @@ list_cmd() {
 	log_it(RealUser, Pid, "LIST", User);
 	(void) snprintf(n, MAX_FNAME, CRON_TAB(User));
 	if (!(f = fopen(n, "r"))) {
-		if (errno == ENOENT)
+		if (errno == ENOENT) 
 			fprintf(stderr, "no crontab for %s\n", User);
-		else
+		else {
+                        fprintf(stderr, "%s/", CRONDIR);
 			perror(n);
+                }
 		exit(ERROR_EXIT);
 	}
 
@@ -356,8 +358,10 @@ delete_cmd() {
 	if (unlink(n)) {
 		if (errno == ENOENT)
 			fprintf(stderr, "no crontab for %s\n", User);
-		else
+		else {
+                        fprintf(stderr, "%s/", CRONDIR);
 			perror(n);
+                }
 		exit(ERROR_EXIT);
 	}
 	poke_daemon();
@@ -524,6 +528,7 @@ edit_cmd() {
 	(void) snprintf(n, MAX_FNAME, CRON_TAB(User));
 	if (!(f = fopen(n, "r"))) {
 		if (errno != ENOENT) {
+                        fprintf(stderr, "%s/", CRONDIR);
 			perror(n);
 			exit(ERROR_EXIT);
 		}
@@ -780,11 +785,13 @@ replace_cmd() {
 	um = umask(077);
 	fd = mkstemp(tn);
 	if (fd < 0) {
+                fprintf(stderr, "%s/", CRONDIR);
 		perror(tn);
 		return(-2);
 	}
 	tmp = fdopen(fd, "w+");
 	if (!tmp) {
+                fprintf(stderr, "%s/", CRONDIR);
 		perror(tn);
 		return (-2);
 	}
@@ -899,12 +906,14 @@ poke_daemon() {
 	tvs[1] = tvs[0];
 	if (utimes(SPOOL_DIR, tvs) < OK) {
 		fprintf(stderr, "crontab: can't update mtime on spooldir\n");
+                fprintf(stderr, "%s/", CRONDIR);
 		perror(SPOOL_DIR);
 		return;
 	}
 #else
 	if (utime(SPOOL_DIR, NULL) < OK) {
 		fprintf(stderr, "crontab: can't update mtime on spooldir\n");
+                fprintf(stderr, "%s/", CRONDIR);
 		perror(SPOOL_DIR);
 		return;
 	}
