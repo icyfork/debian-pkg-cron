@@ -95,11 +95,11 @@ file itself. Note in particular that if you want a PATH other than
 By default, cron will send mail using the mail "Content-Type:" header of
 "text/plain" with the "charset=" parameter set to the charmap / codeset of the
 locale in which
-.IR crond(8)
+.IR crond (8)
 is started up - ie. either the default system locale, if no LC_* environment
 variables are set, or the locale specified by the LC_* environment variables 
 ( see
-.IR locale(7) ).
+.IR locale (7) ).
 You can use different character encodings for mailed cron job output by
 setting the CONTENT_TYPE and CONTENT_TRANSFER_ENCODING variables in crontabs,
 to the correct values of the mail headers of those names
