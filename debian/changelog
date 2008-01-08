@@ -1,3 +1,14 @@
+cron (3.0pl1-101) unstable; urgency=low
+
+  * Do not use ANSI_x3.4-1968 but US-ASCII instead since it is the preferred
+    MIME name as per http://www.iana.org/assignments/character-sets"
+    (Closes: #415302)
+  * Add LSB dependencies on mounted /usr (Closes: #459489)
+  * Remove 0 and 6 from Default-Stop LSB definition in the init script
+    as sendsigs take care of stopping cron" debian/cron.init
+
+ -- Javier Fernandez-Sanguino Pen~a <jfs@debian.org>  Tue, 08 Jan 2008 22:13:35 +0100
+
 cron (3.0pl1-100) unstable; urgency=low
 
   [ Last upload for etch fixing documentation in this package ]
