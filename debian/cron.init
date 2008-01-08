@@ -21,6 +21,28 @@ test -f /usr/sbin/cron || exit 0
 
 . /lib/lsb/init-functions
 
+# Read the system's locale and set cron's locale. This locale
+# will be inherited by cron (used to set charset of emails)
+# and tasks running under it.
+
+parse_environment () 
+{
+    ENV_FILE="none"
+    [ -r /etc/environment ] && ENV_FILE="/etc/environment"
+    [ -r /etc/default/locale ] && ENV_FILE="/etc/default/locale"
+    [ $ENV_FILE = none ] && return
+
+    for var in LANG LC_ALL LC_CTYPE; do
+        value=$(egrep "^[^#]*${var}=" $ENV_FILE | tail -n1 | cut -d= -f2)
+        eval $var=$value
+    done
+}
+
+# Parse the system's environment
+export LANG LC_ALL LC_CTYPE
+parse_environment
+
+
 case "$1" in
 start)	log_daemon_msg "Starting periodic command scheduler" "crond"
         start-stop-daemon --start --quiet --pidfile /var/run/crond.pid --name cron --startas /usr/sbin/cron -- $LSBNAMES
