@@ -17,7 +17,7 @@
 
 test -f /usr/sbin/cron || exit 0
 
-#LSBNAMES='-l'  # Uncomment for LSB name support in /etc/cron.d/
+[ -r /etc/default/cron ] && . /etc/default/cron
 
 . /lib/lsb/init-functions
 
@@ -39,13 +39,15 @@ parse_environment ()
 }
 
 # Parse the system's environment
-export LANG LC_ALL LC_CTYPE
-parse_environment
+if [ "$READ_ENV" = "yes" ] ; then
+    export LANG LC_ALL LC_CTYPE
+    parse_environment
+fi
 
 
 case "$1" in
 start)	log_daemon_msg "Starting periodic command scheduler" "crond"
-        start-stop-daemon --start --quiet --pidfile /var/run/crond.pid --name cron --startas /usr/sbin/cron -- $LSBNAMES
+        start-stop-daemon --start --quiet --pidfile /var/run/crond.pid --name cron --startas /usr/sbin/cron -- $LSBNAMES $EXTRA_OPTS
         log_end_msg $?
 	;;
 stop)	log_daemon_msg "Stopping periodic command scheduler" "crond"
@@ -54,7 +56,7 @@ stop)	log_daemon_msg "Stopping periodic command scheduler" "crond"
         ;;
 restart) log_daemon_msg "Restarting periodic command scheduler" "crond" 
         start-stop-daemon --stop --retry 5 --quiet --pidfile /var/run/crond.pid --name cron
-        start-stop-daemon --start --quiet --pidfile /var/run/crond.pid --name cron --startas /usr/sbin/cron -- $LSBNAMES
+        start-stop-daemon --start --quiet --pidfile /var/run/crond.pid --name cron --startas /usr/sbin/cron -- $LSBNAMES $EXTRA_OPTS
         log_end_msg $?
         ;;
 reload|force-reload) log_daemon_msg "Reloading configuration files for periodic command scheduler" "crond"
