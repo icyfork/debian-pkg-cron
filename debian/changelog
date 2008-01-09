@@ -6,6 +6,9 @@ cron (3.0pl1-101) unstable; urgency=low
       as sendsigs take care of stopping cron" debian/cron.init. Also
       change the postinst call to update-rc.d so no stop symlinks
       are added in those runlevels (Closes: #422785)
+      [ Notice that the existing symlinks are not removed when upgrading
+        it is up to the administrator to remove this himself so as to not
+        break local changes ]
     - Parse system's locale to set the charset used to email cron tasks. This
       will affect tasks that expect a 'C' locale (for example to parse
       messages) and are running in systems with a non-C locale. 
