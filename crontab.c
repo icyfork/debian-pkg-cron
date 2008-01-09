@@ -294,15 +294,6 @@ list_cmd() {
 	int     x;
 	char    *ctnh;
 #endif
-        if( PromptOnDelete == 1 )
-        {
-            printf("crontab: really delete %s's crontab? ", User);
-            fflush(stdout);
-            fgets(n, MAX_FNAME-1, stdin);
-            if((n[0] != 'Y') && (n[0] != 'y'))
-                exit(0);
-        }
-
 
 	log_it(RealUser, Pid, "LIST", User);
 	(void) snprintf(n, MAX_FNAME, CRON_TAB(User));
@@ -352,6 +343,29 @@ list_cmd() {
 static void
 delete_cmd() {
 	char	n[MAX_FNAME];
+        char    q[MAX_TEMPSTR];
+        int     ans;
+
+        if( PromptOnDelete == 1 )
+        {
+            printf("crontab: really delete %s's crontab? ", User);
+            fflush(stdout);
+            ans = 0;
+            q[0] = '\0';
+            while ( ans == 0 ) {
+                (void) fgets(q, sizeof q, stdin);
+                switch (islower(q[0]) ? q[0] : tolower(q[0])) {
+                    case 'y':
+                    case 'n':
+                        ans = 1;
+                        break;
+                    default:
+                        fprintf(stderr, "Please enter Y or N: ");
+                }
+            }
+            if ( (q[0] == 'N') || (q[0] == 'n') )
+                exit(OK_EXIT);
+        }
 
 	log_it(RealUser, Pid, "DELETE", User);
 	(void) snprintf(n, MAX_FNAME, CRON_TAB(User));
