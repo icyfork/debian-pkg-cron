@@ -1,3 +1,14 @@
+cron (3.0pl1-102) unstable; urgency=low
+
+  * Modify pathnames.h so that GNU/KFreeBSD is detected and /var/run is
+    used instead of /etc/ to store the PID file (Closes: #460514)
+  * Modify the init.d script so that it uses /etc/cron.pid as its pidfile
+    if it exists, this will prevent the init.d script from failing if
+    cron is compiled in a system which does not get to define _PATH_RUN
+    as /var/run
+
+ -- Javier Fernandez-Sanguino Pen~a <jfs@debian.org>  Sun, 13 Jan 2008 23:08:11 +0100
+
 cron (3.0pl1-101) unstable; urgency=low
 
   * Init.d changes:
