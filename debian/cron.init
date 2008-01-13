@@ -17,6 +17,10 @@
 
 test -f /usr/sbin/cron || exit 0
 
+PIDFILE=/var/run/cron.pid
+# In some systems the pidfile might be (incorrectly) set to /etc
+# if this pidfile is present, use it instead.
+[ -e /etc/cron.pid ] && PIDFILE=/etc/cron.pid
 [ -r /etc/default/cron ] && . /etc/default/cron
 
 . /lib/lsb/init-functions
@@ -47,16 +51,16 @@ fi
 
 case "$1" in
 start)	log_daemon_msg "Starting periodic command scheduler" "crond"
-        start-stop-daemon --start --quiet --pidfile /var/run/crond.pid --name cron --startas /usr/sbin/cron -- $LSBNAMES $EXTRA_OPTS
+        start-stop-daemon --start --quiet --pidfile $PIDFILE --name cron --startas /usr/sbin/cron -- $LSBNAMES $EXTRA_OPTS
         log_end_msg $?
 	;;
 stop)	log_daemon_msg "Stopping periodic command scheduler" "crond"
-        start-stop-daemon --stop --quiet --pidfile /var/run/crond.pid --name cron
+        start-stop-daemon --stop --quiet --pidfile $PIDFILE --name cron
         log_end_msg $?
         ;;
 restart) log_daemon_msg "Restarting periodic command scheduler" "crond" 
-        start-stop-daemon --stop --retry 5 --quiet --pidfile /var/run/crond.pid --name cron
-        start-stop-daemon --start --quiet --pidfile /var/run/crond.pid --name cron --startas /usr/sbin/cron -- $LSBNAMES $EXTRA_OPTS
+        start-stop-daemon --stop --retry 5 --quiet --pidfile $PIDFILE --name cron
+        start-stop-daemon --start --quiet --pidfile $PIDFILE --name cron --startas /usr/sbin/cron -- $LSBNAMES $EXTRA_OPTS
         log_end_msg $?
         ;;
 reload|force-reload) log_daemon_msg "Reloading configuration files for periodic command scheduler" "crond"
