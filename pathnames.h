@@ -19,7 +19,7 @@
  * $Id: pathnames.h,v 1.3 1994/01/15 20:43:43 vixie Exp $
  */
 
-#if (defined(BSD)) && (BSD >= 199103) || defined(__linux__) || defined(AIX)
+#if (defined(BSD)) && (BSD >= 199103) || defined(__linux__) || defined(AIX) || defined(__GNU__) || defined(__GLIBC__)
 # include <paths.h>
 #endif /*BSD*/
 
