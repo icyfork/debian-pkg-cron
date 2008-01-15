@@ -240,7 +240,7 @@ set_cron_cwd()
 }
 
 
-/* acquire_daemonlock() - write our PID into /etc/cron.pid, unless
+/* acquire_daemonlock() - write our PID into /etc/crond.pid, unless
  *	another daemon is already running, which we detect here.
  *
  * note: main() calls us twice; once before forking, once after.
