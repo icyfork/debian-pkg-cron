@@ -1,3 +1,10 @@
+cron (3.0pl1-103) unstable; urgency=low
+
+  * Fix location of PIDFILE which caused the init.d script to not
+    stop cron properly (Closes:  #460869, #460886)
+
+ -- Javier Fernandez-Sanguino Pen~a <jfs@debian.org>  Tue, 15 Jan 2008 19:50:37 +0100
+
 cron (3.0pl1-102) unstable; urgency=low
 
   * Modify pathnames.h so that GNU/KFreeBSD is detected and /var/run is
