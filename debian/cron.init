@@ -17,10 +17,10 @@
 
 test -f /usr/sbin/cron || exit 0
 
-PIDFILE=/var/run/cron.pid
+PIDFILE=/var/run/crond.pid
 # In some systems the pidfile might be (incorrectly) set to /etc
 # if this pidfile is present, use it instead.
-[ -e /etc/cron.pid ] && PIDFILE=/etc/cron.pid
+[ -e /etc/cron.pid ] && PIDFILE=/etc/crond.pid
 [ -r /etc/default/cron ] && . /etc/default/cron
 
 . /lib/lsb/init-functions
