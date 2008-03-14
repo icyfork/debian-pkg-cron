@@ -1,8 +1,12 @@
 cron (3.0pl1-105) unstable; urgency=low
 
   * Change maintainer's email address
+  * Move lockfile-progs to Recommends: and remove from the description the
+    justification which was dselect-related (as dselect is no longer the
+    recommended package management interface) (Closes: #452460)
+  * Add justification of checksecurity being in the Suggests: line
 
- -- Javier Fernandez-Sanguino Pen~a <jfs@debian.org>  Fri, 14 Mar 2008 01:46:08 +0100
+ -- Javier Fernandez-Sanguino Pen~a <jfs@debian.org>  Fri, 14 Mar 2008 01:58:21 +0100
 
 cron (3.0pl1-104) unstable; urgency=low
 
