@@ -1,3 +1,9 @@
+cron (3.0pl1-105) unstable; urgency=low
+
+  * Change maintainer's email address
+
+ -- Javier Fernandez-Sanguino Pen~a <jfs@debian.org>  Fri, 14 Mar 2008 01:46:08 +0100
+
 cron (3.0pl1-104) unstable; urgency=low
 
   * Discard errors from df in the standard daily cron task to prevent errors
