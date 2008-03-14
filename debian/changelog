@@ -1,7 +1,16 @@
+cron (3.0pl1-104) unstable; urgency=low
+
+  * Discard errors from df in the standard daily cron task to prevent errors
+    in user's systems that do not have ext2, ext3 or xfs filesystems  
+    (Closes: #462472, #394646, #463656, #463713, #464749)
+
+ -- Javier Fernandez-Sanguino Pen~a <jfs@debian.org>  Fri, 14 Mar 2008 01:03:03 +0100
+
 cron (3.0pl1-103) unstable; urgency=low
 
-  * Fix location of PIDFILE which caused the init.d script to not
-    stop cron properly (Closes:  #460869, #460886)
+  * Fix bug introduced in the init.d file with the changes in the previous
+    version that makes the init.d not work properly when stopping cron due
+    to the improper definition of PIDFILE (Closes:  #460869, #460886)
 
  -- Javier Fernandez-Sanguino Pen~a <jfs@debian.org>  Tue, 15 Jan 2008 19:50:37 +0100
 
