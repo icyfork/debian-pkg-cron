@@ -61,7 +61,8 @@ fi
 # Check to see if any files are in lost+found directories and warn admin
 #
 # Get a list of the (potential) ext2, ext3 and xfs l+f directories
-df -P --type=ext2 --type=ext3 --type=xfs |
+# Discard errors, for systems not using any of these.
+df -P --type=ext2 --type=ext3 --type=xfs 2>/dev/null |
 awk '/\/dev\// { print }' | sed -e 's/ [[:space:]]*/ /g'  |
 while read mount block used avail perc mp; do
 	[ "$mp" = "/" ] && mp=""
