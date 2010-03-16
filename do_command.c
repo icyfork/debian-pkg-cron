@@ -296,9 +296,21 @@ child_process(e, u)
 		/* set our directory, uid and gid.  Set gid first, since once
 		 * we set uid, we've lost root privledges.
 		 */
-		setgid(e->gid);
+		if (setgid(e->gid) !=0) {
+		  char msg[256];
+		  snprintf(msg, 256, "do_command:setgid(%lu) failed: %s",
+			   (unsigned long) e->gid, strerror(errno));
+		  log_it("CRON",getpid(),"error",msg);
+		  exit(ERROR_EXIT);
+		}
 # if defined(BSD) || defined(POSIX)
-		initgroups(env_get("LOGNAME", e->envp), e->gid);
+		if (initgroups(env_get("LOGNAME", e->envp), e->gid) !=0) {
+		  char msg[256];
+		  snprintf(msg, 256, "do_command:initgroups(%lu) failed: %s",
+			   (unsigned long) e->gid, strerror(errno));
+		  log_it("CRON",getpid(),"error",msg);
+		  exit(ERROR_EXIT);
+		}
 # endif
 		if (setuid(e->uid) !=0) { /* we aren't root after this... */
 		  char msg[256];
