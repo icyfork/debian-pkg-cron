@@ -9,14 +9,15 @@ Build-Depends: debhelper, libpam0g-dev, libselinux1-dev [!hurd-i386 !kfreebsd-i3
 Package: cron
 Architecture: any
 Depends: ${shlibs:Depends}, debianutils (>=1.7), adduser, lsb-base (>= 3.0-10)
-Recommends: exim4 | postfix | mail-transport-agent
-Suggests: anacron (>=2.0-1), logrotate, lockfile-progs, checksecurity
+Recommends: exim4 | postfix | mail-transport-agent, lockfile-progs
+Suggests: anacron (>=2.0-1), logrotate, checksecurity
 Conflicts: suidmanager (<< 0.50), lockfile-progs (<< 0.1.7)
 Provides:
-Description: management of regular background processing
- cron is a background process (`daemon') that runs programs at regular
- intervals (for example, every minute, day, week or month); which
- processes are run and at what times are specified in the `crontab'.
+Description: process scheduling daemon
+ The cron daemon is a background process that runs particular programs at
+ particular times (for example, every minute, day, week or month), as 
+ specific in the in a crontab. By default, users may also create
+ crontabs of their own so that processes are run on their behalf.
  .
  Users may also install crontabs so that processes are run on
  their behalf, though this feature can be disabled or restricted to
@@ -26,11 +27,11 @@ Description: management of regular background processing
  (or to the user in question); you should probably install a mail system
  as well so that you can receive these messages.
  .
- This cron package is configured by default to do various standard
- system maintenance tasks, such as ensuring that logfiles do not
- grow endlessly and overflow the disk.
+ This cron package is configured by default to do some basic daily system
+ maintenance tasks, such as ensuring creating copying key system files.
+ Additional maintenance tasks are available on external packages, such as
+ 'checksecurity'
  .
- The lockfile-progs package is only a "Suggests" because of the poor
- way that dselect handles "Recommends", but I do strongly suggest that
- you install it; it prevents /etc/cron.daily/standard from running multiple
+ The lockfile-progs package is recommended as it will prevent
+ /etc/cron.daily/standard from running multiple
  times if something gets jammed.
