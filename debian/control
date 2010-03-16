@@ -1,7 +1,7 @@
 Source: cron
 Section: admin
 Priority: important
-Maintainer: Javier Fernandez-Sanguino Pen~a <jfs@computer.org>
+Maintainer: Javier Fernandez-Sanguino Pen~a <jfs@debian.org>
 Uploaders: Steve Greenland <stevegr@debian.org>
 Standards-Version: 3.6.1
 Build-Depends: debhelper, libpam0g-dev, libselinux1-dev [!hurd-i386 !kfreebsd-i386 !kfreebsd-amd64]
@@ -15,22 +15,17 @@ Conflicts: suidmanager (<< 0.50), lockfile-progs (<< 0.1.7)
 Provides:
 Description: process scheduling daemon
  The cron daemon is a background process that runs particular programs at
- particular times (for example, every minute, day, week or month), as 
- specific in the in a crontab. By default, users may also create
- crontabs of their own so that processes are run on their behalf.
- .
- Users may also install crontabs so that processes are run on
- their behalf, though this feature can be disabled or restricted to
- particular users.
+ particular times (for example, every minute, day, week, or month), as 
+ specified in a crontab. By default, users may also create crontabs of
+ their own so that processes are run on their behalf.
  .
  Output from the commands is usually mailed to the system administrator
  (or to the user in question); you should probably install a mail system
  as well so that you can receive these messages.
  .
  This cron package is configured by default to do some basic daily system
- maintenance tasks, such as ensuring creating copying key system files.
- Additional maintenance tasks are available on external packages, such as
- 'checksecurity'
+ maintenance tasks, such as creating backups of key system files. Other
+ packages, such as checksecurity, can provide further maintenance tasks.
  .
  The lockfile-progs package is recommended as it will prevent
  /etc/cron.daily/standard from running multiple
