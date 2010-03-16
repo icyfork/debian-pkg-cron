@@ -1,7 +1,7 @@
 Source: cron
 Section: admin
 Priority: important
-Maintainer: Javier Fernandez-Sanguino Pen~a <jfs@debian.org>
+Maintainer: Javier Fernandez-Sanguino Pen~a <jfs@computer.org>
 Uploaders: Steve Greenland <stevegr@debian.org>
 Standards-Version: 3.6.1
 Build-Depends: debhelper, libpam0g-dev, libselinux1-dev [!hurd-i386 !kfreebsd-i386 !kfreebsd-amd64]
@@ -9,8 +9,8 @@ Build-Depends: debhelper, libpam0g-dev, libselinux1-dev [!hurd-i386 !kfreebsd-i3
 Package: cron
 Architecture: any
 Depends: ${shlibs:Depends}, debianutils (>=1.7), adduser, lsb-base (>= 3.0-10)
-Recommends: exim4 | postfix | mail-transport-agent, lockfile-progs
-Suggests: anacron (>=2.0-1), logrotate, checksecurity
+Recommends: exim4 | postfix | mail-transport-agent
+Suggests: anacron (>=2.0-1), logrotate, lockfile-progs, checksecurity
 Conflicts: suidmanager (<< 0.50), lockfile-progs (<< 0.1.7)
 Provides:
 Description: management of regular background processing
@@ -30,5 +30,7 @@ Description: management of regular background processing
  system maintenance tasks, such as ensuring that logfiles do not
  grow endlessly and overflow the disk.
  .
- For additional system security-related maintenance tasks it is 
- recommended you install the checksecurity package.
+ The lockfile-progs package is only a "Suggests" because of the poor
+ way that dselect handles "Recommends", but I do strongly suggest that
+ you install it; it prevents /etc/cron.daily/standard from running multiple
+ times if something gets jammed.

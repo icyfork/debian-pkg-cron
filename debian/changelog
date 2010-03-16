@@ -1,14 +1,18 @@
-cron (3.0pl1-105) UNRELEASED; urgency=low
+cron (3.0pl1-105) unstable; urgency=low
 
-  * Change maintainer's email address
-  * Move lockfile-progs to Recommends: and remove from the description the
-    justification which was dselect-related (as dselect is no longer the
-    recommended package management interface) (Closes: #452460, #468262)
-  * Add justification of checksecurity being in the Suggests: line
-  * Include cross build support with patch to debian/rules provided by Neil
-    Williams  (Closes: #465077)
+  * Non-maintainer upload with permission.
+  * Fixes an uninitialised data problem in the SE Linux code, also fixes a
+    similar compile warning in code which is not related to SE Linux which
+    isn't a bug (to avoid confusion).
+    Closes: #472938
+  * Updates the SE Linux patch to work with the new code base, the previous
+    version was almost totally unusable with Lenny SE Linux.
+    Closes: #499518
+  * Fixes inadequate security checks in the SE Linux code path, the previous
+    code might be vulnerable to exploit at some future time.
+    Closes: #499584
 
- -- Javier Fernandez-Sanguino Pen~a <jfs@debian.org>  Fri, 14 Mar 2008 02:01:04 +0100
+ -- Russell Coker <russell@coker.com.au>  Sun, 28 Sep 2008 19:23:50 +1000
 
 cron (3.0pl1-104) unstable; urgency=low
 
