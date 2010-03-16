@@ -1,3 +1,42 @@
+cron (3.0pl1-107) unstable; urgency=low
+
+  * debian/cron.pam: Use common-session-noninteractive in pam.d configuration
+    instead of common-session so that libpam-ssh is not run. If libpam-ssh was
+    installed the previous configuration resulted in cron spawning
+    many ssh-agent processes (Closes: #572292)
+  * debian/cron.init: Add Should-Start/Stop dependency to slapd so that cron
+  * can start up tasks for users define in an LDAP (Closes: #557659, #546367)
+  * Fix the use of perror so that the error message is correct when
+    printing the reason why an operation failed. Thanks to
+    Justin Pryzby for the patch. (Closes: 470587)
+  * pathnames.h: Use /usr/bin/sensible-editor instead of /usr/bin/editor when
+    calling crontab -e (Closes: #482284)
+  * Fix debian/control description, thanks to Justin B Rye for the patch
+    (Closes: #535227)
+  * crontab.c: Produce a different warning message when root tries to setup a 
+    crontab for a user that is not allowed to do so, and do not log the
+    action (Closes: #505288)
+  * Only allow -i if -r has been specified previously (Closes: #513379)
+  * Update debian/README.Debian to indicate that the package is 
+    being maintained at Alioth, thanks Tomas Pospisek for the patch 
+    (Closes: #511740)
+  * crontab.c: Update the usage() call so that it refers to the use 
+    of -i when removing (-r)
+  * crontab.1: Update the manpage:
+     - Use the same option listing as in the crontab usage() call
+     - Remove 'tweaked', explain what -u does in each context. 
+     - Remove V3, use 'Vixie Cron' instead
+    (Closes: #572249)
+     - Update the manpage years (Closes: #563296)
+     - Describe the usage of the crontab group wrt /var/spool/cron/crontabs
+    (Closes: #539182)
+  * Use debhelper compatibility version 5
+  * Include cross build support with patch to debian/rules provided by Neil
+    Williams  (Closes: #465077)
+  * Change maintainer's email address
+
+ -- Javier Fernandez-Sanguino Pen~a <jfs@debian.org>  Tue, 16 Mar 2010 22:55:26 +0100
+
 cron (3.0pl1-106) unstable; urgency=high
 
    * SECURITY UPDATE: cron does not check the return code of setgid() and
@@ -27,11 +66,11 @@ cron (3.0pl1-106) unstable; urgency=high
        - Use 'cron' instead of 'crond' (Closes: #497699)
    * Change lockfile-progs from Suggests: to Recommends: and remove wording
      related to dselect, which is no longer relevant (Closes: #452460, #468262)
+   * Add justification of checksecurity being in the Suggests: line
    * Change the (outdated) wording of the description based on an example
      provided by Justin B Rye (Closes: 485452)
    * Change the postinst so that update-rc.d is only run if /etc/init.d/cron is
      executable (Closes: #500610)
-
 
  -- Javier Fernandez-Sanguino Pen~a <jfs@debian.org>  Wed, 13 May 2009 01:05:41 +0200
 
