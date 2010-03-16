@@ -29,6 +29,7 @@ static char rcsid[] = "$Id: user.c,v 2.8 1994/01/15 20:43:43 vixie Exp $";
 
 
 #ifdef WITH_SELINUX
+#include <selinux/context.h>
 #include <selinux/selinux.h>
 #include <selinux/flask.h>
 #include <selinux/av_permissions.h>
@@ -36,13 +37,37 @@ static char rcsid[] = "$Id: user.c,v 2.8 1994/01/15 20:43:43 vixie Exp $";
 
 static int get_security_context(char *name, int crontab_fd, security_context_t
                                 *rcontext, char *tabname) {
-    security_context_t scontext=NULL;
+    security_context_t *context_list = NULL;
+    security_context_t current_con;
+    int list_count = 0;
     security_context_t  file_context=NULL;
     struct av_decision avd;
     int retval=0;
+    char *seuser = NULL;
+    char *level = NULL;
+    int i;
+
+    if (name != NULL) {
+        if (getseuserbyname(name, &seuser, &level)) {
+            log_it(name, getpid(), "getseuserbyname FAILED", tabname);
+            return (security_getenforce() > 0);
+        }
+    }
+    else
+    {
+        seuser = strdup("system_u");
+    }
 
     *rcontext = NULL;
-    if (get_default_context(name, NULL, &scontext)) {
+    if(getcon(&current_con)) {
+        log_it(name, getpid(), "Can't get current context", tabname);
+        return -1;
+    }
+    list_count = get_ordered_context_list_with_level(seuser, level, current_con, &context_list);
+    freecon(current_con);
+    free(seuser);
+    free(level);
+    if (list_count == -1) {
         if (security_getenforce() > 0) {
             log_it(name, getpid(), "No SELinux security context", tabname);
             return -1;
@@ -57,12 +82,13 @@ static int get_security_context(char *name, int crontab_fd, security_context_t
     if (fgetfilecon(crontab_fd, &file_context) < OK) {
         if (security_getenforce() > 0) {
             log_it(name, getpid(), "getfilecon FAILED", tabname);
-            freecon(scontext);
+            freeconary(context_list);
             return -1;
         } else {
             log_it(name, getpid(), "getfilecon FAILED but SELinux in "
                    "permissive mode, continuing", tabname);
-            *rcontext=scontext;
+            *rcontext = strdup(context_list[0]);
+            freeconary(context_list);
             return 0;
         }
     }
@@ -75,22 +101,30 @@ static int get_security_context(char *name, int crontab_fd, security_context_t
      * permission check for this purpose.
      */
 
-    retval = security_compute_av(scontext,
+    for(i = 0; i < list_count; i++)
+    {
+        retval = security_compute_av(context_list[i],
                                  file_context,
                                  SECCLASS_FILE,
                                  FILE__ENTRYPOINT,
                                  &avd);
-    freecon(file_context);
-    if (retval || ((FILE__ENTRYPOINT & avd.allowed) != FILE__ENTRYPOINT)) {
-        if (security_getenforce() > 0) {
-            log_it(name, getpid(), "ENTRYPOINT FAILED", tabname);
-            freecon(scontext);
-            return -1;
-        } else {
-            log_it(name, getpid(), "ENTRYPOINT FAILED but SELinux in permissive mode, continuing", tabname);
+        if(!retval && ((FILE__ENTRYPOINT & avd.allowed) == FILE__ENTRYPOINT)) {
+            *rcontext = strdup(context_list[i]);
+            freecon(file_context);
+            freeconary(context_list);
+            return 0;
         }
     }
-    *rcontext=scontext;
+    freecon(file_context);
+    if (security_getenforce() > 0) {
+        log_it(name, getpid(), "ENTRYPOINT FAILED", tabname);
+        freeconary(context_list);
+        return -1;
+    } else {
+        log_it(name, getpid(), "ENTRYPOINT FAILED but SELinux in permissive mode, continuing", tabname);
+        *rcontext = strdup(context_list[0]);
+        freeconary(context_list);
+    }
     return 0;
 }
 #endif

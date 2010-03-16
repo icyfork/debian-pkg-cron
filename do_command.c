@@ -331,14 +331,20 @@ child_process(e, u)
 			fprintf(stdout,"error");
 #endif
 #ifdef WITH_SELINUX
-			if ((is_selinux_enabled() > 0) && (u->scontext != 0L)) {
-                            security_context_t scontext;
-                            if (setexeccon(u->scontext) < 0) {
-                                if (security_getenforce() > 0) {
-                                    fprintf(stderr, "Could not set exec context to %s for user  %s\n", scontext,u->name);
-                                    _exit(ERROR_EXIT);
-                                }
+			if (is_selinux_enabled() > 0) {
+			    if (u->scontext != 0L) {
+                                if (setexeccon(u->scontext) < 0) {
+                                    if (security_getenforce() > 0) {
+                                        fprintf(stderr, "Could not set exec context to %s for user  %s\n", u->scontext,u->name);
+                                        _exit(ERROR_EXIT);
+                                    }
+			        }
                             }
+			    else if(security_getenforce() > 0)
+			    {
+                                fprintf(stderr, "Error, must have a security context for the cron job when in enforcing mode.\nUser %s.\n", u->name);
+                                _exit(ERROR_EXIT);
+			    }
 			}
 #endif
                         execle(shell, shell, "-c", e->cmd, (char *)0, jobenv);
@@ -444,7 +450,7 @@ child_process(e, u)
 		register int	ch = getc(in);
 
 		if (ch != EOF) {
-			register FILE	*mail;
+			register FILE	*mail = NULL;
 			register int	bytes = 1;
 			int		status = 0;
 
