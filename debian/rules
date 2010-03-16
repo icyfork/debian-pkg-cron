@@ -6,6 +6,12 @@
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
+ifneq ($(DEB_HOST_GNU_TYPE),$(DEB_BUILD_GNU_TYPE))
+CROSS=CC=$(DEB_HOST_GNU_TYPE)-gcc
+else
+CROSS=
+endif
+
 DEB_OPTIM= -O2 -g -Wall -Wno-comment
 DEB_INSTALL = install
 DEB_DEBUG_DEFS = -DDEBUGGING=0
@@ -60,7 +66,7 @@ b-cron/build-stamp:
 	rm -rf b-cron
 	mkdir b-cron
 	# Add here commands to compile the package.
-	$(MAKE) -C b-cron -f ../Makefile OPTIM="$(DEB_OPTIM)" DEBUG_DEFS="$(DEB_DEBUG_DEFS)" VPATH=.. INCLUDE=-I.. 
+	$(MAKE) $(CROSS) -C b-cron -f ../Makefile OPTIM="$(DEB_OPTIM)" DEBUG_DEFS="$(DEB_DEBUG_DEFS)" VPATH=.. INCLUDE=-I.. 
 	touch $@
 
 build-cron-se: b-cron-se/build-stamp
@@ -71,7 +77,7 @@ b-cron-se/build-stamp:
 	cp debian/cron-se.overrides b-cron-se/cron-se
 	cd b-cron-se
 	# Add here commands to compile the package.
-	SELINUX_DEFS="-DWITH_SELINUX" SELINUX_LIBS=-lselinux $(MAKE) -C b-cron-se -f ../Makefile OPTIM="$(DEB_OPTIM)" DEBUG_DEFS="$(DEB_DEBUG_DEFS)" VPATH=.. INCLUDE=-I..
+	SELINUX_DEFS="-DWITH_SELINUX" SELINUX_LIBS=-lselinux $(MAKE) $(CROSS) -C b-cron-se -f ../Makefile OPTIM="$(DEB_OPTIM)" DEBUG_DEFS="$(DEB_DEBUG_DEFS)" VPATH=.. INCLUDE=-I..
 	touch $@
 
 clean:
