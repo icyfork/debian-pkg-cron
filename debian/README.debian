@@ -4,6 +4,9 @@ cron for DEBIAN
 This is the Debian GNU/Linux prepackaged version of Paul Vixie's cron
 subsystem.
 
+Debian's cron development is being done on Alioth:
+http://svn.debian.org/wsvn/pkg-cron
+
 This package was put together by Ian Jackson <iwj10@cus.cam.ac.uk>,
 from the standard sources to 3.0pl1, as posted to comp.sources.unix.
 Ian obtained them from
@@ -29,6 +32,6 @@ other Debian package cron requirements. Files follow /etc/crontab
 format (i.e. with user field), must meet run-parts(8) naming
 convention (alphanumeric, underscore, hyphen only).
 
-This package is now maintained by Steve Greenland
-<stevegr@master.debian.org>.
+This package is now maintained by Javier Fernández-Sanguino Peña
+<jfs@computer.org>.
 
