@@ -1,3 +1,40 @@
+cron (3.0pl1-106) unstable; urgency=high
+
+   * SECURITY UPDATE: cron does not check the return code of setgid() and
+   initgroups(), which under certain circumstances could cause
+   applications to run with elevated group privileges. Note that the more
+   serious issue of not checking the return code of setuid() was fixed already
+   in 3.0pl1-64.  (Closes: #528434)
+    - do_command.c: check return code of setgid() and initgroups()
+    - This fixes (hopefully completely) CVE-2006-2607
+   * crontab.c: 
+      - close the temporary file after it is edited and
+        before calling cleanup_tmp_crontab() to behave properly on NFS
+        mounted / (Closes: #413962)
+      - if crontab is run without argument then it will read stdin to replace
+        the users crontab. This way it is POSIXLY_CORRECT. More information at
+        http://www.opengroup.org/onlinepubs/9699919799/utilities/crontab.html
+        (Closes: #514062)
+   * crontab.5 : 
+      - Add details about multiple recipients in MAILTO (LP: #235464) 
+        (Closes: #502650)
+      - Indicate that it also reads environment from /etc/environment
+      - Substitute ATT for AT&T (Closes: #405474)
+   * Proper fix for PAM configuration to make cron read the system
+     environment (Closes: #511684)
+   * debian/cron.init:
+       - Add support for 'status' in the init.d (Closes: #514721)
+       - Use 'cron' instead of 'crond' (Closes: #497699)
+   * Change lockfile-progs from Suggests: to Recommends: and remove wording
+     related to dselect, which is no longer relevant (Closes: #452460, #468262)
+   * Change the (outdated) wording of the description based on an example
+     provided by Justin B Rye (Closes: 485452)
+   * Change the postinst so that update-rc.d is only run if /etc/init.d/cron is
+     executable (Closes: #500610)
+
+
+ -- Javier Fernandez-Sanguino Pen~a <jfs@debian.org>  Wed, 13 May 2009 01:05:41 +0200
+
 cron (3.0pl1-105) unstable; urgency=low
 
   * Non-maintainer upload with permission.
@@ -18,7 +55,7 @@ cron (3.0pl1-104) unstable; urgency=low
 
   * Discard errors from df in the standard daily cron task to prevent errors
     in user's systems that do not have ext2, ext3 or xfs filesystems  
-    (Closes: #462472, #394646, #463656, #463713, #464749)
+    (Closes: #462472, #394646, #463656, #463713, #464749, #504146)
 
  -- Javier Fernandez-Sanguino Pen~a <jfs@debian.org>  Fri, 14 Mar 2008 01:03:03 +0100
 
@@ -58,7 +95,7 @@ cron (3.0pl1-101) unstable; urgency=low
       messages) and are running in systems with a non-C locale. 
       (Closes: #410057, #405335, #309150)
     - Add support for /etc/default/cron and make it possible to add additional
-      options and control if environment is parsed. (Closes: #396928)
+      options and control if environment is parsed. (Closes: #396928, #471506)
   * cron.c:
     - Do not use ANSI_x3.4-1968 but US-ASCII instead since it is the preferred
       MIME name as per http://www.iana.org/assignments/character-sets"
