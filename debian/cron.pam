@@ -3,7 +3,7 @@
 #
 
 @include common-auth
-auth       required   pam_env.so
+session       required   pam_env.so
 @include common-account
 @include common-session
 # Sets up user limits, please define limits for cron tasks
