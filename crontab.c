@@ -115,11 +115,19 @@ main(argc, argv)
 	parse_args(argc, argv);		/* sets many globals, opens a file */
 	set_cron_cwd();
 	if (!allowed(User)) {
-		fprintf(stderr,
-			"You (%s) are not allowed to use this program (%s)\n",
-			User, ProgramName);
-		fprintf(stderr, "See crontab(1) for more information\n");
-		log_it(RealUser, Pid, "AUTH", "crontab command not allowed");
+                if ( getuid() != 0 ) {
+                    fprintf(stderr,
+                            "You (%s) are not allowed to use this program (%s)\n",
+                            User, ProgramName);
+                    fprintf(stderr, "See crontab(1) for more information\n");
+                    log_it(RealUser, Pid, "AUTH", "crontab command not allowed");
+                } else {
+                /* If the user is not allowed but root is running the
+                 * program warn but do not log */
+                    fprintf(stderr,
+                            "The user %s cannot use this program (%s)\n",
+                            User, ProgramName);
+                }
 		exit(ERROR_EXIT);
 	}
 	exitstatus = OK_EXIT;
