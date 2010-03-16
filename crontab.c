@@ -109,6 +109,9 @@ main(argc, argv)
 #if defined(BSD)
 	setlinebuf(stderr);
 #endif
+	if (argv[1] == NULL) {
+		argv[1] = "-";
+	}	
 	parse_args(argc, argv);		/* sets many globals, opens a file */
 	set_cron_cwd();
 	if (!allowed(User)) {
@@ -620,6 +623,8 @@ edit_cmd() {
 	}
 
 
+        /*  Close before cleanup_tmp_crontab is called or otherwise
+         *  (on NFS mounted /) will get renamed on unlink */
 	if (fclose(NewCrontab) != 0) {
 		perror(Filename);
                 goto fatal;
@@ -746,6 +751,10 @@ again: /* Loop point for retrying edit after error */
 		    ProgramName);
 		goto fatal;
 	}
+
+       if (fclose(NewCrontab) != 0) {
+               perror(Filename);
+       }
 
  remove:
         cleanup_tmp_crontab();
