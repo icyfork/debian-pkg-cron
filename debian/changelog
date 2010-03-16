@@ -1,4 +1,4 @@
-cron (3.0pl1-105) unstable; urgency=low
+cron (3.0pl1-105) UNRELEASED; urgency=low
 
   * Change maintainer's email address
   * Move lockfile-progs to Recommends: and remove from the description the
