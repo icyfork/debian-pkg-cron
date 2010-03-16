@@ -75,7 +75,7 @@
 			 * environment variable specified.
 			 */
 #if defined(DEBIAN)
-# define EDITOR "/usr/bin/editor"
+# define EDITOR "/usr/bin/sensible-editor"
 #elif defined(_PATH_VI)
 # define EDITOR _PATH_VI
 #else
