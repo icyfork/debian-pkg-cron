@@ -203,8 +203,7 @@ set_cron_cwd()
 			fprintf(stderr, "%s: created\n", CRONDIR);
 			stat(CRONDIR, &sb);
 		} else {
-			fprintf(stderr, "%s: ", CRONDIR);
-			perror("mkdir");
+			fprintf(stderr, "%s: mkdir: %s\n", CRONDIR, strerror(errno));
 			exit(ERROR_EXIT);
 		}
 	}
@@ -214,8 +213,7 @@ set_cron_cwd()
 		exit(ERROR_EXIT);
 	}
 	if (chdir(CRONDIR) < OK) {
-		fprintf(stderr, "cannot chdir(%s), bailing out.\n", CRONDIR);
-		perror(CRONDIR);
+		fprintf(stderr, "%s: chdir: %s\n", CRONDIR, strerror(errno));
 		exit(ERROR_EXIT);
 	}
 
@@ -227,8 +225,7 @@ set_cron_cwd()
 			fprintf(stderr, "%s: created\n", SPOOL_DIR);
 			stat(SPOOL_DIR, &sb);
 		} else {
-			fprintf(stderr, "%s: ", SPOOL_DIR);
-			perror("mkdir");
+			fprintf(stderr, "%s: mkdir: %s\n", SPOOL_DIR, strerror(errno));
 			exit(ERROR_EXIT);
 		}
 	}
@@ -507,9 +504,8 @@ log_it(username, xpid, event, detail)
 	if (LogFD < OK) {
 		LogFD = open(LOG_FILE, O_WRONLY|O_APPEND|O_CREAT, 0600);
 		if (LogFD < OK) {
-			fprintf(stderr, "%s: can't open log file\n",
-				ProgramName);
-			perror(LOG_FILE);
+			fprintf(stderr, "%s: %s: open: %s\n",
+				ProgramName, LOG_FILE, strerror(errno));
 		} else {
 			(void) fcntl(LogFD, F_SETFD, 1);
 		}

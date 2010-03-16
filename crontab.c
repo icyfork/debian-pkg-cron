@@ -304,8 +304,7 @@ list_cmd() {
 		if (errno == ENOENT) 
 			fprintf(stderr, "no crontab for %s\n", User);
 		else {
-                        fprintf(stderr, "%s/", CRONDIR);
-			perror(n);
+                        fprintf(stderr, "%s/: fopen: %s\n", n, strerror(errno));
                 }
 		exit(ERROR_EXIT);
 	}
@@ -376,8 +375,7 @@ delete_cmd() {
 		if (errno == ENOENT)
 			fprintf(stderr, "no crontab for %s\n", User);
 		else {
-                        fprintf(stderr, "%s/", CRONDIR);
-			perror(n);
+                        fprintf(stderr, "%s/: unlink: %s\n", CRONDIR, strerror(errno));
                 }
 		exit(ERROR_EXIT);
 	}
@@ -545,8 +543,7 @@ edit_cmd() {
 	(void) snprintf(n, MAX_FNAME, CRON_TAB(User));
 	if (!(f = fopen(n, "r"))) {
 		if (errno != ENOENT) {
-                        fprintf(stderr, "%s/", CRONDIR);
-			perror(n);
+                        fprintf(stderr, "%s/: fdopen: %s", n, strerror(errno));
 			exit(ERROR_EXIT);
 		}
 		fprintf(stderr, "no crontab for %s - using an empty one\n",
@@ -808,14 +805,12 @@ replace_cmd() {
 	um = umask(077);
 	fd = mkstemp(tn);
 	if (fd < 0) {
-                fprintf(stderr, "%s/", CRONDIR);
-		perror(tn);
+                fprintf(stderr, "%s/: mkstemp: %s\n", CRONDIR, strerror(errno));
 		return(-2);
 	}
 	tmp = fdopen(fd, "w+");
 	if (!tmp) {
-                fprintf(stderr, "%s/", CRONDIR);
-		perror(tn);
+                fprintf(stderr, "%s/: fdopen: %s\n", CRONDIR, strerror(errno));
 		return (-2);
 	}
 	(void) umask(um);
@@ -836,9 +831,8 @@ replace_cmd() {
 		putc(ch, tmp);
 
 	if (ferror(tmp) || fflush(tmp) || fsync(fd)) {
-		fprintf(stderr, "%s: error while writing new crontab to %s\n",
-			ProgramName, tn);
-		perror("Error");
+		fprintf(stderr, "%s: %s: %s\n",
+			ProgramName, tn, strerror(errno));
 		fclose(tmp);  unlink(tn);
 		return (-2);
 	}
@@ -903,9 +897,8 @@ replace_cmd() {
 
 	(void) snprintf(n, sizeof(n), CRON_TAB(User));
 	if (rename(tn, n)) {
-		fprintf(stderr, "%s: error renaming %s to %s\n",
-			ProgramName, tn, n);
-		perror("rename");
+		fprintf(stderr, "%s: %s: rename: %s\n",
+			ProgramName, n, strerror(errno));
 		unlink(tn);
 		return (-2);
 	}
@@ -928,16 +921,14 @@ poke_daemon() {
 	(void) gettimeofday(&tvs[0], &tz);
 	tvs[1] = tvs[0];
 	if (utimes(SPOOL_DIR, tvs) < OK) {
-		fprintf(stderr, "crontab: can't update mtime on spooldir\n");
-                fprintf(stderr, "%s/", CRONDIR);
-		perror(SPOOL_DIR);
+                fprintf(stderr, "%s/: utimes: %s", CRONDIR, strerror(errno));
+		fputs("crontab: can't update mtime on spooldir\n", stderr);
 		return;
 	}
 #else
 	if (utime(SPOOL_DIR, NULL) < OK) {
-		fprintf(stderr, "crontab: can't update mtime on spooldir\n");
-                fprintf(stderr, "%s/", CRONDIR);
-		perror(SPOOL_DIR);
+                fprintf(stderr, "%s: utime: %s\n", CRONDIR, strerror(errno));
+		fputs("crontab: can't update mtime on spooldir\n", stderr);
 		return;
 	}
 #endif /*USE_UTIMES*/

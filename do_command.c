@@ -360,8 +360,7 @@ child_process(e, u)
 			}
 #endif
                         execle(shell, shell, "-c", e->cmd, (char *)0, jobenv);
-			fprintf(stderr, "execl: couldn't exec `%s'\n", shell);
-			perror("execl");
+			fprintf(stderr, "%s: execle: %s\n", shell, strerror(errno));
 			_exit(ERROR_EXIT);
 		}
 		break;
