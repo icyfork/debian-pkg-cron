@@ -17,14 +17,14 @@
 .\"
 .\" $Id: crontab.1,v 2.4 1993/12/31 10:47:33 vixie Exp $
 .\"
-.TH CRONTAB 1 "29 December 1993"
+.TH CRONTAB 1 "16 March 2010"
 .UC 4
 .SH NAME
-crontab \- maintain crontab files for individual users (V3)
+crontab \- maintain crontab files for individual users (Vixie Cron)
 .SH SYNOPSIS
 crontab [ -u user ] file
 .br
-crontab [ -u user ] { -l | -r [ -i ] | -e }
+crontab [ -u user ] { -e | -l | -r [ -i ] }
 .SH DESCRIPTION
 .I crontab
 is the program used to install, deinstall or list the tables
@@ -51,7 +51,7 @@ command. For standard Debian systems, all users may use this command.
 If the
 .I -u
 option is given, it specifies the name of the user whose crontab is to be
-tweaked.  If this option is not given,
+used (when listing) or modified (when editing). If this option is not given,
 .I crontab
 examines "your" crontab, i.e., the crontab of the person executing the
 command.  Note that
@@ -117,7 +117,18 @@ crontab(5), cron(8)
 .nf
 /etc/cron.allow
 /etc/cron.deny
+/var/spool/cron/crontabs
 .fi
+.PP
+There is one file for each user's crontab under the /var/spool/cron/crontabs
+directory. Users are not allowed to edit the files under that directory
+directly to ensure that only users allowed by the system to run periodic tasks
+can add them, and only syntactically correct crontabs will be written there.
+This is enforced by having the directory writable only by the
+.I crontab
+group and configuring
+.I crontab
+command with the setgid bid set for that specific group.
 .SH STANDARDS
 The
 .I crontab
