@@ -5,7 +5,7 @@
 @include common-auth
 session       required   pam_env.so
 @include common-account
-@include common-session
+@include common-session-noninteractive 
 # Sets up user limits, please define limits for cron tasks
 # through /etc/security/limits.conf
 session    required   pam_limits.so
