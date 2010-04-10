@@ -366,7 +366,7 @@ delete_cmd() {
 
         if( PromptOnDelete == 1 )
         {
-            printf("crontab: really delete %s's crontab? ", User);
+            printf("crontab: really delete %s's crontab? (y/n) ", User);
             fflush(stdout);
             ans = 0;
             q[0] = '\0';
