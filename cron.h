@@ -40,6 +40,13 @@
 #include "config.h"
 #include "externs.h"
 
+#if SYS_TIME_H
+# include <sys/time.h>
+#else
+# include <time.h>
+#endif
+
+
 #ifdef WITH_SELINUX
 #include <selinux/selinux.h>
 #endif
@@ -231,6 +238,8 @@ int		job_runqueue __P((void)),
 		strcmp_until __P((char *, char *, int)),
 		allowed __P((char *)),
 		strdtb __P((char *));
+
+long            get_gmtoff(time_t *, struct tm *);
 
 char		*env_get __P((char *, char **)),
 		*arpadate __P((time_t *)),
