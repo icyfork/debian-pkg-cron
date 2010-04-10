@@ -269,6 +269,17 @@ either).
 .PP
 All of the `@' commands that can appear in place of the first five fields
 are extensions.
+.SH LIMITATIONS
+The
+.I cron
+daemon runs with a defined timezone. It currently does not support 
+per-user timezones. All the tasks: system's and user's will be run based on the
+configured timezone. Even if a user specifies the 
+.I TZ
+environment variable in his
+.I crontab
+this will affect only the commands executed in the crontab, not the execution
+of the crontab tasks themselves.
 .SH AUTHOR
 .nf
 Paul Vixie <paul@vix.com>
