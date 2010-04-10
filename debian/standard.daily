@@ -54,15 +54,20 @@ fi
 #
 # Check to see if any files are in lost+found directories and warn admin
 #
-# Get a list of the (potential) ext2, ext3 and xfs l+f directories
+# Get a list of the (potential) ext2, ext3, ext4 and xfs l+f directories
 # Discard errors, for systems not using any of these.
-df -P --type=ext2 --type=ext3 --type=xfs 2>/dev/null |
-awk '/\/dev\// { print }' | sed -e 's/ [[:space:]]*/ /g'  |
-while read mount block used avail perc mp; do
-	[ "$mp" = "/" ] && mp=""
-	echo "$mp/lost+found"
-done |
-while read lfdir; do
+lfdirs=`df -P --type=ext2 --type=ext3 --type=ext4 --type=xfs 2>/dev/null |
+	awk '/\/dev\// { print }' | sed -e 's/ [[:space:]]*/ /g'  |
+	while read mount block used avail perc mp; do
+		[ "$mp" = "/" ] && mp=""
+		echo "$mp/lost+found"
+	done`
+
+# Don't use space as a field separator
+oldifs="$IFS"
+IFS=`printf '\n\t'`
+
+for lfdir in $lfdirs; do
 # In each directory, look for files
     if [ -d "$lfdir" ] ; then
 	more_lost_found=`ls -1  "$lfdir" | grep -v 'lost+found$' | sed 's/^/    /'`
@@ -78,6 +83,10 @@ $more_lost_found"
 $lfdir"
     fi
 done
+
+# Restore IFS
+IFS="$oldifs"
+unset oldifs
 
 # NOTE: This might need to be configurable if systems abound
 # w/o lost+found out there to prevent giving out this warning
