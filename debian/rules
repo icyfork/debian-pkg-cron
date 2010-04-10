@@ -83,6 +83,7 @@ b-cron-se/build-stamp:
 clean:
 	dh_testdir
 	dh_testroot
+	$(MAKE) clean
 	rm -rf b-cron b-cron-se
 	rm -f debian/conffiles
 	dh_clean
