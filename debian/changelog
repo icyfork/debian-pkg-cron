@@ -1,3 +1,11 @@
+cron (3.0pl1-108) unstable; urgency=high
+
+  * Add a Depends: on libpam-runtime (>= 1.0.1-11) since this 
+    is required for the use of common-session-noninteractive
+    (Closes: 575342) 
+
+ -- Javier Fernandez-Sanguino Pen~a <jfs@debian.org>  Fri, 26 Mar 2010 00:17:02 +0100
+
 cron (3.0pl1-107) unstable; urgency=low
 
   * debian/cron.pam: Use common-session-noninteractive in pam.d configuration
