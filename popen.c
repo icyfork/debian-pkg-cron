@@ -124,7 +124,13 @@ cron_popen(program, type, e)
 		/* Lose root privilege */
 		setgid(e->gid);
 # if defined(BSD) || defined(POSIX)
-		initgroups(env_get("LOGNAME", e->envp), e->gid);
+		if (initgroups(env_get("LOGNAME", e->envp), e->gid) !=0) {
+		  char msg[256];
+		  snprintf(msg, 256, "do_command:initgroups(%lu) failed: %s",
+			   (unsigned long) e->gid, strerror(errno));
+		  log_it("CRON",getpid(),"error",msg);
+		  exit(ERROR_EXIT);
+                }
 # endif
 		if (setuid(e->uid) !=0) {
 		  char msg[256];
