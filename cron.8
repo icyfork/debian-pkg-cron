@@ -129,6 +129,26 @@ the clock, and the new time is used immediately.
 .I cron
 logs its action to the syslog facility 'cron', and logging may be
 controlled using the standard syslogd(8) facility.
+.SH ENVIRONMENT
+If configured in
+.I /etc/default/cron
+in Debian systems, the
+.I cron
+daemon localisation settings environment can be managed through the use of 
+.I /etc/environment
+or through the use of
+.I /etc/default/locale
+whichever is available (with the latter one taking precedence). These
+files are read and they will use to setup the LANG, LC_ALL, and
+LC_CTYPE environment variables.
+.PP
+The daemon will use, if present, the definition from
+.I /etc/timezone
+for the timezone.
+.PP
+The environment can be redefined in user's crontab definitions but
+.I cron
+will only handle tasks in a single timezone.
 .SH "SEE ALSO"
 crontab(1), crontab(5)
 .SH AUTHOR
