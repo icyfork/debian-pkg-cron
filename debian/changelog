@@ -279,7 +279,7 @@ cron (3.0pl1-95) unstable; urgency=low
     dumping binary files in /etc/cron.d/ or /var/spool/cron/crontabs/ 
     and have them executed by cron (but binary files under
     /etc/cron.{daily,weekly,monthly} will still be processed as they are
-    handled by run-parts. Thanks to Faidon Liambotis for the patch.
+    handled by run-parts). Thanks to Faidon Liambotis for the patch.
     (Closes: #378153)
   * Reuse vixie-cron-4.1-_51-bz180145-mail_i18n.patch from Fedora Core in
     order to setup a proper Content-Type when sending e-mails. The
