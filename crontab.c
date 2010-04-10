@@ -82,7 +82,7 @@ usage(msg)
 {
 	fprintf(stderr, "%s: usage error: %s\n", ProgramName, msg);
 	fprintf(stderr, "usage:\t%s [-u user] file\n", ProgramName);
-	fprintf(stderr, "\t%s [-u user] { -e | -l | -r [ -i ] }\n", ProgramName);
+	fprintf(stderr, "\t%s [ -u user ] [ -i ] { -e | -l | -r }\n", ProgramName);
 	fprintf(stderr, "\t\t(default operation is replace, per 1003.2)\n");
 	fprintf(stderr, "\t-e\t(edit user's crontab)\n");
 	fprintf(stderr, "\t-l\t(list user's crontab)\n");
@@ -227,8 +227,6 @@ parse_args(argc, argv)
 			Option = opt_edit;
 			break;
 		case 'i':
-			if (Option != opt_delete)
-				usage("-i is only allowed with -r");
                         PromptOnDelete = 1;
 			break;
 		default:
