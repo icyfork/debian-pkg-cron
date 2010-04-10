@@ -51,12 +51,6 @@ if cd $bak ; then
 	fi
 fi
 
-if cd $bak ; then
-    if ! cmp -s dpkg.status.0 /var/lib/dpkg/status ; then
-	    cp -p /var/lib/dpkg/status dpkg.status
-	    savelog -c 7 dpkg.status >/dev/null
-    fi
-fi
 #
 # Check to see if any files are in lost+found directories and warn admin
 #
