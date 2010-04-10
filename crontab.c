@@ -355,6 +355,14 @@ delete_cmd() {
 	char	n[MAX_FNAME];
         char    q[MAX_TEMPSTR];
         int     ans;
+	struct stat fsbuf;
+
+        /* Check if the user has a crontab file first */
+	(void) snprintf(n, MAX_FNAME, CRON_TAB(User));
+	if (stat(n, &fsbuf) < 0) {
+            fprintf(stderr, "no crontab for %s\n", User);
+            exit(ERROR_EXIT);
+	}
 
         if( PromptOnDelete == 1 )
         {
@@ -378,7 +386,6 @@ delete_cmd() {
         }
 
 	log_it(RealUser, Pid, "DELETE", User);
-	(void) snprintf(n, MAX_FNAME, CRON_TAB(User));
 	if (unlink(n)) {
 		if (errno == ENOENT)
 			fprintf(stderr, "no crontab for %s\n", User);
@@ -580,7 +587,30 @@ edit_cmd() {
 	Set_LineNum(1)
 
 	if (add_help_text) {
-		fprintf(NewCrontab, "# m h  dom mon dow   command\n" );
+		fprintf(NewCrontab, 
+"# Edit this file to introduce tasks to be run by cron.\n"
+"# \n"
+"# Each task to run has to be defined through a single line\n"
+"# indicating with different fields when the task will be run\n"
+"# and what command to run for the task\n"
+"# \n"
+"# To define the time you can provide concrete values for\n"
+"# minute (m), hour (h), day of month (dom), month (mon),\n"
+"# and day of week (dow) or use '*' in these fields (for 'any')."
+"# \n"
+"# Notice that tasks will be started based on the cron's system\n"
+"# daemon's notion of time and timezones.\n"
+"# \n"
+"# Output of the crontab jobs (including errors) is sent through\n"
+"# email to the user the crontab file belongs to (unless redirected).\n"
+"# \n"
+"# For example, you can run a backup of all your user accounts\n"
+"# at 5 a.m every week with:\n"
+"# 0 5 * * 1 tar -zcf /var/backups/home.tgz /home/\n"
+"# \n"
+"# For more information see the manual pages of crontab(5) and cron(8)\n" 
+"# \n"
+"# m h  dom mon dow   command\n" );
 	}
 
 	/* ignore the top few comments since we probably put them there.
