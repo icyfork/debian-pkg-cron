@@ -56,14 +56,29 @@ leading or trailing blanks. The
 .I value
 string is 
 .B not
-parsed for environmental substitutions, thus lines like
+parsed for environmental substitutions or replacement of variables, thus lines
+like
 .PP
     PATH = $HOME/bin:$PATH
 .PP
-will not work as you might expect.
+will not work as you might expect. And neither will this work
 .PP
-Several environment variables are set up
-automatically by the
+    A=1
+    B=2
+    C=$A $B
+.PP
+There will not be any subsitution for the defined variables in the
+last value.
+.PP
+An alternative for setting up the commands path is using the fact that
+many shells will treat the tilde(~) as substitution of $HOME, so if you use 
+.I bash
+for your tasks you can use this:
+.PP
+     SHELL=/bin/bash
+     PATH=~/bin:/usr/bin/:/bin
+.PP
+Several environment variables are set up automatically by the
 .IR cron (8)
 daemon.
 SHELL is set to /bin/sh, and LOGNAME and HOME are set from the /etc/passwd 
