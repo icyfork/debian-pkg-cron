@@ -1,3 +1,48 @@
+cron (3.0pl1-109) unstable; urgency=medium
+
+  * cron.c: 
+     - Apply patch derived from OpenBSD's cron by Petya Kohts to
+       handle properly DST and avoid running cron jobs twice, or 
+       skip cron jobs when there is a savings time change.
+       Closes: #217836, #458123, #474157, LP: #36690
+  * crontab.c: 
+     - Revert the behaviour  that prevented 'alias crontab="crontab -i"' from
+       working. Now the -i flag is allowed regardless of other command line
+       switches.  (Closes: #513379)
+     - Be more verbose in the example provided for first-time users than run
+       'crontab -e'
+     - Check if the crontab exists before attempting its removal and before
+       prompting the user (whe using -i)
+     - When prompting, tell the user which chars are expected
+  * crontab.1: 
+     - Change usage to match crontab's output
+     - Clarify use of the cron.allow and cron.deny files (Closes: #511782)
+  * crontab.5:
+     - Describe a known limitation related to the lack of the cron daemon's
+       per-user timezone support (Closes: #497741, 353246, 166533)
+     - Describe the use of tilde (~) as a substitute for $HOME (Closes: 477198)
+     - Describe the lack of replacements of variables (Closes: #493636)
+  * popen.c: Check return call of initgroups(), associated with
+     CVE-2006-2607 fix. Thanks to Christian Kastner for the heads up.
+  * cron.8:
+     - Describe how the environment is managed in Debian
+  * debian/cron.init: Also use /etc/timezone to setup the timezone environment
+    (TZ) if not set.
+  * debian/standard.daily:
+     - Do not make a backup copy of dpkg files anymore since dpkg (1.15.4) does
+       this already (when #541412 was fixed) (Closes: #541415)
+     - Fix a bug in lost+found reporting. Files in lost+found were never +
+       actually reported. [ Patch from Teemu Kiviniemi ]
+     - Added ext4 for lost+found searches. [ Patch from Teemu Kiviniemi ]
+     Closes LP: #367383
+  * debian/control:
+      - Add a Breaks dpkg (<< 1.15.4) to ensure that one always has the backup
+        functionality either via cron or via dpkg.
+      - Provides: cron-daemon, which was reinstated in the virtual package
+        list in November 2009 (Closes: #349170)
+  
+ -- Javier Fernandez-Sanguino Pen~a <jfs@debian.org>  Sat, 10 Apr 2010 12:48:42 +0200
+
 cron (3.0pl1-108) unstable; urgency=high
 
   * Add a Depends: on libpam-runtime (>= 1.0.1-11) since this 
