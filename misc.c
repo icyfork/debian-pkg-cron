@@ -672,8 +672,9 @@ arpadate(clock)
 	struct tm *tm = localtime(&t);
 	char *qmark;
 	size_t len;
-	int hours = tm->tm_gmtoff / 3600;
-	int minutes = (tm->tm_gmtoff - (hours * 3600)) / 60;
+        long gmtoff = get_gmtoff(&t, tm);
+        int hours = gmtoff / 3600;
+        int minutes = (gmtoff - (hours * 3600)) / 60;
 
 	if (minutes < 0)
 		minutes = -minutes;
@@ -714,3 +715,38 @@ int swap_uids()
 }
 int swap_uids_back() { return swap_uids(); }
 #endif /*HAVE_SAVED_UIDS*/
+
+
+/* Return the offset from GMT in seconds (algorithm taken from sendmail).
+ *
+ * warning:
+ *	clobbers the static storage space used by localtime() and gmtime().
+ *	If the local pointer is non-NULL it *must* point to a local copy.
+ */
+#ifndef HAVE_TM_GMTOFF
+long get_gmtoff(time_t *clock, struct tm *local)
+{
+	struct tm gmt;
+	long offset;
+
+	gmt = *gmtime(clock);
+	if (local == NULL)
+		local = localtime(clock);
+
+	offset = (local->tm_sec - gmt.tm_sec) +
+	    ((local->tm_min - gmt.tm_min) * 60) +
+	    ((local->tm_hour - gmt.tm_hour) * 3600);
+
+	/* Timezone may cause year rollover to happen on a different day. */
+	if (local->tm_year < gmt.tm_year)
+		offset -= 24 * 3600;
+	else if (local->tm_year > gmt.tm_year)
+		offset -= 24 * 3600;
+	else if (local->tm_yday < gmt.tm_yday)
+		offset -= 24 * 3600;
+	else if (local->tm_yday > gmt.tm_yday)
+		offset += 24 * 3600;
+
+	return (offset);
+}
+#endif /* HAVE_TM_GMTOFF */

@@ -37,7 +37,7 @@ static char rcsid[] = "$Id: cron.c,v 2.11 1994/01/15 20:43:43 vixie Exp $";
 static	void	usage __P((void)),
 		run_reboot_jobs __P((cron_db *)),
 		find_jobs __P((time_min, cron_db *, int, int)),
-		set_time __P((void)),
+		set_time __P((int)),
 		cron_sleep __P((time_min)),
 #ifdef USE_SIGCHLD
 		sigchld_handler __P((int)),
@@ -152,7 +152,7 @@ main(argc, argv)
 #endif
 	load_database(&database);
 
-	set_time();
+	set_time(TRUE);
 	run_reboot_jobs(&database);
 	timeRunning = virtualTime = clockTime;
 
@@ -173,7 +173,7 @@ main(argc, argv)
 		/* ... wait for the time (in minutes) to change ... */
 		do {
 			cron_sleep(timeRunning + 1);
-			set_time();
+			set_time(FALSE);
 		} while (clockTime == timeRunning);
 		timeRunning = clockTime;
 
@@ -185,6 +185,9 @@ main(argc, argv)
 		 * of 4 cases
 		 */
 		timeDiff = timeRunning - virtualTime;
+
+		Debug(DSCH, ("[%d] pulse: %d = %d - %d\n",
+            	    getpid(), timeDiff, timeRunning, virtualTime));
 
 		/* shortcut for the most common case */
 		if (timeDiff == 1) {
@@ -239,7 +242,7 @@ main(argc, argv)
 						sleep(10);
 					virtualTime++;
 					find_jobs(virtualTime, &database, FALSE, TRUE);
-					set_time();
+					set_time(FALSE);
 				} while (virtualTime< timeRunning &&
 				    clockTime == timeRunning);
 				break;
@@ -326,7 +329,7 @@ find_jobs(vtime, db, doWild, doNonWild)
 	int doNonWild;
 {
 	time_t   virtualSecond  = vtime * SECONDS_PER_MINUTE;
-	register struct tm	*tm = localtime(&virtualSecond);
+	register struct tm 	*tm = gmtime(&virtualSecond);
 	register int		minute, hour, dom, month, dow;
 	register user		*u;
 	register entry		*e;
@@ -370,15 +373,27 @@ find_jobs(vtime, db, doWild, doNonWild)
 
 
 /*
- * set StartTime and clockTime to the current time.
- * these are used for computing what time it really is right now.
- * note that clockTime is a unix wallclock time converted to minutes
+ * Set StartTime and clockTime to the current time.
+ * These are used for computing what time it really is right now.
+ * Note that clockTime is a unix wallclock time converted to minutes.
  */
 static void
-set_time()
+set_time(int initialize)
 {
-	StartTime = time((time_t *)0);
-	clockTime = StartTime / (unsigned long)SECONDS_PER_MINUTE;
+    struct tm tm;
+    static int isdst;
+
+    StartTime = time(NULL);
+
+    /* We adjust the time to GMT so we can catch DST changes. */
+    tm = *localtime(&StartTime);
+    if (initialize || tm.tm_isdst != isdst) {
+       isdst = tm.tm_isdst;
+       GMToff = get_gmtoff(&StartTime, &tm);
+       Debug(DSCH, ("[%d] GMToff=%ld\n",
+           getpid(), (long)GMToff))
+    }
+    clockTime = (StartTime + GMToff) / (time_t)SECONDS_PER_MINUTE;
 }
 
 /*
@@ -388,14 +403,17 @@ static void
 cron_sleep(target)
 	time_min target;
 {
-	register int	seconds_to_wait;
+	time_t t;
+	int seconds_to_wait;
 
-	seconds_to_wait = (int)(target*SECONDS_PER_MINUTE - time((time_t*)0)) + 1;
+	t = time(NULL) + GMToff;
+
+	seconds_to_wait = (int)(target * SECONDS_PER_MINUTE - t) + 1;
 	Debug(DSCH, ("[%d] TargetTime=%ld, sec-to-wait=%d\n",
 	    getpid(), (long)target*SECONDS_PER_MINUTE, seconds_to_wait))
 
-	if (seconds_to_wait > 0 && seconds_to_wait< 65)
-		sleep((unsigned int) seconds_to_wait);
+        if (seconds_to_wait > 0 && seconds_to_wait < 65)
+            sleep((unsigned int) seconds_to_wait);
 }
 
 
