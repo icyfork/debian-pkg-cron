@@ -36,17 +36,30 @@ they are not intended to be edited directly.
 .PP
 If the
 .I /etc/cron.allow
-file exists, then you must be listed therein in order to be allowed to use
-this command.  If the
+file exists, then you must be listed (one user per line) therein in order to be
+allowed to use this command.  If the
 .I /etc/cron.allow
 file does not exist but the
 .I /etc/cron.deny
 file does exist, then you must \fBnot\fR be listed in the
 .I /etc/cron.deny
-file in order to use this command.  If neither of these files exists, then
-depending on site-dependent configuration parameters, only the super user
-will be allowed to use this command, or all users will be able to use this
-command. For standard Debian systems, all users may use this command.
+file in order to use this command. 
+.PP
+If neither of these files exists, then depending on site-dependent
+configuration parameters, only the super user will be allowed to use this
+command, or all users will be able to use this command. 
+.PP
+If both files exist then 
+.I /etc/cron.allow
+takes precendence. Which means that 
+.I /etc/cron.deny
+is not considered and your user must be listed in 
+.I /etc/cron.allow
+in order to be able to use the crontab.
+.PP
+Regardless of the existance of any of these files, the root administrative
+user is always allowed to setup a crontab.  For standard Debian systems, all
+users may use this command.
 .PP
 If the
 .I -u
