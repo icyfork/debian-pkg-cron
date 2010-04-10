@@ -42,11 +42,15 @@ parse_environment ()
         value=$(egrep "^[^#]*${var}=" $ENV_FILE | tail -n1 | cut -d= -f2)
         eval $var=$value
     done
+    # Get the timezone set.
+    if [ -z "$TZ" -a -e /etc/timezone ]; then
+        TZ=`cat /etc/timezone` 
+    fi
 }
 
 # Parse the system's environment
 if [ "$READ_ENV" = "yes" ] ; then
-    export LANG LC_ALL LC_CTYPE
+    export LANG LC_ALL LC_CTYPE TZ
     parse_environment
 fi
 
