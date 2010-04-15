@@ -70,7 +70,7 @@ IFS=`printf '\n\t'`
 for lfdir in $lfdirs; do
 # In each directory, look for files
     if [ -d "$lfdir" ] ; then
-	more_lost_found=`ls -1  "$lfdir" | grep -v 'lost+found$' | sed 's/^/    /'`
+	more_lost_found=`ls -1  "$lfdir" 2>/dev/null | grep -v 'lost+found$' | sed 's/^/    /'`
 	if [ -n "$more_lost_found" ] ; then
 	    lost_found="$lost_found
 
@@ -79,8 +79,17 @@ $more_lost_found"
 	    # NOTE: above weird line breaks in string are intentional!
         fi
     else
-    	no_lost_found="$no_lost_found
+# Do nothing for XFS filesystems they do not need to
+# have a lost and found dir
+        fs=`cat /proc/mounts | grep " $lfdir "`
+        case "$fs" in
+            ext*)
+        	no_lost_found="$no_lost_found
 $lfdir"
+                ;;
+            *)
+                ;;
+        esac
     fi
 done
 
