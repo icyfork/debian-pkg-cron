@@ -153,12 +153,10 @@ SVR3 syntax.
 A fairly informative usage message appears if you run it with a bad command
 line.
 
-.SH BUGS
-Although cron requires that each entry in a crontab end in a newline
-character, neither the crontab command nor the cron daemon will
-detect this error. Instead, the crontab will appear to load
-normally. However, the command will never run. The best choice is to
-ensure that your crontab has a blank line at the end.
+cron requires that each entry in a crontab end in a newline character. If the
+last entry in a crontab is missing the newline, cron will consider the crontab
+(at least partially) broken, and log an error message to syslog.  The last
+entry will not be run.
 
 .SH AUTHOR
 .nf
