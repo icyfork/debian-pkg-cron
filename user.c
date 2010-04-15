@@ -240,11 +240,23 @@ load_user(crontab_fd, pw, uname, fname, tabname)
 	/*
 	 * load the crontab
 	 */
-	while ((status = load_env(envstr, file)) >= OK) {
+	do {
+		status = load_env(envstr, file);
 		switch (status) {
 		case ERR:
-			free_user(u);
-			u = NULL;
+			/* If envstr has no content, we reached a proper EOF
+ 			 * and we can return to continue regular processing.
+			 *
+ 			 * If it does have content, we reached EOF without a
+ 			 * newline, so we bail out
+			 */
+			if (envstr[0] != '\0') {
+                                log_it(u->name, getpid(), "ERROR", "Missing "
+                                "newline before EOF - aborting processing of "
+                                "this crontab!");
+				free_user(u);
+				u = NULL;
+			}
 			goto done;
 		case FALSE:
 #ifdef DEBIAN
@@ -258,7 +270,7 @@ load_user(crontab_fd, pw, uname, fname, tabname)
 				e->next = u->crontab;
 				u->crontab = e;
 			} else {
-				/* stop processing on EOF/syntax error */
+				/* stop processing on syntax error */
 				free_user(u);
 				u = NULL;
 				goto done;
@@ -274,7 +286,7 @@ load_user(crontab_fd, pw, uname, fname, tabname)
 			}
 			break;
 		}
-	}
+	} while (status >= OK);
 
  done:
 	env_free(envp);

@@ -320,10 +320,13 @@ load_entry(file, error_func, pw, envp)
 	ch = get_string(cmd, MAX_COMMAND, file, "\n");
 
 	/* a file without a \n before the EOF is rude, so we'll complain...
+
+	   CK 2010-04-14: this code will never be reached. All calls to
+	   load_entry are proceeded by calls to load_env, which aborts on EOF, and
+       where load_env fails, the code bails out.
 	 */
 	if (ch == EOF) {
 		ecode = e_cmd;
-                log_it("CRON",getpid(),"DEBUG","detected early eof");
 		goto eof;
 	}
 
