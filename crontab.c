@@ -819,6 +819,7 @@ replace_cmd() {
 	char	n[MAX_FNAME], envstr[MAX_ENVSTR];
 	FILE	*tmp;
 	int	ch, eof, fd;
+	int	nl = FALSE;
 	entry	*e;
 	time_t	now = time(NULL);
 	char	**envp = env_init();
@@ -888,6 +889,8 @@ replace_cmd() {
 		switch (load_env(envstr, tmp)) {
 		case ERR:
 			eof = TRUE;
+			if (envstr[0] == '\0')
+				nl = TRUE;
 			break;
 		case FALSE:
 			e = load_entry(tmp, check_error, pw, envp);
@@ -897,6 +900,13 @@ replace_cmd() {
 		case TRUE:
 			break;
 		}
+	}
+
+	if (nl == FALSE) {
+		fprintf(stderr, "new crontab file is missing newline before "
+				"EOF, can't install.\n");
+		fclose(tmp);  unlink(tn);
+		return (-1);
 	}
 
 	if (CheckErrorCount != 0) {
