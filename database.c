@@ -373,7 +373,7 @@ process_crontab(uname, fname, tabname, statbuf, new_db, old_db)
 		log_it(fname, getpid(), "LSTAT FAILED", tabname);
 		goto next_crontab;
             }
-            if (statbuf->st_uid != ROOT_UID) {
+            if (S_ISLNK(statbuf->st_mode) && statbuf->st_uid != ROOT_UID) {
                 log_it(fname, getpid(), "WRONG SYMLINK OWNER", tabname);
 		goto next_crontab;
             }
