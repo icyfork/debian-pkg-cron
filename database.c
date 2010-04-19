@@ -489,7 +489,8 @@ next_crontab:
    names, originally GPL, but relicensed to cron license per e-mail of
    27 September 2003. I've changed it to do regcomp() only once. */
 
-int valid_name(char *filename)
+static int
+valid_name(char *filename)
 {
   static regex_t hierre, tradre, excsre, classicalre;
   static int donere = 0;
