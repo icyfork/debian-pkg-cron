@@ -124,7 +124,8 @@ load_database(old_db)
 			if (stat(syscrond_fname, &syscrond_file_stat) < OK)
 				syscrond_file_stat.st_mtime = 0;
 
-			if (syscrond_file_stat.st_mtime != systab->mtime) {
+			if (syscrond_file_stat.st_mtime != systab->mtime ||
+				systab->mtime == 0) {
 			        syscrond_change = 1;
                         }
 
@@ -379,9 +380,38 @@ process_crontab(uname, fname, tabname, statbuf, new_db, old_db)
             }
             if ((crontab_fd = open(tabname, O_RDONLY, 0)) < OK) {
 		/* crontab not accessible?
+
+                   If tabname is a regular file, this error is bad so we skip
+		   it instead of adding it to the new DB. If it's a symlink,
+                   it's most probably just broken, so we emit a warning.
+                   Then we re-add the old crontab to the new DB, but only after
+                   removing all entries and resetting its mtime. Once the link
+                   is fixed, it will get picked up and processed again.
 		 */
-		log_it(fname, getpid(), "CAN'T OPEN", tabname);
-		goto next_crontab;
+                if (S_ISREG(statbuf->st_mode)) {
+		    log_it(fname, getpid(), "CAN'T OPEN", tabname);
+		    goto next_crontab;
+                } else {
+                    log_it(fname, getpid(), "CAN'T OPEN SYMLINK", tabname);
+
+                    u = find_user(old_db, fname);
+                    if (u != NULL) {
+			Debug(DLOAD, ("\t%s: [using placeholder]\n", fname))
+                        unlink_user(old_db, u);
+
+			if (u->crontab != NULL) {
+                    	    entry *e, *ne;
+			    for (e = u->crontab;  e != NULL;  e = ne) {
+			    	ne = e->next;
+			    	free_entry(e);
+			    }
+			}
+                        u->crontab = NULL;
+                        u->mtime = 0;
+                        link_user(new_db, u);
+                        goto next_crontab;
+                    }
+                }                
             }
 
             if (fstat(crontab_fd, statbuf) < OK) {
