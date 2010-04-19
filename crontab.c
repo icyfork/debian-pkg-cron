@@ -762,7 +762,7 @@ again: /* Loop point for retrying edit after error */
 		break;
 	case -1:
 		for (;;) {
-			printf("Do you want to retry the same edit? ");
+			printf("Do you want to retry the same edit? (y/n) ");
 			fflush(stdout);
 			q[0] = '\0';
 			(void) fgets(q, sizeof q, stdin);
