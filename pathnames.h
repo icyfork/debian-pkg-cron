@@ -93,3 +93,25 @@
 #ifndef _PATH_DEFPATH_ROOT
 # define _PATH_DEFPATH_ROOT "/usr/sbin:/usr/bin:/sbin:/bin"
 #endif
+
+
+#ifdef DEBIAN
+#ifndef CRONDIR_MODE
+			/* Create mode for CRONDIR; must be in sync with
+			 * packaging
+			 */
+#define CRONDIR_MODE 0755
+#endif
+#ifndef SPOOL_DIR_MODE
+			/* Create mode for SPOOL_DIR; must be in sync with
+			 * packaging
+			 */
+#define SPOOL_DIR_MODE 1730
+#endif
+#ifndef SPOOL_DIR_GROUP
+			/* Chown SPOOL_DIR to this group (needed by Debian's
+			 * SGID crontab feature)
+			 */ 
+#define SPOOL_DIR_GROUP "crontab"
+#endif
+#endif

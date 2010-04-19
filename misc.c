@@ -35,6 +35,7 @@ static char rcsid[] = "$Id: misc.c,v 2.9 1994/01/15 20:43:43 vixie Exp $";
 #include <errno.h>
 #include <string.h>
 #include <fcntl.h>
+#include <grp.h>
 #ifdef WITH_AUDIT
 #include <libaudit.h>
 #endif
@@ -194,18 +195,29 @@ void
 set_cron_cwd()
 {
 	struct stat	sb;
-
+	mode_t		um;
+	struct group	*gr;
+	
 	/* first check for CRONDIR ("/var/cron" or some such)
 	 */
 	if (stat(CRONDIR, &sb) < OK && errno == ENOENT) {
 		perror(CRONDIR);
-		if (OK == mkdir(CRONDIR, 0700)) {
+
+		/* crontab(1) running SGID crontab shouldn't attempt to create
+		 * directories */
+		if (getuid() != 0 )
+			exit(ERROR_EXIT);
+
+		um = umask(000);
+		if (OK == mkdir(CRONDIR, CRONDIR_MODE)) {
 			fprintf(stderr, "%s: created\n", CRONDIR);
 			stat(CRONDIR, &sb);
 		} else {
-			fprintf(stderr, "%s: mkdir: %s\n", CRONDIR, strerror(errno));
+			fprintf(stderr, "%s: mkdir: %s\n", CRONDIR,
+				strerror(errno));
 			exit(ERROR_EXIT);
 		}
+		(void) umask(um);
 	}
 	if (!(sb.st_mode & S_IFDIR)) {
 		fprintf(stderr, "'%s' is not a directory, bailing out.\n",
@@ -221,11 +233,33 @@ set_cron_cwd()
 	 */
 	if (stat(SPOOL_DIR, &sb) < OK && errno == ENOENT) {
 		perror(SPOOL_DIR);
-		if (OK == mkdir(SPOOL_DIR, 0700)) {
+
+		/* crontab(1) running SGID crontab shouldn't attempt to create
+		 * directories */
+		if (getuid() != 0 )
+			exit(ERROR_EXIT);
+
+		um = umask(000);
+		if (OK == mkdir(SPOOL_DIR, SPOOL_DIR_MODE)) {
 			fprintf(stderr, "%s: created\n", SPOOL_DIR);
-			stat(SPOOL_DIR, &sb);
 		} else {
-			fprintf(stderr, "%s: mkdir: %s\n", SPOOL_DIR, strerror(errno));
+			fprintf(stderr, "%s: mkdir: %s\n", SPOOL_DIR,
+				strerror(errno));
+			exit(ERROR_EXIT);
+		}
+		(void) umask(um);
+
+		if (!(gr = getgrnam(SPOOL_DIR_GROUP))) {
+			fprintf(stderr, "%s: getgrnam: %s\n", SPOOL_DIR,
+				strerror(errno));
+			exit(ERROR_EXIT);
+		}
+		if (OK == chown(SPOOL_DIR, -1, gr->gr_gid)) {
+			fprintf(stderr, "%s: chowned\n", SPOOL_DIR);
+				stat(SPOOL_DIR, &sb);
+		} else {
+			fprintf(stderr, "%s: chown: %s\n", SPOOL_DIR,
+			strerror(errno));
 			exit(ERROR_EXIT);
 		}
 	}
