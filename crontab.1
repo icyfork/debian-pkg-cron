@@ -17,7 +17,7 @@
 .\"
 .\" $Id: crontab.1,v 2.4 1993/12/31 10:47:33 vixie Exp $
 .\"
-.TH CRONTAB 1 "16 March 2010"
+.TH CRONTAB 1 "19 April 2010"
 .UC 4
 .SH NAME
 crontab \- maintain crontab files for individual users (Vixie Cron)
@@ -155,8 +155,7 @@ line.
 
 cron requires that each entry in a crontab end in a newline character. If the
 last entry in a crontab is missing the newline, cron will consider the crontab
-(at least partially) broken, and log an error message to syslog.  The last
-entry will not be run.
+(at least partially) broken and refuse to install it.
 
 .SH AUTHOR
 .nf

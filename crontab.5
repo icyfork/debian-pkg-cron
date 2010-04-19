@@ -17,7 +17,7 @@
 .\"
 .\" $Id: crontab.5,v 2.4 1994/01/15 20:43:43 vixie Exp $
 .\" 
-.TH CRONTAB 5 "16 March 2010"
+.TH CRONTAB 5 "19 April 2010"
 .UC 4
 .SH NAME
 crontab \- tables for driving cron
@@ -295,6 +295,13 @@ environment variable in his
 .I crontab
 this will affect only the commands executed in the crontab, not the execution
 of the crontab tasks themselves.
+
+.SH DIAGNOSTICS
+cron requires that each entry in a crontab end in a newline character. If the
+last entry in a crontab is missing a newline (ie, terminated by EOF), cron will
+consider the crontab (at least partially) broken. A warning will be written to
+syslog.
+
 .SH AUTHOR
 .nf
 Paul Vixie <paul@vix.com>
