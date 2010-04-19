@@ -393,6 +393,17 @@ process_crontab(uname, fname, tabname, statbuf, new_db, old_db)
                 log_it(fname, getpid(), "WRONG FILE OWNER", tabname);
 		goto next_crontab;
             }
+            /* Check to make sure that the crontab is writable only by root */
+            if ((statbuf->st_mode & S_IWGRP) || (statbuf->st_mode & S_IWOTH))  {
+                log_it(fname, getpid(), "WRONG INODE INFO", tabname);
+		goto next_crontab;
+            }
+            /* Technically, we should also check whether the parent dir is
+ 	     * writable, and so on. This would only make proper sense for
+ 	     * regular files; we can't realistically check all possible
+ 	     * security issues resulting from symlinks. We'll just assume that
+ 	     * root will handle responsible when creating them.
+	     */
         }
         /*
          * The link count check is not sufficient (the owner may
