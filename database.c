@@ -78,7 +78,7 @@ load_database(old_db)
 	 */
 	if (stat(SPOOL_DIR, &statbuf) < OK) {
 		log_it("CRON", getpid(), "STAT FAILED", SPOOL_DIR);
-		(void) exit(ERROR_EXIT);
+		statbuf.st_mtime = 0;
 	}
 
 	/* track system crontab file
@@ -93,7 +93,7 @@ load_database(old_db)
 	 */
 	if (stat(SYSCRONDIR, &syscrond_stat) < OK) {
 		log_it("CRON", getpid(), "STAT FAILED", SYSCRONDIR);
-		(void) exit(ERROR_EXIT);
+		syscrond_stat.st_mtime = 0;
 	}
 
 	/* If SYSCRONDIR was modified, we know that something is changed and
@@ -175,10 +175,9 @@ load_database(old_db)
 	/* Read all the package crontabs. */
 	if (!(dir = opendir(SYSCRONDIR))) {
 		log_it("CRON", getpid(), "OPENDIR FAILED", SYSCRONDIR);
-		(void) exit(ERROR_EXIT);
 	}
 
-	while (NULL != (dp = readdir(dir))) {
+	while (dir != NULL && NULL != (dp = readdir(dir))) {
 		char	fname[MAXNAMLEN+1],
 		        tabname[PATH_MAX+1];
 
@@ -208,7 +207,8 @@ load_database(old_db)
 				&statbuf, &new_db, old_db);
 
 	}
-	closedir(dir);
+	if (dir)
+		closedir(dir);
 #endif
 
 	/* we used to keep this dir open all the time, for the sake of
@@ -217,10 +217,9 @@ load_database(old_db)
 	 */
 	if (!(dir = opendir(SPOOL_DIR))) {
 		log_it("CRON", getpid(), "OPENDIR FAILED", SPOOL_DIR);
-		(void) exit(ERROR_EXIT);
 	}
 
-	while (NULL != (dp = readdir(dir))) {
+	while (dir != NULL && NULL != (dp = readdir(dir))) {
 		char	fname[MAXNAMLEN+1],
 			tabname[PATH_MAX+1];
 
@@ -238,7 +237,8 @@ load_database(old_db)
 		process_crontab(fname, fname, tabname,
 				&statbuf, &new_db, old_db);
 	}
-	closedir(dir);
+	if (dir)
+		closedir(dir);
 
 	/* if we don't do this, then when our children eventually call
 	 * getpwnam() in do_command.c's child_process to verify MAILTO=,
