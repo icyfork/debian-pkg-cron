@@ -126,7 +126,7 @@ cron_popen(program, type, e)
 # if defined(BSD) || defined(POSIX)
 		if (initgroups(env_get("LOGNAME", e->envp), e->gid) !=0) {
 		  char msg[256];
-		  snprintf(msg, 256, "do_command:initgroups(%lu) failed: %s",
+		  snprintf(msg, 256, "popen:initgroups(%lu) failed: %s",
 			   (unsigned long) e->gid, strerror(errno));
 		  log_it("CRON",getpid(),"error",msg);
 		  exit(ERROR_EXIT);
