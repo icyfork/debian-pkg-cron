@@ -23,6 +23,8 @@ static char rcsid[] = "$Id: do_command.c,v 2.12 1994/01/15 20:43:43 vixie Exp $"
 #include "cron.h"
 #include <signal.h>
 #include <grp.h>
+#include <sys/stat.h>
+#include <unistd.h>
 #if defined(sequent)
 # include <sys/universe.h>
 #endif
@@ -492,6 +494,16 @@ child_process(e, u)
 			log_it("CRON", getpid(), "error", msg);
 		} 
 	}
+
+	struct stat	mcsb;
+	int		statret;	
+
+	/* Don't send mail if MAILCMD is not available */
+	if ((statret = stat(MAILCMD, &mcsb)) != 0) {
+		Debug(DPROC|DEXT, ("%s not found, not sending mail\n", MAILCMD))
+		goto mail_finished;
+	}
+
 // Finally, send any output of the command to the mailer; also, alert
 // the user if their job failed.  Avoid popening the mailcmd until now
 // since sendmail may time out, and to write info about the exit
@@ -623,6 +635,7 @@ child_process(e, u)
 		log_it(usernm, getpid(), "MAIL", "stream error reading output");
 	}
 
+mail_finished:
 	fclose(tmpout);
 
 	if (log_level >= 2) {
