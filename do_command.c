@@ -111,12 +111,21 @@ do_command(e, u)
 }
 
 
+/*
+ * CROND
+ *  - cron (runs child_process);
+ *    - cron (runs exec sh -c 'tab entry');
+ *    - cron (writes any %-style stdin to the command);
+ *    - mail (popen writes any stdout to mailcmd);
+ */
+
 static void
 child_process(e, u)
 	entry	*e;
 	user	*u;
 {
-	int		stdin_pipe[2], stdout_pipe[2];
+	int		stdin_pipe[2];
+	FILE		*tmpout;
 	register char	*input_data;
 	char		*usernm, *mailto;
 	int		children = 0;
@@ -176,10 +185,14 @@ child_process(e, u)
 	(void) signal(SIGCLD, SIG_DFL);
 #endif /*BSD*/
 
-	/* create some pipes to talk to our future child
+	/* create a pipe to talk to our future child
 	 */
 	pipe(stdin_pipe);	/* child's stdin */
-	pipe(stdout_pipe);	/* child's stdout */
+	/* child's stdout */
+	if ((tmpout = tmpfile()) == NULL) {
+		log_it("CRON", getpid(), "error", "create tmpfile");
+		exit(ERROR_EXIT);
+	}
 	
 	/* since we are a forked process, we can diddle the command string
 	 * we were passed -- nobody else is going to use it again, right?
@@ -270,7 +283,6 @@ child_process(e, u)
 		 * appropriate circumstances.
 		 */
 		close(stdin_pipe[WRITE_PIPE]);
-		close(stdout_pipe[READ_PIPE]);
 
 		/* grandchild process.  make std{in,out} be the ends of
 		 * pipes opened by our daddy; make stderr go to stdout.
@@ -278,14 +290,14 @@ child_process(e, u)
 		/* Closes are unnecessary -- let dup2() do it */
 
 		  /* close(STDIN) */; dup2(stdin_pipe[READ_PIPE], STDIN);
-		  /* close(STDOUT) */;  dup2(stdout_pipe[WRITE_PIPE], STDOUT);
+		  dup2(fileno(tmpout), STDOUT);
 		  /* close(STDERR)*/; dup2(STDOUT, STDERR);
 
 
-		/* close the pipes we just dup'ed.  The resources will remain.
+		/* close the pipe we just dup'ed.  The resources will remain.
 		 */
 		close(stdin_pipe[READ_PIPE]);
-		close(stdout_pipe[WRITE_PIPE]);
+		// Don't do this: fclose(tmpout);
 
 		/* set our login universe.  Do this in the grandchild
 		 * so that the child can invoke /usr/lib/sendmail
@@ -377,11 +389,10 @@ child_process(e, u)
 
 	Debug(DPROC, ("[%d] child continues, closing pipes\n", getpid()))
 
-	/* close the ends of the pipe that will only be referenced in the
+	/* close the end of the pipe that will only be referenced in the
 	 * grandchild process...
 	 */
 	close(stdin_pipe[READ_PIPE]);
-	close(stdout_pipe[WRITE_PIPE]);
 
 	/*
 	 * write, to the pipe connected to child's stdin, any input specified
@@ -401,11 +412,6 @@ child_process(e, u)
 		register int	ch;
 
 		Debug(DPROC, ("[%d] child2 sending data to grandchild\n", getpid()))
-
-		/* close the pipe we don't use, since we inherited it and
-		 * are part of its reference count now.
-		 */
-		close(stdout_pipe[READ_PIPE]);
 
 		/* translation:
 		 *	\% -> %
@@ -454,167 +460,12 @@ child_process(e, u)
 	 * when the grandchild exits, we'll get EOF.
 	 */
 
-	Debug(DPROC, ("[%d] child reading output from grandchild\n", getpid()))
-
-	/*local*/{
-		register FILE	*in = fdopen(stdout_pipe[READ_PIPE], "r");
-		register int	ch = getc(in);
-
-		if (ch != EOF) {
-			register FILE	*mail = NULL;
-			register int	bytes = 1;
-			int		status = 0;
-
-			Debug(DPROC|DEXT,
-				("[%d] got data (%x:%c) from grandchild\n",
-					getpid(), ch, ch))
-
-			/* get name of recipient.  this is MAILTO if set to a
-			 * valid local username; USER otherwise.
-			 */
-			if (mailto) {
-				/* MAILTO was present in the environment
-				 */
-				if (!*mailto) {
-					/* ... but it's empty. set to NULL
-					 */
-					mailto = NULL;
-				}
-			} else {
-				/* MAILTO not present, set to USER.
-				 */
-				mailto = usernm;
-			}
-		
-			/* if we are supposed to be mailing, MAILTO will
-			 * be non-NULL.  only in this case should we set
-			 * up the mail command and subjects and stuff...
-			 */
-
-			if (mailto) {
-				register char	**env;
-                        	char    **jobenv = build_env(e->envp); 
-				auto char	mailcmd[MAX_COMMAND];
-				auto char	hostname[MAXHOSTNAMELEN];
-				char    *content_type = env_get("CONTENT_TYPE",jobenv),
-					*content_transfer_encoding = env_get("CONTENT_TRANSFER_ENCODING",jobenv);
-
-
-				(void) gethostname(hostname, MAXHOSTNAMELEN);
-				(void) snprintf(mailcmd, sizeof(mailcmd),
-				    MAILARGS, MAILCMD, mailto);
-				if (!(mail = cron_popen(mailcmd, "w", e))) {
-					perror(MAILCMD);
-					(void) _exit(ERROR_EXIT);
-				}
-				fprintf(mail, "From: root (Cron Daemon)\n");
-				fprintf(mail, "To: %s\n", mailto);
-				fprintf(mail, "Subject: Cron <%s@%s> %s\n",
-					usernm, first_word(hostname, "."),
-					e->cmd);
-# if defined(MAIL_DATE)
-				fprintf(mail, "Date: %s\n",
-					arpadate(&StartTime));
-# endif /* MAIL_DATE */
-                               if ( content_type == 0L ) {
-                                       fprintf(mail, "Content-Type: text/plain; charset=%s\n",
-                                               cron_default_mail_charset
-                                              );
-                               } else {   
-				    /* user specified Content-Type header.
-				     * disallow new-lines for security reasons
-				     * (else users could specify arbitrary mail headers!)
-				     */
-				       char *nl=content_type;
-                                       size_t ctlen = strlen(content_type);
-
-                                       while(  (*nl != '\0')
-                                            && ((nl=strchr(nl,'\n')) != 0L)
-                                            && (nl < (content_type+ctlen))
-                                            ) *nl = ' ';
-                                       fprintf(mail,"Content-Type: %s\n", content_type);
-                               }
-                               if ( content_transfer_encoding != 0L ) {
-                                       char *nl=content_transfer_encoding;
-                                       size_t ctlen = strlen(content_transfer_encoding);
-                                       while(  (*nl != '\0')
-                                            && ((nl=strchr(nl,'\n')) != 0L)
-                                            && (nl < (content_transfer_encoding+ctlen))
-                                            ) *nl = ' ';
-
-                                       fprintf(mail,"Content-Transfer-Encoding: %s\n", content_transfer_encoding);
-                               }
-
-
-				for (env = e->envp;  *env;  env++)
-					fprintf(mail, "X-Cron-Env: <%s>\n",
-						*env);
-				fprintf(mail, "\n");
-
-				/* this was the first char from the pipe
-				 */
-				putc(ch, mail);
-			}
-
-			/* we have to read the input pipe no matter whether
-			 * we mail or not, but obviously we only write to
-			 * mail pipe if we ARE mailing.
-			 */
-
-			while (EOF != (ch = getc(in))) {
-				bytes++;
-				if (mailto)
-					putc(ch, mail);
-			}
-
-			/* only close pipe if we opened it -- i.e., we're
-			 * mailing...
-			 */
-
-			if (mailto) {
-				Debug(DPROC, ("[%d] closing pipe to mail\n",
-					getpid()))
-				/* Note: the pclose will probably see
-				 * the termination of the grandchild
-				 * in addition to the mail process, since
-				 * it (the grandchild) is likely to exit
-				 * after closing its stdout.
-				 */
-				status = cron_pclose(mail);
-			}
-
-			/* if there was output and we could not mail it,
-			 * log the facts so the poor user can figure out
-			 * what's going on.
-			 */
-			if (mailto && status) {
-				char buf[MAX_TEMPSTR];
-
-				snprintf(buf, MAX_TEMPSTR,
-			"mailed %d byte%s of output but got status 0x%04x\n",
-					bytes, (bytes==1)?"":"s",
-					status);
-				log_it(usernm, getpid(), "MAIL", buf);
-			}
-
-		} /*if data from grandchild*/
-
-		if (log_level >= 2) {
-			char *x = mkprints((u_char *)e->cmd, strlen(e->cmd));
-
-			log_it(usernm, getpid(), "END", x);
-			free(x);
-		}
-
-		Debug(DPROC, ("[%d] got EOF from grandchild\n", getpid()))
-
-		fclose(in);	/* also closes stdout_pipe[READ_PIPE] */
-	}
-
 	/* wait for children to die.
 	 */
+	int status = 0;
 	for (;  children > 0;  children--)
 	{
+		char		msg[256];
 		WAIT_T		waiter;
 		PID_T		pid;
 
@@ -622,16 +473,164 @@ child_process(e, u)
 			getpid(), children))
 		pid = wait(&waiter);
 		if (pid < OK) {
-			Debug(DPROC, ("[%d] no more grandchildren--mail written?\n",
-				getpid()))
+			Debug(DPROC, ("[%d] no more grandchildren\n", getpid()))
 			break;
 		}
-		Debug(DPROC, ("[%d] grandchild #%d finished, status=%04x",
+		Debug(DPROC, ("[%d] grandchild #%d finished, status=%04x\n",
 			getpid(), pid, WEXITSTATUS(waiter)))
-		if (WIFSIGNALED(waiter) && WCOREDUMP(waiter))
-			Debug(DPROC, (", dumped core"))
-		Debug(DPROC, ("\n"))
+
+		if (WIFEXITED(waiter) && WEXITSTATUS(waiter)) {
+			status = waiter;
+			snprintf(msg, 256, "grandchild #%d failed with exit "
+				"status %d", pid, WEXITSTATUS(waiter));
+			log_it("CRON", getpid(), "error", msg);
+		} else if (WIFSIGNALED(waiter)) {
+			status = waiter;
+			snprintf(msg, 256, "grandchild #%d terminated by signal"
+				" %d%s", pid, WTERMSIG(waiter),
+				WCOREDUMP(waiter) ? ", dumped core" : "");
+			log_it("CRON", getpid(), "error", msg);
+		} 
 	}
+// Finally, send any output of the command to the mailer; also, alert
+// the user if their job failed.  Avoid popening the mailcmd until now
+// since sendmail may time out, and to write info about the exit
+// status.
+	
+	long pos;
+
+	fseek(tmpout, 0, SEEK_END);
+	pos = ftell(tmpout);
+	fseek(tmpout, 0, SEEK_SET);
+
+	Debug(DPROC|DEXT, ("[%d] got %ld bytes data from grandchild tmpfile\n",
+				getpid(), (long) pos))
+	if (pos == 0 && status == 0)
+		return;
+
+	// get name of recipient.
+	if (mailto == NULL)
+		mailto = usernm;
+	else if (!*mailto)
+		mailto = NULL;
+
+	register FILE	*mail = NULL;
+	register int	bytes = 1;
+
+	register char	**env;
+	char    	**jobenv = build_env(e->envp); 
+	auto char	mailcmd[MAX_COMMAND];
+	auto char	hostname[MAXHOSTNAMELEN];
+	char    	*content_type = env_get("CONTENT_TYPE",jobenv),
+			*content_transfer_encoding = env_get("CONTENT_TRANSFER_ENCODING",jobenv);
+
+	(void) gethostname(hostname, MAXHOSTNAMELEN);
+	(void) snprintf(mailcmd, sizeof(mailcmd),
+			MAILARGS, MAILCMD, mailto);
+	if (!(mail = cron_popen(mailcmd, "w", e))) {
+		perror(MAILCMD);
+		(void) _exit(ERROR_EXIT);
+	}
+	fprintf(mail, "From: root (Cron Daemon)\n");
+	fprintf(mail, "To: %s\n", mailto);
+	fprintf(mail, "Subject: Cron <%s@%s> %s%s\n",
+			usernm, first_word(hostname, "."),
+			e->cmd, status?" (failed)":"");
+# if defined(MAIL_DATE)
+	fprintf(mail, "Date: %s\n",
+			arpadate(&StartTime));
+# endif /* MAIL_DATE */
+	if ( content_type == 0L ) {
+		fprintf(mail, "Content-Type: text/plain; charset=%s\n",
+				cron_default_mail_charset
+		       );
+	} else {   
+		/* user specified Content-Type header.
+		 * disallow new-lines for security reasons
+		 * (else users could specify arbitrary mail headers!)
+		 */
+		char *nl=content_type;
+		size_t ctlen = strlen(content_type);
+
+		while(  (*nl != '\0')
+				&& ((nl=strchr(nl,'\n')) != 0L)
+				&& (nl < (content_type+ctlen))
+		     ) *nl = ' ';
+		fprintf(mail,"Content-Type: %s\n", content_type);
+	}
+	if ( content_transfer_encoding != 0L ) {
+		char *nl=content_transfer_encoding;
+		size_t ctlen = strlen(content_transfer_encoding);
+		while(  (*nl != '\0')
+				&& ((nl=strchr(nl,'\n')) != 0L)
+				&& (nl < (content_transfer_encoding+ctlen))
+		     ) *nl = ' ';
+
+		fprintf(mail,"Content-Transfer-Encoding: %s\n", content_transfer_encoding);
+	}
+
+	for (env = e->envp;  *env;  env++)
+		fprintf(mail, "X-Cron-Env: <%s>\n",
+				*env);
+	fputc('\n', mail);
+
+	if (WIFEXITED(status) && WEXITSTATUS(status)) {
+		status = WEXITSTATUS(status);
+		fprintf(mail, "command failed with exit status %d\n\n", status);
+	} else if (WIFSIGNALED(status)) {
+		fprintf(mail, "command terminated by signal %d%s\n\n",
+				WTERMSIG(status),
+				WCOREDUMP(status)?", dumped core":"");
+	}
+
+// Append the actual output of the child to the mail
+	
+	char buf[4096];
+	int ret, remain;
+
+	while(1) {
+		if ((ret = fread(buf, 1, sizeof(buf), tmpout)) == 0)
+			break;
+		for (remain = ret; remain != 0; ) {
+			ret = fwrite(buf, 1, remain, mail);
+			if (ret > 0) {
+				remain -= ret;
+				continue;
+			}
+			// XXX error
+			break;
+		}
+	}
+
+	Debug(DPROC, ("[%d] closing pipe to mail\n", getpid()))
+	status = cron_pclose(mail);
+
+	/* if there was output and we could not mail it,
+	 * log the facts so the poor user can figure out
+	 * what's going on.
+	 */
+	if (status) {
+		char buf[MAX_TEMPSTR];
+		snprintf(buf, MAX_TEMPSTR,
+				"mailed %d byte%s of output; "
+				"but got status 0x%04x, "
+				"\n",
+				bytes, (bytes==1)?"":"s", status);
+		log_it(usernm, getpid(), "MAIL", buf);
+	}
+
+	if (ferror(tmpout)) {
+		log_it(usernm, getpid(), "MAIL", "stream error reading output");
+	}
+
+	fclose(tmpout);
+
+	if (log_level >= 2) {
+		char *x = mkprints((u_char *)e->cmd, strlen(e->cmd));
+		log_it(usernm, getpid(), "END", x);
+		free(x);
+	}
+
 #if defined(USE_PAM)
 	pam_setcred(pamh, PAM_DELETE_CRED | PAM_SILENT);
 	retcode = pam_close_session(pamh, PAM_SILENT);
