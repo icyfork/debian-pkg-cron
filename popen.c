@@ -173,7 +173,7 @@ cron_pclose(iop)
 	FILE *iop;
 {
 	register int fdes;
-	int omask;
+	sigset_t omask, mask;
 	WAIT_T stat_loc;
 	PID_T pid;
 
@@ -184,10 +184,15 @@ cron_pclose(iop)
 	if (pids == 0 || pids[fdes = fileno(iop)] == 0)
 		return(-1);
 	(void)fclose(iop);
-	omask = sigblock(sigmask(SIGINT)|sigmask(SIGQUIT)|sigmask(SIGHUP));
-	while ((pid = wait(&stat_loc)) != pids[fdes] && pid != -1)
-		;
-	(void)sigsetmask(omask);
+	sigemptyset(&mask);
+	sigaddset(&mask, SIGQUIT);
+	sigaddset(&mask, SIGINT);
+	sigaddset(&mask, SIGHUP);
+	sigprocmask(SIG_BLOCK, &mask, &omask);
+	pid = waitpid(pids[fdes], &stat_loc, 0);
+	sigprocmask(SIG_SETMASK, &omask, NULL);
 	pids[fdes] = 0;
-	return (pid == -1 ? -1 : WEXITSTATUS(stat_loc));
+	if (pid == -1 || !WIFEXITED(stat_loc))
+		return -1;
+	return WEXITSTATUS(stat_loc);
 }
