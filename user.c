@@ -271,6 +271,9 @@ load_user(crontab_fd, pw, uname, fname, tabname)
 				u->crontab = e;
 			} else {
 				/* stop processing on syntax error */
+				log_it(u->name, getpid(), "ERROR", "Syntax "
+					"error, aborting processing of this "
+					"crontab!");
 				free_user(u);
 				u = NULL;
 				goto done;
