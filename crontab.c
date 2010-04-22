@@ -902,15 +902,15 @@ replace_cmd() {
 		}
 	}
 
-	if (nl == FALSE) {
-		fprintf(stderr, "new crontab file is missing newline before "
-				"EOF, can't install.\n");
+	if (CheckErrorCount != 0) {
+		fprintf(stderr, "errors in crontab file, can't install.\n");
 		fclose(tmp);  unlink(tn);
 		return (-1);
 	}
 
-	if (CheckErrorCount != 0) {
-		fprintf(stderr, "errors in crontab file, can't install.\n");
+	if (nl == FALSE) {
+		fprintf(stderr, "new crontab file is missing newline before "
+				"EOF, can't install.\n");
 		fclose(tmp);  unlink(tn);
 		return (-1);
 	}
