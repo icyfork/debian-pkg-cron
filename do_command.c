@@ -240,9 +240,9 @@ child_process(e, u)
 	PAM_FAIL_CHECK;
 	retcode = pam_acct_mgmt(pamh, PAM_SILENT);
 	PAM_FAIL_CHECK;
-	retcode = pam_open_session(pamh, PAM_SILENT);
-	PAM_FAIL_CHECK;
 	retcode = pam_setcred(pamh, PAM_ESTABLISH_CRED | PAM_SILENT);
+	PAM_FAIL_CHECK;
+	retcode = pam_open_session(pamh, PAM_SILENT);
 	PAM_FAIL_CHECK;
 
 #endif
