@@ -476,6 +476,17 @@ get_range(bits, low, high, names, ch, file)
 		num3 = 1;
 	}
 
+	/* Explicitly check for sane values. Certain combinations of ranges and
+	 * steps which should return EOF don't get picked up by the code below,
+	 * eg:
+	 *	5-64/30 * * * *	touch /dev/null
+	 *
+	 * Code adapted from set_elements() where this error was probably intended
+	 * to be catched.
+	 */
+	if (num1 < low || num1 > high || num2 < low || num2 > high)
+		return EOF;
+
 	/* range. set all elements from num1 to num2, stepping
 	 * by num3.  (the step is a downward-compatible extension
 	 * proposed conceptually by bob@acornrc, syntactically
