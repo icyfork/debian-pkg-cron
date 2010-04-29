@@ -83,8 +83,10 @@ load_database(old_db)
 
 	/* track system crontab file
 	 */
-	if (stat(SYSCRONTAB, &syscron_stat) < OK)
+	if (stat(SYSCRONTAB, &syscron_stat) < OK) {
+		log_it("CRON", getpid(), "STAT FAILED", SYSCRONTAB);
 		syscron_stat.st_mtime = 0;
+	}
 
 #ifdef DEBIAN
 	/* Check mod time of SYSCRONDIR. This won't tell us if a file
