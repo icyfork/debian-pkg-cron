@@ -33,5 +33,5 @@ format (i.e. with user field), must meet run-parts(8) naming
 convention (alphanumeric, underscore, hyphen only).
 
 This package is now maintained by Javier Fernández-Sanguino Peña
-<jfs@computer.org>.
+<jfs@computer.org> and Christian Kastner <debian@kvr.at>.
 
