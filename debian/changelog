@@ -1,3 +1,65 @@
+cron (3.0pl1-110) unstable; urgency=low
+  [ Christian Kastner ]
+  * user.c
+     - Fix broken parsing and handling of crontabs with no-newline-before-EOF
+     - Refuse to install such crontabs via crontab(1). Closes: #79037
+     - Log crontabs missing newline before EOF to syslog. This is only relevant
+       for crontabs not installed via crontab(1), ie. /etc/cron.d/* and
+       /etc/crontab. Closes: #76625
+     - Add a log message explicitly stating that all jobs of crontabs with
+       syntax errors will not be run (ie, all-or-nothing). See #555954 
+  * crontab.c
+     - Tell the user which chars are expected on retry, too
+  * cron.c
+     - Don't let the daemon die when directories disappear, eg. when moving
+       directories around. Patch provided by Justin Pryzby (thanks!).
+       Closes: #470564
+  * database.c
+     - Recover from broken symlinks in /etc/cron.d/ (Closes: #433609)
+     - Don't report wrong file owner in /etc/cron.d/ as wrong symlink owner 
+     - Check the permissions of symlink targets (writeable only by root)
+  * do_command.c
+     - Don't let long-running commands time out certain MTAs. Patch provided by
+       Justin Pryzby, based on an analysis by Alexis Huxley (thanks!). Debian's
+       default MTA, exim, does not time out, so it shouldn't have been
+       affected.  Closes: #155109, #443615
+     - Bypass mail generation/sending code when no MTA is installed.
+       Previously, jobs with a lot of output would die once the pipe's buffer
+       was filled.  Closes: #577133
+  * popen.c
+     - Move signal handling away from ancient API. Patch provided by Justin
+       Pryzby (thanks!).
+  * misc.c
+     - On startup, when recreating missing directories, do so with permissions
+       reflecting Debian's SGID crontab vs upstream's SUID
+  * entry.c
+     - Explicitly check for valid ranges in range values instead of upstream's
+       broken approach which misses certain combinations of ranges and steps.
+       Closes: #533726
+  * env.c
+     - Backport environment variable parser from 4.1. The 3.0 parser has a
+       number of issues, especially with otherwise trivial matters such as
+       whitespace. Closes: #437180
+  * cron.8
+     - Document symlink behaviour.
+  * crontab.1
+     - Document the new EOF handling described above.
+  * crontab.5
+     - Clarify parsing of empty variables (Closes: #497742)
+  * debian/TODO
+     - Remove obsolete entries; add a table of planned milestones
+  * debian/NEWS
+     - Briefly describe the most important changes since lenny's release
+  * debian/control
+     - Add Christian Kastner to the Maintainers list (Closes: #565143)
+
+  [ Javier Fernandez-Sanguino Pen~a ]
+  * debian/standard.daily:
+     - Do not indicate that lost+found does not exist if the filesystem is XFS
+       Closes: #577508
+
+ -- Christian Kastner <debian@kvr.at>  Thu, 29 Apr 2010 16:23:38 +0200
+
 cron (3.0pl1-109) unstable; urgency=medium
 
   * cron.c: 
