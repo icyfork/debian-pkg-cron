@@ -252,8 +252,8 @@ load_user(crontab_fd, pw, uname, fname, tabname)
 			 */
 			if (envstr[0] != '\0') {
                                 log_it(u->name, getpid(), "ERROR", "Missing "
-                                "newline before EOF - aborting processing of "
-                                "this crontab!");
+                                "newline before EOF, this crontab file will be "
+                                "ignored");
 				free_user(u);
 				u = NULL;
 			}
@@ -272,8 +272,8 @@ load_user(crontab_fd, pw, uname, fname, tabname)
 			} else {
 				/* stop processing on syntax error */
 				log_it(u->name, getpid(), "ERROR", "Syntax "
-					"error, aborting processing of this "
-					"crontab!");
+					"error, this crontab file will be "
+					"ignored"); 
 				free_user(u);
 				u = NULL;
 				goto done;
