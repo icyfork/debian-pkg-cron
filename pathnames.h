@@ -106,7 +106,7 @@
 			/* Create mode for SPOOL_DIR; must be in sync with
 			 * packaging
 			 */
-#define SPOOL_DIR_MODE 1730
+#define SPOOL_DIR_MODE 01730
 #endif
 #ifndef SPOOL_DIR_GROUP
 			/* Chown SPOOL_DIR to this group (needed by Debian's
