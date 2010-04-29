@@ -495,21 +495,14 @@ child_process(e, u)
 		} 
 	}
 
-	struct stat	mcsb;
-	int		statret;	
-
-	/* Don't send mail if MAILCMD is not available */
-	if ((statret = stat(MAILCMD, &mcsb)) != 0) {
-		Debug(DPROC|DEXT, ("%s not found, not sending mail\n", MAILCMD))
-		goto mail_finished;
-	}
-
 // Finally, send any output of the command to the mailer; also, alert
 // the user if their job failed.  Avoid popening the mailcmd until now
 // since sendmail may time out, and to write info about the exit
 // status.
 	
 	long pos;
+	struct stat	mcsb;
+	int		statret;	
 
 	fseek(tmpout, 0, SEEK_END);
 	pos = ftell(tmpout);
@@ -525,6 +518,19 @@ child_process(e, u)
 		mailto = usernm;
 	else if (!*mailto)
 		mailto = NULL;
+
+	/* Don't send mail if MAILCMD is not available */
+	if ((statret = stat(MAILCMD, &mcsb)) != 0) {
+		Debug(DPROC|DEXT, ("%s not found, not sending mail\n", MAILCMD))
+		if (pos > 0) {
+			log_it("CRON", getpid(), "info", "got %ld bytes data, "
+				"but no MTA installed.  Data will be "
+				"discarded.", pos);
+		}
+		goto mail_finished;
+	} else {
+		Debug(DPROC|DEXT, ("%s found, will send mail\n", MAILCMD))
+	}
 
 	register FILE	*mail = NULL;
 	register int	bytes = 1;
