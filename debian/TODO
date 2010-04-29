@@ -13,7 +13,15 @@ TODO stuff
   (like fcron or bcron) can be installed/deinstalled without breaking 
   the system. 
   This might imply fixing #304036 (which might help fix #312614 too BTW)
-  Note:
+
+- Greatly improve change detection code for /etc/cron.d. Currently, only
+  broken symlinks are handled correctly. Other errors (bad file owner,
+  bad file permissions) require a restart.
+  => The broken-symlink-code can be generalized and atapted for this
+
+
+Milestones
+----------
 
 - Convert source package to source format 3.0 (quilt)
   The current cron source package is the result of a 1993 upstream and
