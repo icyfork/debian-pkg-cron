@@ -1,4 +1,4 @@
-cron (3.0pl1-110) unstable; urgency=low
+cron (3.0pl1-110) unstable; urgency=medium
   [ Christian Kastner ]
   * user.c
      - Fix broken parsing and handling of crontabs with no-newline-before-EOF
@@ -27,6 +27,8 @@ cron (3.0pl1-110) unstable; urgency=low
        Previously, jobs with a lot of output would die once the pipe's buffer
        was filled.  Closes: #577133
   * popen.c
+     - Check return value of setgid() call, also associated with the
+       CVE-2006-2607 fix
      - Move signal handling away from ancient API. Patch provided by Justin
        Pryzby (thanks!).
   * misc.c

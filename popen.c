@@ -121,8 +121,16 @@ cron_popen(program, type, e)
 			}
 			(void)close(pdes[1]);
 		}
-		/* Lose root privilege */
-		setgid(e->gid);
+ 		/* set our directory, uid and gid.  Set gid first, since once
+         * we set uid, we've lost root privleges.
+         */
+        if (setgid(e->gid) !=0) {
+          char msg[256];
+          snprintf(msg, 256, "popen:setgid(%lu) failed: %s",
+               (unsigned long) e->gid, strerror(errno));
+          log_it("CRON",getpid(),"error",msg);
+          exit(ERROR_EXIT);
+        }
 # if defined(BSD) || defined(POSIX)
 		if (initgroups(env_get("LOGNAME", e->envp), e->gid) !=0) {
 		  char msg[256];
