@@ -523,9 +523,7 @@ child_process(e, u)
 	if ((statret = stat(MAILCMD, &mcsb)) != 0) {
 		Debug(DPROC|DEXT, ("%s not found, not sending mail\n", MAILCMD))
 		if (pos > 0) {
-			log_it("CRON", getpid(), "info", "got %ld bytes data, "
-				"but no MTA installed.  Data will be "
-				"discarded.", pos);
+			log_it("CRON", getpid(), "info", "No MTA installed, discarding output");
 		}
 		goto mail_finished;
 	} else {
