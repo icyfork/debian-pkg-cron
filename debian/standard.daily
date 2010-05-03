@@ -81,7 +81,7 @@ $more_lost_found"
     else
 # Do nothing for XFS filesystems they do not need to
 # have a lost and found dir
-        fs=`cat /proc/mounts | grep " $lfdir "`
+        fs=`cat /proc/mounts | grep " ${lfdir%/lost+found} "`
         case "$fs" in
             ext*)
         	no_lost_found="$no_lost_found
