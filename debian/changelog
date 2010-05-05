@@ -58,7 +58,7 @@ cron (3.0pl1-110) unstable; urgency=medium
   [ Javier Fernandez-Sanguino Pen~a ]
   * debian/standard.daily:
      - Do not indicate that lost+found does not exist if the filesystem is XFS
-       Closes: #577508
+       (Closes: #577508 577536)
 
  -- Christian Kastner <debian@kvr.at>  Thu, 29 Apr 2010 16:23:38 +0200
 
