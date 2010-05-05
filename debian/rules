@@ -118,6 +118,7 @@ binary-arch: build
                        debian/cron/etc/cron.daily/standard
 	install -m 755 debian/standard.monthly \
                        debian/cron/etc/cron.monthly/standard
+	install -m 644 debian/cron.default debian/cron/etc/default/cron
 	dh_installman crontab.1 crontab.5 cron.8
 #	dh_undocumented
 	dh_installchangelogs CHANGES

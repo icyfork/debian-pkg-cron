@@ -56,6 +56,7 @@ cron (3.0pl1-110) unstable; urgency=medium
      - Add Christian Kastner to the Maintainers list (Closes: #565143)
 
   [ Javier Fernandez-Sanguino Pen~a ]
+  * debian/rules: Install the cron.default file properly
   * debian/standard.daily:
      - Do not indicate that lost+found does not exist if the filesystem is XFS
        (Closes: #577508 577536)
