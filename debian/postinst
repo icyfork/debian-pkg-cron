@@ -1,10 +1,6 @@
 #!/bin/sh
 set -e
 
-if [ -x "/etc/init.d/cron" ]; then
-    update-rc.d cron start 89 2 3 4 5 . stop 11 1 . >/dev/null || exit $?
-fi
-# Copy existing allow/deny files
 crondir="/var/spool/cron"
 pausemessage="F"
 for fname in allow deny ; do
@@ -49,7 +45,5 @@ if [ -x /etc/init.d/cron ]; then
 	       /etc/init.d/cron start
 	fi
 fi
-
-
 
 #DEBHELPER#

@@ -8,13 +8,4 @@ if [ remove = "$1" ]; then
         --divert /usr/bin/crontab.cron /usr/bin/crontab
 fi
 
-# Restart non-se cron
-if [ -x /etc/init.d/cron ]; then
-	if [ -x /usr/sbin/invoke-rc.d ] ; then
-	       invoke-rc.d cron restart
-	else
-	       /etc/init.d/cron restart
-	fi
-fi
-
 #DEBHELPER#
