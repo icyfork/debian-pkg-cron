@@ -38,12 +38,4 @@ if ! dpkg-statoverride --list /usr/bin/crontab > /dev/null ; then
     fi
 fi
 
-if [ -x /etc/init.d/cron ]; then
-	if [ -x /usr/sbin/invoke-rc.d ] ; then
-	       invoke-rc.d cron start
-	else
-	       /etc/init.d/cron start
-	fi
-fi
-
 #DEBHELPER#
