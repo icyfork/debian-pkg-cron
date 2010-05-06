@@ -8,7 +8,7 @@
 # Should-Start:      slapd
 # Should-Stop:       slapd
 # Default-Start:     2 3 4 5
-# Default-Stop:      1
+# Default-Stop:      0 1 6
 # Short-Description: Regular background program processing daemon
 # Description:       cron is a standard UNIX program that runs user-specified 
 #                    programs at periodic scheduled times. vixie cron adds a 
