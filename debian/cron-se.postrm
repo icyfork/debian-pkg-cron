@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-if [ remove = "$1" ]; then
+if [ "$1" = "remove" ]; then
     dpkg-divert --package cron-se --remove --rename \
         --divert /usr/sbin/cron.cron /usr/sbin/cron
     dpkg-divert --package cron-se --remove --rename \

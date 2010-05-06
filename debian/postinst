@@ -2,6 +2,10 @@
 set -e
 
 crondir="/var/spool/cron"
+
+# LEGACY: This hasn't been relevant to Debian cron since the last Millenium,
+# but we keep it here to preserve the upgrade path... 
+# Copy existing allow/deny files
 pausemessage="F"
 for fname in allow deny ; do
     if [ -f $crondir/$fname ] ; then
@@ -24,7 +28,6 @@ done
 getent group crontab > /dev/null 2>&1 || addgroup --system crontab
 
 # Fixup crontab binary, directory and files for new group 'crontab'.
-
 if ! dpkg-statoverride --list /usr/bin/crontab > /dev/null ; then
     dpkg-statoverride --update --add root crontab 2755 /usr/bin/crontab
 fi
