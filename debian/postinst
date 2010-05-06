@@ -23,19 +23,6 @@ for fname in allow deny ; do
 	fi
     fi
 done
-#
-# Move dpkg status file backups, if necessary/possible.
-#
-( cd /var/lib/dpkg ;
-for oldstat in status.yesterday.* ; do
-    if [ -f $oldstat ] ; then
-        newstat=`echo $oldstat | sed 's/yesterday\.//'`;
-        newstat=/var/backups/dpkg.$newstat;            
-        if [ ! -f $newstat ] ; then
-            mv $oldstat $newstat ;
-        fi
-    fi                        
-done)
 
 # Add group for crontabs
 getent group crontab > /dev/null 2>&1 || addgroup --system crontab
