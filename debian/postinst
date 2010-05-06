@@ -26,16 +26,20 @@ getent group crontab > /dev/null 2>&1 || addgroup --system crontab
 # Fixup crontab binary, directory and files for new group 'crontab'.
 
 if ! dpkg-statoverride --list /usr/bin/crontab > /dev/null ; then
-    chgrp crontab /usr/bin/crontab
-    chmod g+s /usr/bin/crontab
-    chgrp crontab $crondir/crontabs
-    chmod 1730 $crondir/crontabs
-    if dpkg --compare-versions "$2" lt "3.0pl1-81" ; then
-        cd $crondir/crontabs
-        set +e
-        ls -1 |  xargs -r -n 1 --replace=xxx  chown 'xxx:crontab' 'xxx'
-        set -e
-    fi
+    dpkg-statoverride --update --add root crontab 2755 /usr/bin/crontab
 fi
+
+# Can't use dpkg-statoverride for this because it doesn't cooperate nicely
+# with cron alternatives such as bcron
+chown root:crontab $crondir/crontabs
+chmod 1730 $crondir/crontabs
+
+# This used to be done conditionally. It has been disabled to suit cron
+# alternative such as bcron. 
+cd $crondir/crontabs
+set +e
+ls -1 |  xargs -r -n 1 --replace=xxx  chown 'xxx:crontab' 'xxx'
+set -e
+ls -1 | xargs chmod 600
 
 #DEBHELPER#
