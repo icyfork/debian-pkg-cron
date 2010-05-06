@@ -3,7 +3,7 @@ Section: admin
 Priority: important
 Maintainer: Javier Fernandez-Sanguino Pen~a <jfs@debian.org>
 Uploaders: Christian Kastner <debian@kvr.at>,Steve Greenland <stevegr@debian.org>
-Standards-Version: 3.6.1
+Standards-Version: 3.8.4
 Build-Depends: debhelper (>= 7), libpam0g-dev, libselinux1-dev [!hurd-i386 !kfreebsd-i386 !kfreebsd-amd64]
 
 Package: cron
