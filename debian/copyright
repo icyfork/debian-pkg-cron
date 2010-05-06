@@ -11,34 +11,21 @@ anyone resulting from the use of this software rests entirely with the
 user.
 
 
-The original source for this package may be obtained from 
-ftp://ftp.vix.com/pub/vixie/cron-3.0.
-
-Code and regex in database.c/valid_name() from Clint Adams, relicensed
-to cron license above from e-mail:
-
-    Date: Sat, 27 Sep 2003 12:20:49 -0400
-    From: Clint Adams <schizo@debian.org>
-    To: Steve Greenland <steveg@moregruel.net>
-    
-    > So, I think I'm going to do the same wimp-out thing: add a switch,
-    > and lift the code from run-parts to implement it. Oh, crap, it's G P L,
-    > and vixie cron isn't. Clint, would you be willing to relicense
-    > your
-    > "valid_names()" function under the following:
-    > 
-    > [ommitted, same as above]
-    
-    I could have sworn that I replied to this back in May.  I'm willing to
-    relicense it under the cron license, though I still think a shared
-    library is the way to go.
-
-
-
+The original source for this package could be obtained from 
+ftp://ftp.vix.com/pub/vixie/cron-3.0, although that link appears to have gone
+down.
 
 Modifications for Debian GNU/Linux Copyright 1994 Ian Jackson;
 Copyright (C) 1994 Ian Jackson
-Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004 Steve Greenland
+Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005 Steve Greenland
+Copyright (C) 2005, 2006, 2008, 2009, 2010 Javier Fernández-Sanguino Peña
+Copyright (C) 2010 Christian Kastner
+Numerous contributions via the Debian BTS copyright their respective authors
+
+Code and regex in database.c/valid_name() based on the run-parts program
+in the Debian "debianutils" package, created by Clint Adams and others. It is
+licensed under the GNU General Public License version 2 or later (see below).
+
 
 This package includes in the examples directory the  crontab2english script
 written by Sean M. Burke.  This script is Copyright 2001 Sean M. Burke
@@ -47,6 +34,7 @@ and is distributed with the following licensing terms:
 This library is free software; you can redistribute it and/or modify it under
 the same terms as Perl itself. In Debian GNU/Linux you can find Perl's Artistic
 license at /usr/share/common-licenses/Artistic
+
 
 This package includes in the examples directory the stats-cron script
 written by Javier Fernandez-Sanguino.  This script is Copyright 2006
