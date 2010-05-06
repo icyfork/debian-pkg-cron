@@ -30,6 +30,9 @@ PIDFILE=/var/run/crond.pid
 # Read the system's locale and set cron's locale. This locale
 # will be inherited by cron (used to set charset of emails)
 # and tasks running under it.
+#
+# /etc/environment is deprecated. If both /etc/environment and
+# /etc/default/locale are present, the former will be ignored.
 
 parse_environment () 
 {
@@ -37,6 +40,17 @@ parse_environment ()
     [ -r /etc/environment ] && ENV_FILE="/etc/environment"
     [ -r /etc/default/locale ] && ENV_FILE="/etc/default/locale"
     [ $ENV_FILE = none ] && return
+
+    # Transition to locale information in /etc/default/locale
+    if [ -r /etc/environment ] && [ -r /etc/default/locale ]; then
+        for var in LANG LC_ALL LC_TYPE; do
+            if grep "$var" /etc/environment >/dev/null 2>&1; then
+                log_warning_msg "both /etc/environment and /etc/default/locale
+present; locale information from /etc/environment will be ignored!"
+                break
+            fi
+        done
+    fi
 
     for var in LANG LC_ALL LC_CTYPE; do
         value=$(egrep "^[^#]*${var}=" $ENV_FILE | tail -n1 | cut -d= -f2)
