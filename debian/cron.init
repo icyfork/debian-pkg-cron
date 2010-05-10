@@ -27,47 +27,32 @@ PIDFILE=/var/run/crond.pid
 
 . /lib/lsb/init-functions
 
-# Read the system's locale and set cron's locale. This locale
-# will be inherited by cron (used to set charset of emails)
-# and tasks running under it.
+# Read the system's locale and set cron's locale. If cron does
+# not use pam_env, then this locale will be inherited by cron
+#(used to set charset of emails) and tasks running under it.
 #
-# /etc/environment is deprecated. If both /etc/environment and
-# /etc/default/locale are present, the former will be ignored.
+# We read /etc/environment, but warn about locale information in
+# there because it should be in /etc/default/locale.
 
-parse_environment () 
-{
-    ENV_FILE="none"
-    [ -r /etc/environment ] && ENV_FILE="/etc/environment"
-    [ -r /etc/default/locale ] && ENV_FILE="/etc/default/locale"
-    [ $ENV_FILE = none ] && return
+for ENV_FILE in /etc/environment /etc/default/locale; do
+    [ -r "$ENV_FILE" ] || continue
 
-    # Transition to locale information in /etc/default/locale
-    if [ -r /etc/environment ] && [ -r /etc/default/locale ]; then
-        for var in LANG LC_ALL LC_TYPE; do
-            if grep "$var" /etc/environment >/dev/null 2>&1; then
-                log_warning_msg "both /etc/environment and /etc/default/locale
-present; locale information from /etc/environment will be ignored!"
-                break
-            fi
-        done
-    fi
+    for var in LANG LANGUAGE LC_ALL LC_TYPE; do
+        value=$(egrep "^${var}=" "$ENV_FILE" | tail -n1 | cut -d= -f2)
+        [ -n "$value" ] && eval export $var=$value
 
-    for var in LANG LC_ALL LC_CTYPE; do
-        value=$(egrep "^[^#]*${var}=" $ENV_FILE | tail -n1 | cut -d= -f2)
-        eval $var=$value
+        if [ -n "$value" ] && [ "$ENV_FILE" = /etc/environment ]; then
+        log_warning_msg "/etc/environment has been depreciated for locale information; use /etc/default/locale for $var=$value instead"
+
+        fi
     done
-    # Get the timezone set.
-    if [ -z "$TZ" -a -e /etc/timezone ]; then
-        TZ=`cat /etc/timezone` 
-    fi
-}
+done
 
-# Parse the system's environment
-if [ "$READ_ENV" = "yes" ] ; then
-    export LANG LC_ALL LC_CTYPE TZ
-    parse_environment
+# Get the timezone set.
+if [ -z "$TZ" -a -e /etc/timezone ]; then
+    TZ=`cat /etc/timezone` 
+    export TZ
 fi
-
 
 case "$1" in
 start)	log_daemon_msg "Starting periodic command scheduler" "cron"
