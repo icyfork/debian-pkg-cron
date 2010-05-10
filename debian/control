@@ -8,7 +8,7 @@ Build-Depends: debhelper (>= 7), libpam0g-dev, libselinux1-dev [!hurd-i386 !kfre
 
 Package: cron
 Architecture: any
-Depends: ${shlibs:Depends}, debianutils (>=1.7), adduser, lsb-base (>= 3.0-10), libpam-runtime (>= 1.0.1-11)
+Depends: ${misc:Depends}, ${shlibs:Depends}, debianutils (>=1.7), adduser, lsb-base (>= 3.0-10), libpam-runtime (>= 1.0.1-11)
 Recommends: exim4 | postfix | mail-transport-agent, lockfile-progs
 Suggests: anacron (>=2.0-1), logrotate, checksecurity
 Conflicts: suidmanager (<< 0.50), lockfile-progs (<< 0.1.7)
