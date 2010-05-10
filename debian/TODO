@@ -22,6 +22,9 @@ TODO stuff
 - Debate changing the policy of /etc/cron.d being a drop-in for packages
   only vs. a general drop-in for crontabs
 
+- Consider implementing a crontab validation option for crontab(1). A 
+  simple approach might be to provide a validation script in examples/.
+
 
 Milestones
 ----------
