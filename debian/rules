@@ -105,7 +105,7 @@ binary-arch: build
 	dh_installexamples debian/examples/*
 #	dh_installmenu
 	dh_installpam
-	dh_installinit -- start 89 2 3 4 5 . stop 11 0 1 6 .
+	dh_installinit -- start 89 2 3 4 5 . stop 11 1 .
 	# Can't use dh_installcron because we don't have "normal" naming
 	# convention
 	install -m 644 debian/crontab.main debian/cron/etc/crontab
