@@ -36,6 +36,7 @@ PIDFILE=/var/run/crond.pid
 
 for ENV_FILE in /etc/environment /etc/default/locale; do
     [ -r "$ENV_FILE" ] || continue
+    [ -s "$ENV_FILE" ] || continue
 
     for var in LANG LANGUAGE LC_ALL LC_TYPE; do
         value=`egrep "^${var}=" "$ENV_FILE" | tail -n1 | cut -d= -f2`
