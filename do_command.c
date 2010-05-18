@@ -510,8 +510,8 @@ child_process(e, u)
 
 	Debug(DPROC|DEXT, ("[%d] got %ld bytes data from grandchild tmpfile\n",
 				getpid(), (long) pos))
-	if (pos == 0 && status == 0)
-		return;
+	if (pos == 0)
+		goto mail_finished;
 
 	// get name of recipient.
 	if (mailto == NULL)
