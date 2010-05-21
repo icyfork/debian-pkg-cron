@@ -590,15 +590,6 @@ child_process(e, u)
 				*env);
 	fputc('\n', mail);
 
-	if (WIFEXITED(status) && WEXITSTATUS(status)) {
-		status = WEXITSTATUS(status);
-		fprintf(mail, "command failed with exit status %d\n\n", status);
-	} else if (WIFSIGNALED(status)) {
-		fprintf(mail, "command terminated by signal %d%s\n\n",
-				WTERMSIG(status),
-				WCOREDUMP(status)?", dumped core":"");
-	}
-
 // Append the actual output of the child to the mail
 	
 	char buf[4096];
