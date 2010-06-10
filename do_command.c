@@ -517,7 +517,7 @@ child_process(e, u)
 	if (mailto == NULL)
 		mailto = usernm;
 	else if (!*mailto)
-        goto mail_finished; 
+                goto mail_finished;
 
 	/* Don't send mail if MAILCMD is not available */
 	if ((statret = stat(MAILCMD, &mcsb)) != 0) {
