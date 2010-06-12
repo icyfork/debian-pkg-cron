@@ -43,7 +43,7 @@ for ENV_FILE in /etc/environment /etc/default/locale; do
         [ -n "$value" ] && eval export $var=$value
 
         if [ -n "$value" ] && [ "$ENV_FILE" = /etc/environment ]; then
-        log_warning_msg "/etc/environment has been depreciated for locale information; use /etc/default/locale for $var=$value instead"
+        log_warning_msg "/etc/environment has been deprecated for locale information; use /etc/default/locale for $var=$value instead"
 
         fi
     done
