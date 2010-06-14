@@ -8,7 +8,7 @@
 # Should-Start:      slapd autofs ypbind nscd
 # Should-Stop:       slapd autofs ypbind nscd
 # Default-Start:     2 3 4 5
-# Default-Stop:      1
+# Default-Stop:
 # Short-Description: Regular background program processing daemon
 # Description:       cron is a standard UNIX program that runs user-specified 
 #                    programs at periodic scheduled times. vixie cron adds a 
