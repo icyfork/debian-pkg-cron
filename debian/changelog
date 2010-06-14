@@ -1,3 +1,77 @@
+cron (3.0pl1-113) unstable; urgency=medium
+
+  [ Christian Kastner / Javier Fernandez-Sanguino ]
+  * debian/postinst:
+    - Now that permissions and ownership of crontabs are changed unconditionally,
+      do not attempt to chown user crontabs if none are present. Closes: #585636
+    - Only change permissions if the crontabs directory exist
+
+ -- Christian Kastner <debian@kvr.at>  Sat, 12 Jun 2010 18:25:59 +0200
+
+cron (3.0pl1-112) unstable; urgency=low
+
+  [ Christian Kastner ]
+  * do_command.c:
+    - Don't send mail when a job exits non-zero, only send mail if the job sent
+      output to stderr. This behaviour was introduced erroneously; while it
+      does have merit, it is completly against standard cron behaviour.
+      Closes: #581612
+  * debian/compat:
+    - Bumped debhelper compatibility to 7
+  * debian/control:
+    - Bumped Standards-Version to 3.8.4 (no change needed)
+    - Build-Depend on debhelper (>= 7.0.50~)
+    - Added dependency on ${misc:Depends} to package cron
+  * debian/cron.init:
+    - Changed Default-Stop from (1) to (empty). rc0 and rc6 were removed in
+      3.0pl1-101 because the stop action -- sending SIGTERM/SIGKILL to cron
+      on shutdown/reboot -- was redundant. This, however, also applies to
+      rc1, because killprocs will do that for us.
+  * debian/postinst:
+    - Removed obsolete dpkg file backup code, this has been handed over to dpkg
+      in 3.0pl1-109
+    - Removed last remaining stop action (for rc1) from upate-rc.d (see above)
+    - Add dpkg-statoverride for /usr/bin/crontab, and unconditionally change
+      permissions of /var/spool/cron/crontabs. Closes: #304036, #460095
+  * debian/standard.monthly:
+    - Removed because it had been empty for years and therefore served no
+      purpose
+  * debian/cron.bug-{control,script}
+    - Added to extend information submitted by reportbug
+  * debian/rules:
+    - Applied changes for standard.monthly and cron.bug-{control,script} above
+  * debian/copyright:
+    - Updated to reflect recent contributions
+  * debian/README:
+    - Updated ancient information with the current status (PAM support, SELinux
+      support, etc.)
+  * debian/TODO:
+    - Added new entry regarding clarification of the purpose behind /etc/cron.d
+  * debian/REFS:
+    - Summary of links to relevant development threads; re-added for
+      informational purposes.
+  [ Javier Fernandez-Sanguino ]
+  * debian/cron.init:
+    - Fix typo (Closes: #585399)
+
+ -- Christian Kastner <debian@kvr.at>  Thu, 10 Jun 2010 15:21:39 +0200
+
+cron (3.0pl1-111) unstable; urgency=low
+
+  [ Christian Kastner ]
+  * debian/cron.init:
+    - When both /etc/environment and /etc/default/locale contain locale
+    information, warn that variables from /etc/environment will be ignored.
+    Closes: #543895, #580942
+    - Add autofs and NIS+ to Should-Starts, because especially NIS+ must be run
+    before cron, if present. Closes: #511757
+    - init script should be stopped in runlevel 0 and 6, too
+  [ Javier Fernandez-Sanguino ]
+  * do_command.c: Revert change so that mails are not sent if MAILTO
+    is null. Closes: #580938
+
+ -- Javier Fernandez-Sanguino Pen~a <jfs@debian.org>  Sun, 16 May 2010 15:16:24 +0200
+
 cron (3.0pl1-110) unstable; urgency=medium
   [ Christian Kastner ]
   * user.c
