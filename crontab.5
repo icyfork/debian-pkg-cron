@@ -201,7 +201,9 @@ field matches the current time.  For example,
 .br
 ``30 4 1,15 * 5''
 would cause a command to be run at 4:30 am on the 1st and 15th of each
-month, plus every Friday.
+month, plus every Friday. One can, however, achieve the desired result
+by adding a test to the command (see the last example in EXAMPLE CRON FILE
+below).
 .PP
 Instead of the first five fields, one of eight special strings may appear:
 .IP
@@ -242,6 +244,8 @@ MAILTO=paul
 0 22 * * 1-5    mail -s "It's 10pm" joe%Joe,%%Where are your kids?%
 23 0-23/2 * * * echo "run 23 minutes after midn, 2am, 4am ..., everyday"
 5 4 * * sun     echo "run at 5 after 4 every sunday"
+# Run on every second Saturday of the month
+0 4 8-15 * *    test $(date +\%u) -eq 6 && echo "2nd Saturday"
 .fi
 .SH EXAMPLE SYSTEM CRON FILE
 This has the username field, as used by /etc/crontab.
