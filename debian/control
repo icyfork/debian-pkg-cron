@@ -6,6 +6,9 @@ Uploaders: Christian Kastner <debian@kvr.at>, Steve Greenland <stevegr@debian.or
 Standards-Version: 3.8.4
 Pre-Depends: dpkg (>= 1.15.7.2)
 Build-Depends: debhelper (>= 7.0.50~), libpam0g-dev, libselinux1-dev [!hurd-i386 !kfreebsd-i386 !kfreebsd-amd64]
+Homepage: http://ftp.isc.org/isc/cron/
+Vcs-Svn: svn://svn.debian.org/svn/pkg-cron
+Vcs-Browser: http://svn.debian.org/wsvn/pkg-cron
 
 Package: cron
 Architecture: any
