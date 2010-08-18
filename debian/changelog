@@ -1,3 +1,47 @@
+cron (3.0pl1-114) unstable; urgency=low
+
+  * Cleanup of the package in preparation of the next Debian release.
+     - Notice that only one change introduces new behaviour (debian/cron.pam),
+       the other changes are just documentation fixes or cleanups to the
+       packaging.
+  * debian/cron.pam:
+    - In addition to the reading /etc/security/pam_env.conf and 
+      /etc/environment (obsolete config file) previous default,
+      cron will now also read /etc/default/locale in order to setup
+      the proper localisation environment for tasks.
+  [ Documentation fixes ]
+  * debian/cron.{default,init}, cron.8, crontab.5:
+    - Updated documentation (comments in scripts and manpageS) regarding the
+      reading and setting of locale information for the cron daemon and for
+      cron tasks to document the new behaviour due to the above change.
+  * debian/{preinst,postinst,postrm}:
+    - Since /etc/cron.monthly/standard does not provide any worthwhile task
+      anymore, remove obsolete /etc/cron.monthly/standard after upgrading
+      (local changes are preserved, however). Closes: #585680
+  * crontab.1
+    - Minor typo fixes to the manpage.
+  * crontab.5:
+    - Added an example submitted by jidanni (thanks!), showing how to run a
+      command on the second Saturday of the month. Closes: #584514 
+    - Minor fixes
+  [ Fixes to the packaging ]
+  * debian/control:
+    - Bumped Standards-Version to 3.9.1 (no changes needed)
+    - Added Pre-Depends for dpkg (<= 1.15.7.2) for a dpkg-maintscript-helper
+      with support for safely removing conffiles
+    - Added Homepage: field
+    - Added Vcs-* fields
+    - Upgraded debhelper dependency version for dh_bugscripts
+  * debian/rules:
+    - Replace deprecated dh_clean -k with dh_prep
+  * debian/NEWS:
+    - Apply Steve Langasek's patch to remove non-newsworthy content, avoiding
+      unnecessary output from apt-listchanges during upgrade. Closes: #591005
+  * debian/source/format:
+    - Make source format explicit (1.0)
+
+ -- Christian Kastner <debian@kvr.at>  Sun, 18 Jul 2010 22:51:21 +0200
+
 cron (3.0pl1-113) unstable; urgency=medium
 
   [ Christian Kastner / Javier Fernandez-Sanguino ]
