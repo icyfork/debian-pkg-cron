@@ -141,9 +141,15 @@ daemon localisation settings environment can be managed through the use of
 .I /etc/environment
 or through the use of
 .I /etc/default/locale
-whichever is available (with the latter one taking precedence). These
-files are read and they will use to setup the LANG, LC_ALL, and
-LC_CTYPE environment variables.
+with values from the latter overriding values from the former. These
+files are read and they will be used to setup the LANG, LC_ALL, and
+LC_CTYPE environment variables. These variables are then used to set the
+charset of mails, which defaults to 'C'.
+.PP
+This does
+.B NOT
+affect the environment of tasks running under cron. For more information
+on how to modify the environment of tasks, consult crontab(5).
 .PP
 The daemon will use, if present, the definition from
 .I /etc/timezone
