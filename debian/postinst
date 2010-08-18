@@ -27,7 +27,7 @@ done
 # Conffile has become obsolete
 dpkg-maintscript-helper rm_conffile /etc/cron.monthly/standard "3.0pl1-113" -- "$@"
 # If dpkg-maintscript-helper renames it instead of removing it because it has
-# local modifications, we must rename it back to the original name, or crond
+# local modifications, we must rename it back to a valid name, or crond
 # will not accept it. Thanks to Raphaël Hertzog for the tip.
 if [ -e /etc/cron.monthly/standard.dpkg-bak ]; then
     mv /etc/cron.monthly/standard.dpkg-bak \
