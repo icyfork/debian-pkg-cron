@@ -95,9 +95,9 @@ binary-indep: build
 # Build architecture-dependent files here.
 binary-arch: build
 #	dh_testversion
+	dh_prep
 	dh_testdir
 	dh_testroot
-	dh_clean -k
 	dh_installdirs
 	dh_install
 
