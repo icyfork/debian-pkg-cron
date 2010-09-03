@@ -108,7 +108,7 @@ cron (3.0pl1-111) unstable; urgency=low
     information, warn that variables from /etc/environment will be ignored.
     Closes: #543895, #580942
     - Add autofs and NIS+ to Should-Starts, because especially NIS+ must be run
-    before cron, if present. Closes: #511757
+    before cron, if present. Closes: #512757
     - init script should be stopped in runlevel 0 and 6, too
   [ Javier Fernandez-Sanguino ]
   * do_command.c: Revert change so that mails are not sent if MAILTO
