@@ -40,7 +40,7 @@ parse_environment ()
         [ -r "$ENV_FILE" ] || continue
         [ -s "$ENV_FILE" ] || continue
 
-         for var in LANG LANGUAGE LC_ALL LC_TYPE; do
+         for var in LANG LANGUAGE LC_ALL LC_CTYPE; do
              value=`egrep "^${var}=" "$ENV_FILE" | tail -n1 | cut -d= -f2`
              [ -n "$value" ] && eval export $var=$value
 
