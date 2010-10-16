@@ -101,6 +101,7 @@ main(argc, argv)
         */
        setlocale(LC_ALL,""); /* set locale to system defaults or to
                                 that specified by any  LC_* env vars */
+       setlocale(LC_COLLATE, "C"); /* Except for collation, since load_database() uses a-z */
        /* Except that "US-ASCII" is preferred to "ANSI_x3.4-1968" in MIME,
         * even though "ANSI_x3.4-1968" is the official charset name. */
        if ( ( cs = nl_langinfo( CODESET ) ) != 0L && 

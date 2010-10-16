@@ -1,3 +1,19 @@
+cron (3.0pl1-115) unstable; urgency=high
+
+  * cron.c: set LC_COLLATE to 'C' in order to properly work when locales
+    are set that change the collation order expected by the regular
+    expressions used in load_database(). By setting locale we were
+    skipping some crontabs unexpectedly due to [a-z] not matching all the ascii
+    characters in some languages (such as Estonian).  (Closes: #600310)
+    Thanks to Michael Tokarev for spotting this issue and for
+    Bastian Blank for pointing for the fix.
+  * debian/cron.init: 
+      - Fix typo that prevented it from properly loading LC_CTYPE (Closes:
+        #600082)
+      - Force LC_COLLATE to 'C' regardless of user locale settings.
+
+ -- Javier Fernandez-Sanguino Pen~a <jfs@debian.org>  Sat, 16 Oct 2010 13:05:02 +0200
+
 cron (3.0pl1-114) unstable; urgency=low
 
   * Cleanup of the package in preparation of the next Debian release.

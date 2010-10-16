@@ -58,8 +58,9 @@ parse_environment ()
 
 # Parse the system's environment
 if [ "$READ_ENV" = "yes" ] ; then
-    export LANG LC_ALL LC_CTYPE TZ
+    export LANG LC_ALL LC_CTYPE TZ LC_COLLATE
     parse_environment
+    LC_COLLATE=C # Force collation sequence since ASCII is expected in regexps
 fi
 
 
