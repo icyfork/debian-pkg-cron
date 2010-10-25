@@ -299,7 +299,7 @@ child_process(e, u)
 		/* close the pipe we just dup'ed.  The resources will remain.
 		 */
 		close(stdin_pipe[READ_PIPE]);
-		// Don't do this: fclose(tmpout);
+		close(fileno(tmpout));
 
 		/* set our login universe.  Do this in the grandchild
 		 * so that the child can invoke /usr/lib/sendmail
