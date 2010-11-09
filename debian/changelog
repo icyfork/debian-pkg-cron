@@ -1,3 +1,10 @@
+cron (3.0pl1-116) unstable; urgency=low
+
+  * debian/changelog:
+    - Fixed 3.0pl1-115 to reflect changes to cron.init
+
+ -- Christian Kastner <debian@kvr.at>  Tue, 09 Nov 2010 21:58:20 +0100
+
 cron (3.0pl1-115) unstable; urgency=high
 
   * cron.c: set LC_COLLATE to 'C' in order to properly work when locales
@@ -11,6 +18,7 @@ cron (3.0pl1-115) unstable; urgency=high
       - Fix typo that prevented it from properly loading LC_CTYPE (Closes:
         #600082)
       - Force LC_COLLATE to 'C' regardless of user locale settings.
+      - Added nscd and nslcd to LSB Should-Start (LP: #27520)
 
  -- Javier Fernandez-Sanguino Pen~a <jfs@debian.org>  Sat, 16 Oct 2010 13:05:02 +0200
 
@@ -123,7 +131,7 @@ cron (3.0pl1-111) unstable; urgency=low
     - When both /etc/environment and /etc/default/locale contain locale
     information, warn that variables from /etc/environment will be ignored.
     Closes: #543895, #580942
-    - Add autofs and NIS+ to Should-Starts, because especially NIS+ must be run
+    - Add autofs and NIS+ to Should-Start, because especially NIS+ must be run
     before cron, if present. Closes: #512757
     - init script should be stopped in runlevel 0 and 6, too
   [ Javier Fernandez-Sanguino ]
