@@ -249,13 +249,13 @@ child_process(e, u)
 
 	/* fork again, this time so we can exec the user's command.
 	 */
-	switch (vfork()) {
+	switch (fork()) {
 	case -1:
-		log_it("CRON",getpid(),"error","can't vfork");
+		log_it("CRON",getpid(),"error","can't fork");
 		exit(ERROR_EXIT);
 		/*NOTREACHED*/
 	case 0:
-		Debug(DPROC, ("[%d] grandchild process Vfork()'ed\n",
+		Debug(DPROC, ("[%d] grandchild process fork()'ed\n",
 			      getpid()))
 
 		/* write a log message.  we've waited this long to do it
@@ -299,7 +299,7 @@ child_process(e, u)
 		/* close the pipe we just dup'ed.  The resources will remain.
 		 */
 		close(stdin_pipe[READ_PIPE]);
-		close(fileno(tmpout));
+		fclose(tmpout);
 
 		/* set our login universe.  Do this in the grandchild
 		 * so that the child can invoke /usr/lib/sendmail
