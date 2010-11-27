@@ -1,5 +1,10 @@
 cron (3.0pl1-116) unstable; urgency=low
 
+  * do_command.c, popen.c:
+    - Use fork() instead of vfork().
+  * do_command.c:
+    - Close an unused stream in a the fork()ed child prior to exec'ing the
+      user's command, thereby avoiding an fd leak. Closes: #604181, LP: #665912
   * cron.init:
     - Added $named to Should-Start, in case @reboot jobs need DNS resolution.
       Closes: #602903
