@@ -247,7 +247,7 @@ MAILTO=paul
 23 0-23/2 * * * echo "run 23 minutes after midn, 2am, 4am ..., everyday"
 5 4 * * sun     echo "run at 5 after 4 every sunday"
 # Run on every second Saturday of the month
-0 4 8-15 * *    test $(date +\%u) -eq 6 && echo "2nd Saturday"
+0 4 8-14 * *    test $(date +%u) -eq 6 && echo "2nd Saturday"
 .fi
 .SH EXAMPLE SYSTEM CRON FILE
 This has the username field, as used by /etc/crontab.
