@@ -5,6 +5,10 @@ cron (3.0pl1-116) unstable; urgency=low
   * do_command.c:
     - Close an unused stream in a the fork()ed child prior to exec'ing the
       user's command, thereby avoiding an fd leak. Closes: #604181, LP: #665912
+  * crontab.5:
+    - Fixed the example demonstrating how to run a job on a certain weekday of
+      the month (date range was off-by-one). Also, the same example contained
+      a superfluous escape, resulting in wrong output. Closes: #606325
   * cron.init:
     - Added $named to Should-Start, in case @reboot jobs need DNS resolution.
       Closes: #602903
