@@ -1,10 +1,15 @@
-cron (3.0pl1-116) unstable; urgency=low
+cron (3.0pl1-116) unstable; urgency=high
 
+  * Upload with approval from Release Team to get RC bug fixes in Squeeze
+    (see http://lists.debian.org/debian-release/2010/12/msg00719.html)
   * do_command.c, popen.c:
     - Use fork() instead of vfork().
   * do_command.c:
-    - Close an unused stream in a the fork()ed child prior to exec'ing the
+    - Close an unused stream in the fork()ed child prior to exec'ing the
       user's command, thereby avoiding an fd leak. Closes: #604181, LP: #665912
+      Previous to this, and in conjunction with LVM, the fd leak may have the
+      effect of the user being spammed by warnings every time a cron job was
+      executed.
   * crontab.5:
     - Fixed the example demonstrating how to run a job on a certain weekday of
       the month (date range was off-by-one). Also, the same example contained
