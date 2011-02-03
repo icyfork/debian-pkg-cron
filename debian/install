@@ -1,2 +1,2 @@
-cron usr/sbin
-crontab usr/bin
+cron        usr/sbin
+crontab     usr/bin

@@ -8,6 +8,4 @@ etc/cron.daily
 etc/cron.weekly
 etc/cron.monthly
 etc/cron.d
-etc/init.d
-etc/pam.d
-var/spool/cron/crontabs
+/var/spool/cron/crontabs
