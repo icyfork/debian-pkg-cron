@@ -48,11 +48,13 @@ export SELINUX_DEFS SELINUX_LIBS
 
 # Audit
 ifeq (yes,$(AUDIT))
+AUDIT_DEFS = -DWITH_AUDIT
 AUDIT_LIBS = -laudit
 else
+AUDIT_DEFS =
 AUDIT_LIBS = 
 endif
-export AUDIT_LIBS
+export AUDIT_DEFS AUDIT_LIBS
 
 ifeq ($(DEB_HOST_ARCH_OS), linux)
 build: build-cron build-cron-se
