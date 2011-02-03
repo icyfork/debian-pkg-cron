@@ -1,3 +1,0 @@
-b-cron-se/cron usr/sbin
-b-cron-se/crontab usr/bin
-b-cron-se/cron-se usr/share/lintian/overrides
