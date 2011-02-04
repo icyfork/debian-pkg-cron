@@ -8,10 +8,12 @@
 # Set system type (Linux, HURD, etc.)
 DEB_HOST_ARCH_OS = $(shell dpkg-architecture -qDEB_HOST_ARCH_OS)
 
-DEB_DEBUG_DEFS = -DDEBUGGING=0
 ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
-  DEB_DEBUG_DEFS= -DDEBUGGING=1
+  DEBUG_DEFS = -DDEBUGGING=1
+else
+  DEBUG_DEFS = -DDEBUGGING=0
 endif
+export DEBUG_DEFS
 
 ifeq ($(DEB_HOST_ARCH_OS), linux)
   PAM_DEFS = -DUSE_PAM

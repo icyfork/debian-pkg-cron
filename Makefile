@@ -72,7 +72,7 @@ LINTFLAGS	=	-hbxa $(INCLUDE) $(COMPAT) $(DEBUGGING)
 #CC		=	vcc
 #<<manifest defines>>
 # Allow override from command line
-DEBUG_DEFS = -DDEBUGGING=0   
+DEBUG_DEFS  ?= -DDEBUGGING=0   
 # The -DUSE_SIGCHLD is needed for the Alpha port
 DEFS = -DDEBIAN -DUSE_SIGCHLD $(DEBUG_DEFS) $(PAM_DEFS) $(SELINUX_DEFS) $(AUDIT_DEFS)
 #(SGI IRIX systems need this)
