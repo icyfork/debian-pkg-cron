@@ -21,8 +21,7 @@ else
   PAM_DEFS = 
   PAM_LIBS =
 endif
-export PAM_DEFS
-export PAM_LIBS
+export PAM_DEFS PAM_LIBS
 
 # SELinux
 ifeq (yes,$(SELINUX))
@@ -39,7 +38,7 @@ else
 AUDIT_DEFS = 
 AUDIT_LIBS = 
 endif
-export AUDIT_LIBS
+export AUDIT_DEFS AUDIT_LIBS
 
 
 %:
