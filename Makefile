@@ -87,7 +87,7 @@ INSTALL = install -s
 #################################### end configurable stuff
 
 SHELL		=	/bin/sh
-CFLAGS		=	$(OPTIM) $(INCLUDE) $(COMPAT) $(DEFS)
+CFLAGS		+=	$(INCLUDE) $(COMPAT) $(DEFS)
 
 INFOS		=	README CHANGES FEATURES INSTALL CONVERSION THANKS MAIL
 MANPAGES	=	bitstring.3 crontab.5 crontab.1 cron.8 putman.sh
