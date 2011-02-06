@@ -1,3 +1,34 @@
+cron (3.0pl1-117) unstable; urgency=low
+
+  * Makefile:
+    - Fixed integration of enabling/disabling cron debug code into the package
+      building process.
+    - Removed hard-coded compiler flags, allowing to use those provided by
+      dpkg-buildflags.
+  * debian/control:
+    - Added missing Build-Depends on libaudit-dev
+  * debian/rules:
+    - Convert to dh syntax. This included replacing some manually executed
+      steps with debhelper file-automated ones (eg: cron.man, cron.examples)
+      to lessen clutter.
+    - Removed custom (and unnecessary) targets, dh_auto_build does the right
+      thing out of the box
+    - Actually enable cron to be built with support for libaudit.
+  * debian/{prerm,postrm,postinst}:
+    - Let dh_installinit manage stopping/(re)starting of jobs
+  * debian/standard.daily:
+    - Backup of /etc/{passd,group} are no longer performed by cron; the task
+      was handed over to shadow (see #554170). In Squeeze, this task will
+      be performed redundantly by both packages.
+  * Packaging (general): removed a lot of cruft which seems to have accumulated
+    over time. This included all the cron-se stuff, which appears to have been
+    a remnant from the SELinux integration process and was either not being
+    used anymore or completely broken. Also, the patches/ directory was
+    removed, as that location has a specific meaning and the patches in there
+    were no longer relevant.
+
+ -- Christian Kastner <debian@kvr.at>  Sun, 06 Feb 2011 21:44:48 +0100
+
 cron (3.0pl1-116) unstable; urgency=high
 
   * Upload with approval from Release Team to get RC bug fixes in Squeeze
