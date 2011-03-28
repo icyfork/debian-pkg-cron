@@ -32,7 +32,6 @@ Suggests:
     logrotate,
     checksecurity
 Conflicts:
-    suidmanager (<< 0.50),
     lockfile-progs (<< 0.1.7)
 Breaks:
      dpkg (<< 1.15.4)
