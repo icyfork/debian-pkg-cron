@@ -7,7 +7,8 @@ cron (3.0pl1-117) unstable; urgency=low
       dpkg-buildflags.
   * debian/control:
     - Added missing Build-Depends on libaudit-dev
-    - Remove Conflicts for nonexistent package suidmanager
+    - Removed Conflicts for nonexistent package suidmanager
+    - Changed versioned Conflicts for lockfile-progs to Breaks
   * debian/rules:
     - Convert to dh syntax. This included replacing some manually executed
       steps with debhelper file-automated ones (eg: cron.man, cron.examples)

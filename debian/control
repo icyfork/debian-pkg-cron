@@ -32,9 +32,9 @@ Suggests:
     logrotate,
     checksecurity
 Conflicts:
-    lockfile-progs (<< 0.1.7)
 Breaks:
-     dpkg (<< 1.15.4)
+    lockfile-progs (<< 0.1.7),
+    dpkg (<< 1.15.4)
 Provides: cron-daemon
 Description: process scheduling daemon
  The cron daemon is a background process that runs particular programs at
