@@ -66,7 +66,7 @@ override_dh_installchangelogs:
 override_dh_installinit:
 	# Manage Ubuntu's upstart config, as this is the cause for many serious
 	# bugs there. This will be communicated to Ubuntu during the next sync.
-	dpkg-vendor --derives-from ubuntu && \
+	test ! dpkg-vendor --derives-from ubuntu || \
 		mv debian/cron.upstart.in debian/cron.upstart
 	dh_installinit -- start 89 2 3 4 5 .
 
