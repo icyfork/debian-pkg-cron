@@ -20,6 +20,8 @@ cron (3.0pl1-117) unstable; urgency=low
     - Backup of /etc/{passd,group} are no longer performed by cron; the task
       was handed over to shadow (see #554170). In Squeeze, this task will
       be performed redundantly by both packages.
+  * debian/watch:
+    - Added watch file
   * Packaging (general): removed a lot of cruft which seems to have accumulated
     over time. This included all the cron-se stuff, which appears to have been
     a remnant from the SELinux integration process and was either not being
