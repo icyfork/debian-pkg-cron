@@ -70,9 +70,6 @@ override_dh_installinit:
 		if [ ! -f debian/cron.upstart ]; then \
 			mv debian/cron.upstart.in debian/cron.upstart; \
 		fi; \
-		if [ -f debian/cron.default ]; then \
-			rm -f debian/cron.default; \
-		fi \
 	fi
 	dh_installinit -- start 89 2 3 4 5 .
 
