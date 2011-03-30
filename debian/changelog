@@ -1,32 +1,61 @@
 cron (3.0pl1-117) unstable; urgency=low
 
   * Makefile:
-    - Fixed integration of enabling/disabling cron debug code into the package
-      building process.
-    - Removed hard-coded compiler flags, allowing to use those provided by
-      dpkg-buildflags.
+    - Fixed integration of cron-internal debug code into the package building
+      process. Instead of having to modify debian/rules, this is now driven by
+      DEB_BUILD_OPTIONS=debug.
+    - Removed hard-coded compiler flags, honoring those provided by
+      dpkg-buildflags instead.
+  * do_command.c:
+    - When logging the end of cron jobs, log the PID of the actually exec'ed
+      user command, not the PID of the parent. Closes: #609780
+  * database.c:
+    - Split crontab security checks (type, owner, mode, links) into separate
+      tests with individual error messages instead of the cryptic message
+      "WRONG INODE INFO". LP: #741979
   * debian/control:
     - Added missing Build-Depends on libaudit-dev
     - Removed Conflicts for nonexistent package suidmanager
-    - Changed versioned Conflicts for lockfile-progs to Breaks
+    - Removed versioned Conflicts for lockfile-progs (which should have been
+      a Breaks anyway) as we no longer rely on it; we use flock from util-linux
+      instead.
+  * debian/cron.default:
+    - Added the ability to disable the daily lost+found check by setting the
+      new variable CHECK_LOSTFOUND to "no". Closes: #579640
   * debian/rules:
     - Convert to dh syntax. This included replacing some manually executed
       steps with debhelper file-automated ones (eg: cron.man, cron.examples)
       to lessen clutter.
-    - Removed custom (and unnecessary) targets, dh_auto_build does the right
+    - Removed the special cron-se targets, dh_auto_build does the right
       thing out of the box
-    - Actually enable cron to be built with support for libaudit.
+    - Actually enable cron to be built with support for libaudit
+    - Include a mechanism to switch between init config (non-Ubuntu) and 
+      upstart config (Ubuntu) via debian/upstart.cron.in below, as suggested by
+      Steve Langasek on debian-devel.
+  * debian/upstart.cron.in
+    - Include Ubuntu's copy of cron.upstart and sync it with our init script,
+      re-adding all the parts that Ubuntu left out, most notably handling of
+      the extra configuration options in /etc/default/cron. Thanks to terry b
+      for the template.
+      LP: #486558, #692587, #696098, #700409
   * debian/{prerm,postrm,postinst}:
-    - Let dh_installinit manage stopping/(re)starting of jobs
+    - Let dh_installinit manage stopping/(re)starting of jobs instead of
+      calling invoke-rc.d ourselves
   * debian/standard.daily:
-    - Backup of /etc/{passd,group} are no longer performed by cron; the task
-      was handed over to shadow (see #554170). In Squeeze, this task will
+    - Backup of /etc/{passd,group} is no longer performed by cron; the task
+      was handed over to src:shadow (see #554170). In Squeeze, this task will
       be performed redundantly by both packages.
+    - Rewrite locking and lost+found-checking code, based on a submission to
+      the BTS by Justin B. Rye. Closes: #478967, #537073, LP: #257367
+    - Parse /etc/mtab instead of /proc/mounts; the former makes handling bind
+      mounts easier. Closes: #578856
+    - Pull in /etc/cron/default for CHECK_LOSTFOUND (see above)
   * debian/watch:
-    - Added watch file
+    - Added watch file to silence a lintian warning, even though the last
+      update was in 2004.
   * Packaging (general): removed a lot of cruft which seems to have accumulated
     over time. This included all the cron-se stuff, which appears to have been
-    a remnant from the SELinux integration process and was either not being
+    a remnant from the SELinux integration process, and was either not being
     used anymore or completely broken. Also, the patches/ directory was
     removed, as that location has a specific meaning and the patches in there
     were no longer relevant.
