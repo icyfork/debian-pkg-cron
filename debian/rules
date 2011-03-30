@@ -8,7 +8,7 @@
 # Set system type (Linux, HURD, etc.)
 DEB_HOST_ARCH_OS = $(shell dpkg-architecture -qDEB_HOST_ARCH_OS)
 
-CFLAGS ?= -Wall -Wno-unused -Wno-comment
+CFLAGS += -Wall -Wno-unused -Wno-comment
 ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
   DEBUG_DEFS = -DDEBUGGING=1
 else
