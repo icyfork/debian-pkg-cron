@@ -357,18 +357,29 @@ process_crontab(uname, fname, tabname, statbuf, new_db, old_db)
             }
             /* Check to make sure that the crontab is owned by the correct user
                (or root) */
-
             if (statbuf->st_uid != pw->pw_uid &&
                 statbuf->st_uid != ROOT_UID) {
                 log_it(fname, getpid(), "WRONG FILE OWNER", tabname);
 		goto next_crontab;
             }
-            if (!S_ISREG(statbuf->st_mode) ||
-                statbuf->st_nlink != 1 ||
-                (statbuf->st_mode & 07777) != 0600) {
-                log_it(fname, getpid(), "WRONG INODE INFO", tabname);
- 		goto next_crontab;
-            }
+
+	    /* Check to make sure that the crontab is a regular file */
+            if (!S_ISREG(statbuf->st_mode)) {
+		log_it(fname, getpid(), "NOT A REGULAR FILE", tabname);
+		goto next_crontab;
+	    }
+
+	    /* Check to make sure that the crontab's permissions are secure */
+            if ((statbuf->st_mode & 07777) != 0600) {
+		log_it(fname, getpid(), "INSECURE MODE (mode 0600 expected)", tabname);
+		goto next_crontab;
+	    }
+
+	    /* Check to make sure that there are no hardlinks to the crontab */
+            if (statbuf->st_nlink != 1) {
+		log_it(fname, getpid(), "NUMBER OF HARD LINKS > 1", tabname);
+		goto next_crontab;
+	    }
         } else {
             /* System crontab path. These can be symlinks, but the
                symlink and the target must be owned by root. */
@@ -383,17 +394,15 @@ process_crontab(uname, fname, tabname, statbuf, new_db, old_db)
             if ((crontab_fd = open(tabname, O_RDONLY, 0)) < OK) {
 		/* crontab not accessible?
 
+		   If tabname is a symlink, it's most probably just broken, so
+		   we emit a warning. Then we re-add the old crontab to the new
+		   DB, but only after removing all entries and resetting its
+		   mtime. Once the link is fixed, it will get picked up and
+		   processed again.
                    If tabname is a regular file, this error is bad so we skip
-		   it instead of adding it to the new DB. If it's a symlink,
-                   it's most probably just broken, so we emit a warning.
-                   Then we re-add the old crontab to the new DB, but only after
-                   removing all entries and resetting its mtime. Once the link
-                   is fixed, it will get picked up and processed again.
+		   it instead of adding it to the new DB.
 		 */
-                if (S_ISREG(statbuf->st_mode)) {
-		    log_it(fname, getpid(), "CAN'T OPEN", tabname);
-		    goto next_crontab;
-                } else {
+		if (S_ISLNK(statbuf->st_mode)) {
                     log_it(fname, getpid(), "CAN'T OPEN SYMLINK", tabname);
 
                     u = find_user(old_db, fname);
@@ -413,29 +422,49 @@ process_crontab(uname, fname, tabname, statbuf, new_db, old_db)
                         link_user(new_db, u);
                         goto next_crontab;
                     }
-                }                
+                } else {
+		    log_it(fname, getpid(), "CAN'T OPEN", tabname);
+		    goto next_crontab;
+		}
             }
 
             if (fstat(crontab_fd, statbuf) < OK) {
 		log_it(fname, getpid(), "FSTAT FAILED", tabname);
 		goto next_crontab;
             }
+
             /* Check to make sure that the crontab is owned by root */
             if (statbuf->st_uid != ROOT_UID) {
                 log_it(fname, getpid(), "WRONG FILE OWNER", tabname);
 		goto next_crontab;
             }
-            /* Check to make sure that the crontab is writable only by root */
-            if ((statbuf->st_mode & S_IWGRP) || (statbuf->st_mode & S_IWOTH))  {
-                log_it(fname, getpid(), "WRONG INODE INFO", tabname);
+
+            /* Check to make sure that the crontab is a regular file */
+            if (!S_ISREG(statbuf->st_mode)) {
+		log_it(fname, getpid(), "NOT A REGULAR FILE", tabname);
 		goto next_crontab;
-            }
+	    }
+
+            /* Check to make sure that the crontab is writable only by root
+	     * This should really be in sync with the check for users above
+	     * (mode 0600). An upgrade path could be implemented for 4.1
+	     */
+	    if ((statbuf->st_mode & S_IWGRP) || (statbuf->st_mode & S_IWOTH)) {
+		log_it(fname, getpid(), "INSECURE PERMISSIONS (group/other writeable", tabname);
+		goto next_crontab;
+	    }
             /* Technically, we should also check whether the parent dir is
  	     * writable, and so on. This would only make proper sense for
  	     * regular files; we can't realistically check all possible
  	     * security issues resulting from symlinks. We'll just assume that
  	     * root will handle responsible when creating them.
 	     */
+
+	    /* Check to make sure that there are no hardlinks to the crontab */
+            if (statbuf->st_nlink != 1) {
+		log_it(fname, getpid(), "NUMBER OF HARD LINKS > 1", tabname);
+		goto next_crontab;
+	    }
         }
         /*
          * The link count check is not sufficient (the owner may
