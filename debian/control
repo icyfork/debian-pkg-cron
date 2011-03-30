@@ -25,14 +25,12 @@ Depends:
     lsb-base (>= 3.0-10),
     libpam-runtime (>= 1.0.1-11)
 Recommends:
-    exim4 | postfix | mail-transport-agent,
-    lockfile-progs
+    exim4 | postfix | mail-transport-agent
 Suggests:
     anacron (>=2.0-1),
     logrotate,
     checksecurity
 Breaks:
-    lockfile-progs (<< 0.1.7),
     dpkg (<< 1.15.4)
 Provides: cron-daemon
 Description: process scheduling daemon
@@ -48,7 +46,3 @@ Description: process scheduling daemon
  This cron package is configured by default to do some basic daily system
  maintenance tasks, such as creating backups of key system files. Other
  packages, such as checksecurity, can provide further maintenance tasks.
- .
- The lockfile-progs package is recommended as it will prevent
- /etc/cron.daily/standard from running multiple
- times if something gets jammed.

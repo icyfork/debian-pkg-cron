@@ -6,30 +6,22 @@
 
 # Start in the root filesystem, make SElinux happy
 cd /
-bak=/var/backups
 LOCKFILE=/var/lock/cron.daily
-umask 022
 
-#
-# Avoid running more than one at a time 
-#
-
-if [ -x /usr/bin/lockfile-create ] ; then
-    lockfile-create $LOCKFILE
-    if [ $? -ne 0 ] ; then
-	cat <<EOF
+# When flock is available, avoid running more than once at a time 
+# Lock will automatically be cleaned up when we exit
+if `which flock >/dev/null &2>1`; then
+    exec 9> $LOCKFILE
+    if ! flock -x -n 1 9; then
+        cat <<EOF
 
 Unable to run /etc/cron.daily/standard because lockfile $LOCKFILE
 acquisition failed. This probably means that the previous day's
 instance is still running. Please check and correct if necessary.
 
 EOF
-	exit 1
+        exit 1
     fi
-
-    # Keep lockfile fresh
-    lockfile-touch $LOCKFILE &
-    LOCKTOUCHPID="$!"
 fi
 
 #
@@ -106,10 +98,3 @@ $no_lost_found
 EOF
 fi
 
-#
-# Clean up lockfile
-#
-if [ -x /usr/bin/lockfile-create ] ; then
-    kill $LOCKTOUCHPID
-    lockfile-remove $LOCKFILE
-fi
