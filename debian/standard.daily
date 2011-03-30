@@ -9,12 +9,12 @@
 # Start in the root filesystem, make SElinux happy
 cd /
 LOCKFILE=/var/lock/cron.daily
+LOFO=lost+found
 
 # When flock is available, avoid running more than once at a time 
-# Lock will automatically be cleaned up when we exit
-if `which flock >/dev/null &2>1`; then
+if `which flock >/dev/null 2>&1`; then
     exec 9> $LOCKFILE
-    if ! flock -x -n 1 9; then
+    if ! flock -x -n 9; then
         cat <<EOF
 
 Unable to run /etc/cron.daily/standard because lockfile $LOCKFILE
@@ -52,12 +52,16 @@ do
     esac
 
     [ "$MTPT" = '/' ] && MTPT=""
-    # XFS does not necessarily have a lost+found dir
-    if [ ! -d "$MTPT/$LOFO" ] && [ $FSTYPE != "xfs" ]
+
+    if [ ! -d "$MTPT/$LOFO" ]
     then
+        # XFS does not necessarily have a lost+found dir
+        [ $FSTYPE = "xfs" ] && continue
+
         MISSING="$MISSING\n$MTPT/$LOFO"
     elif cd "$MTPT/$LOFO" 2> /dev/null
     then
+        LIST=
         for NAME in *
         do
             [ "$NAME" = '*' ] && break
@@ -74,6 +78,7 @@ done < /etc/mtab
 if [ -n "$MISSING" ]
 then
     cat <<EOF
+
 Some local file systems lack a $LOFO directory. This means if the
 file system is damaged and needs to be repaired, fsck will not have
 anywhere to put stray files for recovery. You should consider creating
@@ -81,12 +86,13 @@ a $LOFO directory with mklost+found(8).
 
 The following $LOFO directories were not available:
 EOF
-    echo -e $MISSING
+    echo $MISSING
 fi
 
 if [ -n "$CONTENTS" ]
 then
     cat <<EOF
+
 Items were found in $LOFO directories. This is probably the result
 of a crash or bad shutdown, or possibly of a disk problem. You should
 examine them to see if they contain important information, and either
@@ -94,6 +100,8 @@ retrieve them from $LOFO or delete them.
 
 The following items were found:
 EOF
-    echo -e $CONTENTS
+    echo $CONTENTS
 fi
 
+# Remove lock file (releasing lock)
+rm -f $LOCKFILE
