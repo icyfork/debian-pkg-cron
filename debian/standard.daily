@@ -26,6 +26,12 @@ EOF
     fi
 fi
 
+# Don't continue if user wants to skip this
+if [ -f /etc/default/cron ]; then
+    . /etc/default/cron
+    [ "$CHECK_LOSTFOUND" = "no" ] && exit 0
+fi
+
 
 # Go through /etc/mtab, looking for filesystems with lost+found dirs
 while read DEV MTPT FSTYPE OPTS REST
