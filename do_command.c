@@ -131,6 +131,7 @@ child_process(e, u)
 	register char	*input_data;
 	char		*usernm, *mailto;
 	int		children = 0;
+	pid_t		job_pid;
 
 #if defined(USE_PAM)
 	int		retcode = 0;
@@ -249,7 +250,7 @@ child_process(e, u)
 
 	/* fork again, this time so we can exec the user's command.
 	 */
-	switch (fork()) {
+	switch (job_pid = fork()) {
 	case -1:
 		log_it("CRON",getpid(),"error","can't fork");
 		exit(ERROR_EXIT);
@@ -635,7 +636,7 @@ mail_finished:
 
 	if (log_level >= 2) {
 		char *x = mkprints((u_char *)e->cmd, strlen(e->cmd));
-		log_it(usernm, getpid(), "END", x);
+		log_it(usernm, job_pid, "END", x);
 		free(x);
 	}
 
