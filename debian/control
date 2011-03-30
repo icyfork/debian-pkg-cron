@@ -31,7 +31,6 @@ Suggests:
     anacron (>=2.0-1),
     logrotate,
     checksecurity
-Conflicts:
 Breaks:
     lockfile-progs (<< 0.1.7),
     dpkg (<< 1.15.4)
