@@ -3,6 +3,8 @@
 # Written by Ian A. Murdock <imurdock@gnu.ai.mit.edu>
 # Modified by Ian Jackson <ijackson@nyx.cs.du.edu>
 # Modified by Steve Greenland <stevegr@debian.org>
+# Modified by Christian Kastner <debian@kvr.at>, based on a script submitted
+# to the BTS by Justin B. Rye <jbr@edlug.org.uk>
 
 # Start in the root filesystem, make SElinux happy
 cd /
@@ -24,77 +26,68 @@ EOF
     fi
 fi
 
-#
-# Check to see if any files are in lost+found directories and warn admin
-#
-# Get a list of the (potential) ext2, ext3, ext4 and xfs l+f directories
-# Discard errors, for systems not using any of these.
-lfdirs=`df -P --type=ext2 --type=ext3 --type=ext4 --type=xfs 2>/dev/null |
-	awk '/\/dev\// { print }' | sed -e 's/ [[:space:]]*/ /g'  |
-	while read mount block used avail perc mp; do
-		[ "$mp" = "/" ] && mp=""
-		echo "$mp/lost+found"
-	done`
 
-# Don't use space as a field separator
-oldifs="$IFS"
-IFS=`printf '\n\t'`
+# Go through /etc/mtab, looking for filesystems with lost+found dirs
+while read DEV MTPT FSTYPE OPTS REST
+do
+    case "$DEV" in
+      /dev/*)
+        ;;
+      *)
+        continue
+        ;;
+    esac
+    case "$FSTYPE" in
+      ext2|ext3|ext4|xfs)
+        ;;
+      *)
+        continue
+        ;;
+    esac
 
-for lfdir in $lfdirs; do
-# In each directory, look for files
-    if [ -d "$lfdir" ] ; then
-	more_lost_found=`ls -1  "$lfdir" 2>/dev/null | grep -v 'lost+found$' | sed 's/^/    /'`
-	if [ -n "$more_lost_found" ] ; then
-	    lost_found="$lost_found
-
-$lfdir:
-$more_lost_found"
-	    # NOTE: above weird line breaks in string are intentional!
-        fi
+    [ "$MTPT" = '/' ] && MTPT=""
+    # XFS does not necessarily have a lost+found dir
+    if [ ! -d "$MTPT/$LOFO" ] && [ $FSTYPE != "xfs" ]
+    then
+        MISSING="$MISSING\n$MTPT/$LOFO"
+    elif cd "$MTPT/$LOFO" 2> /dev/null
+    then
+        for NAME in *
+        do
+            [ "$NAME" = '*' ] && break
+            LIST="$LIST\n\t$NAME"
+        done
+        [ -n "$LIST" ] || continue
+        CONTENTS="$CONTENTS\n$MTPT/$LOFO:$LIST"
     else
-# Do nothing for XFS filesystems they do not need to
-# have a lost and found dir
-        fs=`cat /proc/mounts | grep " ${lfdir%/lost+found} "`
-        case "$fs" in
-            ext*)
-        	no_lost_found="$no_lost_found
-$lfdir"
-                ;;
-            *)
-                ;;
-        esac
+        echo "Can't access $MTPT/$LOFO"
     fi
-done
+done < /etc/mtab
 
-# Restore IFS
-IFS="$oldifs"
-unset oldifs
+# Report findings if any
+if [ -n "$MISSING" ]
+then
+    cat <<EOF
+Some local file systems lack a $LOFO directory. This means if the
+file system is damaged and needs to be repaired, fsck will not have
+anywhere to put stray files for recovery. You should consider creating
+a $LOFO directory with mklost+found(8).
 
-# NOTE: This might need to be configurable if systems abound
-# w/o lost+found out there to prevent giving out this warning
-# every day.
-if [ -n "$lost_found" ]; then
-    cat << EOF
-Files were found in lost+found directories. This is probably
-the result of a crash or bad shutdown, or possibly of a disk
-problem. These files may contain important information. You
-should examine them, and move them out of lost+found or delete
-them if they are not important.
-
-The following files were found:
-$lost_found
+The following $LOFO directories were not available:
 EOF
+    echo -e $MISSING
 fi
 
-if [ -n "$no_lost_found" ]; then
-    cat << EOF
-Some local filesystems do not have lost+found directories. This
-means that these filesystems will not be able to recover
-lost files when the filesystem is checked after a crash.
-Consider creating a lost+found directory with mklost+found(8).
+if [ -n "$CONTENTS" ]
+then
+    cat <<EOF
+Items were found in $LOFO directories. This is probably the result
+of a crash or bad shutdown, or possibly of a disk problem. You should
+examine them to see if they contain important information, and either
+retrieve them from $LOFO or delete them.
 
-The following lost+found directories were not available:
-$no_lost_found
+The following items were found:
 EOF
+    echo -e $CONTENTS
 fi
 
