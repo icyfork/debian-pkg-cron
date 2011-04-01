@@ -16,15 +16,12 @@ else
 endif
 export DEBUG_DEFS
 
-ifeq ($(DEB_HOST_ARCH_OS), linux)
-  PAM_DEFS = -DUSE_PAM
-  PAM_LIBS = -lpam
-  SELINUX = yes
-else
-  PAM_DEFS = 
-  PAM_LIBS =
+# PAM is enabled by default
+ifeq (,$(findstring nopam,$(DEB_BUILD_OPTIONS)))
+    PAM_DEFS = -DUSE_PAM
+    PAM_LIBS = -lpam
+    export PAM_DEFS PAM_LIBS
 endif
-export PAM_DEFS PAM_LIBS
 
 # SELinux
 ifeq (yes,$(SELINUX))
