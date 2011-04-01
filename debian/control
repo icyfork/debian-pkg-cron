@@ -7,7 +7,7 @@ Standards-Version: 3.9.1
 Build-Depends:
     debhelper (>= 7.2.3~),
     libpam0g-dev,
-    libselinux1-dev [!hurd-i386 !kfreebsd-i386 !kfreebsd-amd64],
+    libselinux1-dev [linux-any],
     libaudit-dev
 Homepage: http://ftp.isc.org/isc/cron/
 Vcs-Svn: svn://svn.debian.org/svn/pkg-cron
