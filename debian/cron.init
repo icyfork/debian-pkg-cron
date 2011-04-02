@@ -65,7 +65,7 @@ fi
 
 case "$1" in
 start)	log_daemon_msg "Starting periodic command scheduler" "cron"
-        start_daemon -p $PIDFILE $DAEMON $LSBNAMES $EXTRA_OPTS
+        start_daemon -p $PIDFILE $DAEMON $EXTRA_OPTS
         log_end_msg $?
 	;;
 stop)	log_daemon_msg "Stopping periodic command scheduler" "cron"
