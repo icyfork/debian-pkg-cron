@@ -8,7 +8,10 @@
 # Set system type (Linux, HURD, etc.)
 DEB_HOST_ARCH_OS = $(shell dpkg-architecture -qDEB_HOST_ARCH_OS)
 
+# Standard compiler flags 
 CFLAGS += -Wall -Wno-unused -Wno-comment
+
+# debug is disabled by default
 ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
   DEBUG_DEFS = -DDEBUGGING=1
 else
@@ -42,6 +45,10 @@ endif
 
 %:
 	dh $@ 
+
+
+override_dh_auto_install:
+	# Empty target to bypass the auto-detected install target in Makefile
 
 
 override_dh_install:
