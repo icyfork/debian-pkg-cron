@@ -19,6 +19,8 @@ cron (3.0pl1-117) unstable; urgency=low
     - Removed versioned Conflicts for lockfile-progs (which should have been
       a Breaks anyway) as we no longer rely on it; we use flock from util-linux
       instead.
+    - Changed Build-Depends on libselinux1-dev to linux-any instead of negating
+      all other OSes
   * debian/cron.default:
     - Merged the LSBNAMES option with EXTRA_OPTS. Both where used to pass flags
       to the daemon, making one of them redundant.
