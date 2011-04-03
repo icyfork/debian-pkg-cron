@@ -18,7 +18,6 @@ cron (3.0pl1-117) unstable; urgency=low
     - Removed Conflicts for nonexistent package suidmanager
     - Removed Conflicts for lockfile-progs (which should have been a Breaks
       anyway) as we no longer rely on it, we use flock from util-linux instead
-      instead
     - Changed Build-Depends on libselinux1-dev to linux-any instead of negating
       all other OSes
   * debian/cron.default:
@@ -28,17 +27,17 @@ cron (3.0pl1-117) unstable; urgency=low
       new variable CHECK_LOSTFOUND to "no". Closes: #579640
   * debian/cron.init:
     - Don't call start-stop-daemon directly, use LSB init functions instead.
-      Among other things, this works around the cron daemon not deleting it's
-      pidfile from /var/run. Closes: #615855
+      Among other things, this works around the cron daemon not deleting its
+      pidfile from /var/run/. Closes: #615855
   * debian/rules:
     - Converted to dh syntax. This included replacing some manually executed
       steps with debhelper file-automated ones (eg: cron.man, cron.examples)
       to lessen clutter
     - Completely rewrote the PAM/SELinux/audit integration parts. PAM support
       was being skipped on kfreebsd and hurd, and audit support was completely
-      broken.
-      + PAM is now enabled by default on all platforms
-      + SELinux is enabled by default on linux-*
+      broken. From now on:
+      + PAM is enabled by default on all platforms
+      + SELinux is enabled by default on linux-any
       + audit is disabled by default on all platforms
       All of these can be driven by DEB_BUILD_OPTIONS (see debian/rules)
   * debian/{prerm,postrm,postinst}:
