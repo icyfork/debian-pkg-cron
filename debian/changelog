@@ -3,9 +3,9 @@ cron (3.0pl1-117) unstable; urgency=low
   * Makefile:
     - Fixed integration of cron-internal debug code into the package building
       process. Instead of having to modify debian/rules, this is now driven by
-      DEB_BUILD_OPTIONS=debug.
+      DEB_BUILD_OPTIONS=debug
     - Removed hard-coded compiler flags, honoring those provided by
-      dpkg-buildflags instead.
+      dpkg-buildflags instead
   * do_command.c:
     - When logging the end of cron jobs, log the PID of the actually exec'ed
       user command, not the PID of the parent. Closes: #609780
@@ -16,14 +16,14 @@ cron (3.0pl1-117) unstable; urgency=low
   * debian/control:
     - Added missing Build-Depends on libaudit-dev
     - Removed Conflicts for nonexistent package suidmanager
-    - Removed versioned Conflicts for lockfile-progs (which should have been
-      a Breaks anyway) as we no longer rely on it; we use flock from util-linux
-      instead.
+    - Removed Conflicts for lockfile-progs (which should have been a Breaks
+      anyway) as we no longer rely on it, we use flock from util-linux instead
+      instead
     - Changed Build-Depends on libselinux1-dev to linux-any instead of negating
       all other OSes
   * debian/cron.default:
-    - Merged the LSBNAMES option with EXTRA_OPTS. Both where used to pass flags
-      to the daemon, making one of them redundant.
+    - Merged the LSBNAMES option with EXTRA_OPTS. Both where used to pass
+      options to the daemon, making one of them redundant
     - Added the ability to disable the daily lost+found check by setting the
       new variable CHECK_LOSTFOUND to "no". Closes: #579640
   * debian/cron.init:
@@ -33,7 +33,7 @@ cron (3.0pl1-117) unstable; urgency=low
   * debian/rules:
     - Converted to dh syntax. This included replacing some manually executed
       steps with debhelper file-automated ones (eg: cron.man, cron.examples)
-      to lessen clutter. Also, see the Packaging (general) note below.
+      to lessen clutter
     - Completely rewrote the PAM/SELinux/audit integration parts. PAM support
       was being skipped on kfreebsd and hurd, and audit support was completely
       broken.
@@ -47,7 +47,8 @@ cron (3.0pl1-117) unstable; urgency=low
   * debian/standard.daily:
     - Backup of /etc/{passd,group} is no longer performed by cron; the task
       was handed over to src:shadow (see #554170). In Squeeze, this task will
-      be performed redundantly by both packages.
+      be performed redundantly by both packages (as discussed on
+      debian-release)
     - Rewrite locking and lost+found-checking code, based on a submission to
       the BTS by Justin B. Rye. Closes: #478967, #537073, LP: #257367
     - Parse /etc/mtab instead of /proc/mounts; the former makes handling bind
@@ -57,7 +58,7 @@ cron (3.0pl1-117) unstable; urgency=low
     - Convert to DEP5 format (r173)
   * debian/watch:
     - Added watch file to silence a lintian warning, even though the last
-      upstream release was in 2004.
+      upstream release was in 2004
   * Packaging (general): removed a lot of cruft which seems to have accumulated
     over time. This included all the cron-se stuff, which appears to have been
     a remnant from the SELinux integration process, and was either not being
