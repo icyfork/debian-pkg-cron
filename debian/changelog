@@ -25,7 +25,9 @@ cron (3.0pl1-117) unstable; urgency=low
     - Added the ability to disable the daily lost+found check by setting the
       new variable CHECK_LOSTFOUND to "no". Closes: #579640
   * debian/cron.init:
-    - Don't call start-stop-daemon directly, use LSB init functions instead
+    - Don't call start-stop-daemon directly, use LSB init functions instead.
+      Among other things, this works around the cron daemon not deleting it's
+      pidfile from /var/run. Closes: #615855
   * debian/rules:
     - Converted to dh syntax. This included replacing some manually executed
       steps with debhelper file-automated ones (eg: cron.man, cron.examples)
