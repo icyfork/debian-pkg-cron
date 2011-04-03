@@ -29,6 +29,7 @@ cron (3.0pl1-117) unstable; urgency=low
     - Don't call start-stop-daemon directly, use LSB init functions instead.
       Among other things, this works around the cron daemon not deleting its
       pidfile from /var/run/. Closes: #615855
+    - Added $network to Should-Start
   * debian/rules:
     - Converted to dh syntax. This included replacing some manually executed
       steps with debhelper file-automated ones (eg: cron.man, cron.examples)
