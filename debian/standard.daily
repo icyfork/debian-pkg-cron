@@ -12,7 +12,7 @@ LOCKFILE=/var/lock/cron.daily
 LOFO=lost+found
 
 # When flock is available, avoid running more than once at a time 
-if `which flock >/dev/null 2>&1`; then
+if `which flock >/dev/null`; then
     exec 9> $LOCKFILE
     if ! flock -x -n 9; then
         cat <<EOF
@@ -26,7 +26,7 @@ EOF
     fi
 fi
 
-# Don't continue if user wants to skip this
+# Don't continue if user wants to skip lost+found check
 if [ -f /etc/default/cron ]; then
     . /etc/default/cron
     [ "$CHECK_LOSTFOUND" = "no" ] && exit 0
