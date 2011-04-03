@@ -49,6 +49,8 @@ cron (3.0pl1-117) unstable; urgency=low
     - Parse /etc/mtab instead of /proc/mounts; the former makes handling bind
       mounts easier. Closes: #578856
     - Pull in /etc/cron/default for CHECK_LOSTFOUND (see above)
+  * debian/copyright:
+    - Convert to DEP5 format (r173)
   * debian/watch:
     - Added watch file to silence a lintian warning, even though the last
       upstream release was in 2004.
