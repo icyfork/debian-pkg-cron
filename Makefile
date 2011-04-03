@@ -120,6 +120,9 @@ crontab		:	$(CRONTAB_OBJ)
 install		:	all
 			$(INSTALL) -c -m  755 -o root cron    $(DESTSBIN)/
 			$(INSTALL) -c -m 4755 -o root crontab $(DESTBIN)/
+			sh putman.sh crontab.1 $(DESTMAN)
+			sh putman.sh cron.8    $(DESTMAN)
+			sh putman.sh crontab.5 $(DESTMAN)
 
 clean		:
 			rm -f *.o cron crontab a.out core tags *~ #*

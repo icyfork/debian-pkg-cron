@@ -6,7 +6,6 @@ cron (3.0pl1-117) unstable; urgency=low
       DEB_BUILD_OPTIONS=debug.
     - Removed hard-coded compiler flags, honoring those provided by
       dpkg-buildflags instead.
-    - Disable upstream's method of installing manpages in favor of dh_installman
   * do_command.c:
     - When logging the end of cron jobs, log the PID of the actually exec'ed
       user command, not the PID of the parent. Closes: #609780
