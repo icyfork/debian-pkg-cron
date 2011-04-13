@@ -13,6 +13,8 @@ cron (3.0pl1-117) unstable; urgency=low
     - Split crontab security checks (type, owner, mode, links) into separate
       tests with individual error messages instead of the cryptic message
       "WRONG INODE INFO". LP: #741979
+  * crontab.5:
+    - Specify parse order of crontabs (thanks, Jonathan). Closes: #622645
   * debian/control:
     - Bumped Standards-Version to 3.9.2 (no changes needed)
     - Added missing Build-Depends on libaudit-dev
