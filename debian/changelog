@@ -12,9 +12,15 @@ cron (3.0pl1-117) unstable; urgency=low
   * database.c:
     - Split crontab security checks (type, owner, mode, links) into separate
       tests with individual error messages instead of the cryptic message
-      "WRONG INODE INFO". LP: #741979
+      "WRONG INODE INFO". Closes: #625493
+    - Extended the ability to recover from broken symlinks (added in -110) to
+      also recover from failed security checks above. Fixes to these were not
+      being detected as they don't affect mtime. Closes: #625495
+  * cron.8:
+    - Documented the fact that /etc/crontab and files in /etc/cron.d must not
+      be group- or other-writable. Closes: #625491, LP: #741979
   * crontab.5:
-    - Specify parse order of crontabs (thanks, Jonathan). Closes: #622645
+    - Specify parse order of crontabs (thanks, Jonathan Amery). Closes: #622645
   * debian/control:
     - Bumped Standards-Version to 3.9.2 (no changes needed)
     - Added missing Build-Depends on libaudit-dev
