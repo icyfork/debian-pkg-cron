@@ -14,11 +14,6 @@ TODO stuff
   the system. 
   This might imply fixing #304036 (which might help fix #312614 too BTW)
 
-- Greatly improve change detection code for /etc/cron.d. Currently, only
-  broken symlinks are handled correctly. Other errors (bad file owner,
-  bad file permissions) require a restart.
-  NOTE: The broken-symlink-code can be generalized and adapted for this
-
 - Debate changing the policy of /etc/cron.d being a drop-in for packages
   only vs. a general drop-in for crontabs
 
