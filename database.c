@@ -52,6 +52,9 @@ static	void		process_crontab __P((char *, char *, char *,
 static int valid_name (char *filename);
 static user *get_next_system_crontab __P((user *));
 #endif
+
+void force_rescan_user(cron_db *old_db, cron_db *new_db, const char *fname);
+
 void
 load_database(old_db)
 	cron_db		*old_db;
@@ -357,9 +360,9 @@ process_crontab(uname, fname, tabname, statbuf, new_db, old_db)
             }
             /* Check to make sure that the crontab is owned by the correct user
                (or root) */
-            if (statbuf->st_uid != pw->pw_uid &&
-                statbuf->st_uid != ROOT_UID) {
+            if (statbuf->st_uid != pw->pw_uid && statbuf->st_uid != ROOT_UID) {
                 log_it(fname, getpid(), "WRONG FILE OWNER", tabname);
+                force_rescan_user(old_db, new_db, fname);
 		goto next_crontab;
             }
 
@@ -372,12 +375,14 @@ process_crontab(uname, fname, tabname, statbuf, new_db, old_db)
 	    /* Check to make sure that the crontab's permissions are secure */
             if ((statbuf->st_mode & 07777) != 0600) {
 		log_it(fname, getpid(), "INSECURE MODE (mode 0600 expected)", tabname);
+                force_rescan_user(old_db, new_db, fname);
 		goto next_crontab;
 	    }
 
 	    /* Check to make sure that there are no hardlinks to the crontab */
             if (statbuf->st_nlink != 1) {
 		log_it(fname, getpid(), "NUMBER OF HARD LINKS > 1", tabname);
+                force_rescan_user(old_db, new_db, fname);
 		goto next_crontab;
 	    }
         } else {
@@ -389,6 +394,7 @@ process_crontab(uname, fname, tabname, statbuf, new_db, old_db)
             }
             if (S_ISLNK(statbuf->st_mode) && statbuf->st_uid != ROOT_UID) {
                 log_it(fname, getpid(), "WRONG SYMLINK OWNER", tabname);
+                force_rescan_user(old_db, new_db, fname);
 		goto next_crontab;
             }
             if ((crontab_fd = open(tabname, O_RDONLY, 0)) < OK) {
@@ -404,24 +410,8 @@ process_crontab(uname, fname, tabname, statbuf, new_db, old_db)
 		 */
 		if (S_ISLNK(statbuf->st_mode)) {
                     log_it(fname, getpid(), "CAN'T OPEN SYMLINK", tabname);
-
-                    u = find_user(old_db, fname);
-                    if (u != NULL) {
-			Debug(DLOAD, ("\t%s: [using placeholder]\n", fname))
-                        unlink_user(old_db, u);
-
-			if (u->crontab != NULL) {
-                    	    entry *e, *ne;
-			    for (e = u->crontab;  e != NULL;  e = ne) {
-			    	ne = e->next;
-			    	free_entry(e);
-			    }
-			}
-                        u->crontab = NULL;
-                        u->mtime = 0;
-                        link_user(new_db, u);
-                        goto next_crontab;
-                    }
+                    force_rescan_user(old_db, new_db, fname);
+                    goto next_crontab;
                 } else {
 		    log_it(fname, getpid(), "CAN'T OPEN", tabname);
 		    goto next_crontab;
@@ -436,6 +426,7 @@ process_crontab(uname, fname, tabname, statbuf, new_db, old_db)
             /* Check to make sure that the crontab is owned by root */
             if (statbuf->st_uid != ROOT_UID) {
                 log_it(fname, getpid(), "WRONG FILE OWNER", tabname);
+                force_rescan_user(old_db, new_db, fname);
 		goto next_crontab;
             }
 
@@ -450,7 +441,8 @@ process_crontab(uname, fname, tabname, statbuf, new_db, old_db)
 	     * (mode 0600). An upgrade path could be implemented for 4.1
 	     */
 	    if ((statbuf->st_mode & S_IWGRP) || (statbuf->st_mode & S_IWOTH)) {
-		log_it(fname, getpid(), "INSECURE PERMISSIONS (group/other writeable)", tabname);
+		log_it(fname, getpid(), "INSECURE MODE (group/other writable)", tabname);
+                force_rescan_user(old_db, new_db, fname);
 		goto next_crontab;
 	    }
             /* Technically, we should also check whether the parent dir is
@@ -463,6 +455,7 @@ process_crontab(uname, fname, tabname, statbuf, new_db, old_db)
 	    /* Check to make sure that there are no hardlinks to the crontab */
             if (statbuf->st_nlink != 1) {
 		log_it(fname, getpid(), "NUMBER OF HARD LINKS > 1", tabname);
+                force_rescan_user(old_db, new_db, fname);
 		goto next_crontab;
 	    }
         }
@@ -562,3 +555,43 @@ get_next_system_crontab (curtab)
 }
 
 #endif
+
+/* Force rescan of a crontab the next time cron wakes up
+ *
+ * cron currently only detects changes caused by an mtime update; it does not
+ * detect other attribute changes such as UID or mode. To allow cron to recover
+ * from errors of that nature as well, this function removes the crontab from
+ * the old DB (if present there) and adds an empty crontab to the new DB with
+ * an mtime of 0, thereby forcing a rescan the next time the daemon wakes up.
+ */
+void
+force_rescan_user(cron_db *old_db, cron_db *new_db, const char *fname)
+{
+        user *u;
+
+	/* Remove from old DB and free resources */
+	u = find_user(old_db, fname);
+	if (u != NULL) {
+		Debug(DLOAD, (" [delete old data]"))
+		unlink_user(old_db, u);
+		free_user(u);
+	}
+
+	/* Allocate an empty crontab with mtime 0, add it to new DB */
+        if ((u = (user *) malloc(sizeof(user))) == NULL) {
+                errno = ENOMEM;
+                return NULL;
+        }   
+        if ((u->name = strdup(fname)) == NULL) {
+                free(u);
+                errno = ENOMEM;
+                return NULL;
+        }   
+        u->mtime = 0;
+        u->crontab = NULL;
+#ifdef WITH_SELINUX
+        u->scontext = NULL;
+#endif
+        Debug(DLOAD, ("\t%s: [added empty placeholder to force rescan]\n", fname))
+	link_user(new_db, u);
+}
