@@ -450,7 +450,7 @@ process_crontab(uname, fname, tabname, statbuf, new_db, old_db)
 	     * (mode 0600). An upgrade path could be implemented for 4.1
 	     */
 	    if ((statbuf->st_mode & S_IWGRP) || (statbuf->st_mode & S_IWOTH)) {
-		log_it(fname, getpid(), "INSECURE PERMISSIONS (group/other writeable", tabname);
+		log_it(fname, getpid(), "INSECURE PERMISSIONS (group/other writeable)", tabname);
 		goto next_crontab;
 	    }
             /* Technically, we should also check whether the parent dir is

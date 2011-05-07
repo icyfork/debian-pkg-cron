@@ -87,9 +87,8 @@ Like /etc/crontab, the files in the /etc/cron.d directory are
 monitored for changes. In general, the admin should not use /etc/cron.d/,
 but use the standard system crontab /etc/crontab.
 
-Just like /etc/crontab, the files in /etc/cron.d must be owned by root,
-and must not be group- or
-other-writable. In contrast to the spool area, they may also be symlinks,
+/etc/crontab and the files in /etc/cron.d must be owned by root, and must not
+be group- or other-writable. In contrast to the spool area, they may also be symlinks,
 provided that both the symlink and the file it points to are owned by root.
 
 .I cron
