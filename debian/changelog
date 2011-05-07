@@ -75,7 +75,7 @@ cron (3.0pl1-117) unstable; urgency=low
     removed, as that location has a specific meaning and the patches in there
     were no longer relevant.
 
- -- Christian Kastner <debian@kvr.at>  Sun, 06 Feb 2011 21:44:48 +0100
+ -- Christian Kastner <debian@kvr.at>  Sun, 08 May 2011 01:21:15 +0200
 
 cron (3.0pl1-116) unstable; urgency=high
 
