@@ -74,7 +74,7 @@ stop)	log_daemon_msg "Stopping periodic command scheduler" "cron"
         ;;
 restart) log_daemon_msg "Restarting periodic command scheduler" "cron" 
         $0 stop
-	$0 start
+	    $0 start
         ;;
 reload|force-reload) log_daemon_msg "Reloading configuration files for periodic command scheduler" "cron"
 	# cron reloads automatically

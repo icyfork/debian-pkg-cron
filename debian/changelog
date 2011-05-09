@@ -2,7 +2,7 @@ cron (3.0pl1-117) unstable; urgency=low
 
   * Makefile:
     - Fixed integration of cron-internal debug code into the package building
-      process. Instead of having to modify debian/rules, this is now driven by
+      process. Instead of having to modify debian/rules, this can now driven by
       DEB_BUILD_OPTIONS=debug
     - Removed hard-coded compiler flags, honoring those provided by
       dpkg-buildflags instead
@@ -15,7 +15,7 @@ cron (3.0pl1-117) unstable; urgency=low
       "WRONG INODE INFO". Closes: #625493
     - Extended the ability to recover from broken symlinks (added in -110) to
       also recover from failed security checks above. Fixes to these were not
-      being detected as they don't affect mtime. Closes: #625495
+      being detected as cron only looks at mtime. Closes: #625495
   * cron.8:
     - Documented the fact that /etc/crontab and files in /etc/cron.d must not
       be group- or other-writable. Closes: #625491, LP: #741979
@@ -27,8 +27,8 @@ cron (3.0pl1-117) unstable; urgency=low
     - Removed Conflicts for nonexistent package suidmanager
     - Removed Conflicts for lockfile-progs (which should have been a Breaks
       anyway) as we no longer rely on it, we use flock from util-linux instead
-    - Changed Build-Depends on libselinux1-dev to linux-any instead of negating
-      all other OSes
+    - Changed architecture-specific Build-Depends on libselinux1-dev to
+      linux-any instead of negating all other OSes
   * debian/cron.default:
     - Merged the LSBNAMES option with EXTRA_OPTS. Both where used to pass
       options to the daemon, making one of them redundant
@@ -50,6 +50,7 @@ cron (3.0pl1-117) unstable; urgency=low
       + SELinux is enabled by default on linux-any
       + audit is disabled by default on all platforms
       All of these can be driven by DEB_BUILD_OPTIONS (see debian/rules)
+    - Do not compress example perl scripts
   * debian/{prerm,postrm,postinst}:
     - Let dh_installinit manage stopping/(re)starting of jobs instead of
       calling invoke-rc.d ourselves
