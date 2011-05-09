@@ -401,12 +401,9 @@ process_crontab(uname, fname, tabname, statbuf, new_db, old_db)
 		/* crontab not accessible?
 
 		   If tabname is a symlink, it's most probably just broken, so
-		   we emit a warning. Then we re-add the old crontab to the new
-		   DB, but only after removing all entries and resetting its
-		   mtime. Once the link is fixed, it will get picked up and
-		   processed again.
-                   If tabname is a regular file, this error is bad so we skip
-		   it instead of adding it to the new DB.
+		   we force a rescan. Once the link is fixed, it will get picked
+		   up and processed again. If tabname is a regular file, this
+		   error is bad so we skip it instead.
 		 */
 		if (S_ISLNK(statbuf->st_mode)) {
                     log_it(fname, getpid(), "CAN'T OPEN SYMLINK", tabname);
