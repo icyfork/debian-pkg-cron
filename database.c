@@ -492,7 +492,16 @@ process_crontab(uname, fname, tabname, statbuf, new_db, old_db)
 	if (u != NULL) {
 		u->mtime = statbuf->st_mtime;
 		link_user(new_db, u);
-	}
+        } else {
+                /* The crontab we attempted to load contains a syntax error. A
+                 * fix won't get picked up by the regular change detection
+                 * code, so we force a rescan. statbuf->st_mtime still contains
+                 * the file's mtime, so we use it to rescan only when an update
+                 * has actually taken place.
+                 */
+                force_rescan_user(old_db, new_db, fname, statbuf->st_mtime);
+        }   
+
 
 next_crontab:
 	if (crontab_fd >= OK) {
