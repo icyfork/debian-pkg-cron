@@ -16,6 +16,9 @@ cron (3.0pl1-117) unstable; urgency=low
     - Extended the ability to recover from broken symlinks (added in -110) to
       also recover from failed security checks above. Fixes to these were not
       being detected as cron only looks at mtime. Closes: #625495
+    - Also recover from syntax errors. Fixes to these did change mtime, but
+      were ignored as cron permanently removes broken crontabs from its
+      database of files to check. Closes: #627859
   * cron.8:
     - Documented the fact that /etc/crontab and files in /etc/cron.d must not
       be group- or other-writable. Closes: #625491, LP: #741979
