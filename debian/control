@@ -8,7 +8,7 @@ Build-Depends:
     debhelper (>= 7.2.3~),
     libpam0g-dev,
     libselinux1-dev [linux-any],
-    libaudit-dev
+    libaudit-dev [linux-any]
 Homepage: http://ftp.isc.org/isc/cron/
 Vcs-Svn: svn://svn.debian.org/svn/pkg-cron
 Vcs-Browser: http://svn.debian.org/viewsvn/pkg-cron

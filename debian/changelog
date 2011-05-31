@@ -1,3 +1,13 @@
+cron (3.0pl1-118) unstable; urgency=low
+
+  * debian/control
+    - Limited Build-Depends for libaudit-dev to linux-any. I erroneously
+      assumed it applied to other OSes as well.
+  * debian/rules
+    - DEB_BUILD_OPTIONS for audit support is limited to Linux platforms
+
+ -- Christian Kastner <debian@kvr.at>  Tue, 31 May 2011 14:50:34 +0200
+
 cron (3.0pl1-117) unstable; urgency=low
 
   * Makefile:

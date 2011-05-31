@@ -26,20 +26,20 @@ ifeq (,$(findstring nopam,$(DEB_BUILD_OPTIONS)))
     export PAM_DEFS PAM_LIBS
 endif
 
-# SELINUX is enabled by default on Linux
+# SELinux and audit are only available on Linux
 ifeq ($(DEB_HOST_ARCH_OS), linux)
+# SELinux is enabled by default
 ifeq (,$(findstring noselinux,$(DEB_BUILD_OPTIONS)))
     SELINUX_DEFS = -DWITH_SELINUX
     SELINUX_LIBS = -lselinux
     export SELINUX_DEFS SELINUX_LIBS
 endif
-endif
-
 # audit is disabled by default
 ifneq (,$(findstring withaudit,$(DEB_BUILD_OPTIONS)))
     AUDIT_DEFS = -DWITH_AUDIT
     AUDIT_LIBS = -laudit
     export AUDIT_DEFS AUDIT_LIBS
+endif
 endif
 
 
