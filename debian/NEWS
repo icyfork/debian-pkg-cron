@@ -1,3 +1,37 @@
+cron (3.0pl1-111) unstable; urgency=low
+
+    Cron will log an error if a cronjob exits with a non-zero value with
+    a message similar to this after the syslog message which indicates
+    the cronjob that is being run ('CMD'):
+
+    (CRON) error (grandchild #XYZW failed with exit status 1)
+
+    Debian systems upgrading from Lenny to Squeeze (or to later version) might
+    find that these systems start to generate these new logs and, if using
+    logcheck, might start receiving these entries by email.
+
+    In order to avoid this logs the cron job needs to be fixed to ensure
+    that a zero exit value is returned under normal conditions.
+
+    For example, the following cronjob used to run a script if, and only if,
+    present and executable:
+
+    test -x /name/of/the/script && /name/of/the/script
+
+    Should be changed to either
+
+    if [ -x /name/of/the/script ]; then /name/of/the/script; fi
+
+    or
+
+    test ! -x /name/of/the/script || /name/of/the/script
+
+    To ensure that the exit value 0 if the script does not exist or
+    if the script runs successfully.
+
+
+ -- Javier Fernandez-Sanguino Pen~a <jfs@debian.org>  Sun, 05 Jun 2011 10:29:22 +0200
+
 cron (3.0pl1-110) unstable; urgency=low
 
     In the past, long-running jobs caused certain MTAs to time out,

@@ -6,6 +6,11 @@ cron (3.0pl1-118) unstable; urgency=low
   * debian/rules
     - DEB_BUILD_OPTIONS for audit support is limited to Linux platforms
 
+  [ Javier Fernandez-Sanguino]
+  * debian/NEWS
+    - Document the new behaviour of cron regarding logging of non-zero
+      exit status cronjobs (Closes: #608874)
+
  -- Christian Kastner <debian@kvr.at>  Tue, 31 May 2011 14:50:34 +0200
 
 cron (3.0pl1-117) unstable; urgency=low
