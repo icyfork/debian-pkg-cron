@@ -465,6 +465,7 @@ parse_args(argc, argv)
 {
 	int	argch;
 
+	log_level = 1;
 	stay_foreground = 0;
         lsbsysinit_mode = 0;
 
