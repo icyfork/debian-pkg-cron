@@ -39,12 +39,22 @@ Stay in foreground mode, don't daemonize.
 .B -l
 Enable LSB compliant names for /etc/cron.d files
 .TP
-.B -L loglevel
-Sets the loglevel for cron. The standard logging level (1) will log 
-the start of all the cron jobs. A higher loglevel (2) will cause
-cron to log also the end of all cronjobs, which can be useful to
-audit the behaviour of tasks run by cron. Logging will be disabled
-if the \fIloglevel\fR is set to zero (0).
+.B -L levels
+Tell cron what to log about \fBjobs\fR (errors are logged irregardless of this
+value) as the sum of the following values:
+.br
+.RS 12
+.IP \fB1\fR
+will log the start of all cron jobs
+.IP \fB2\fR
+will log the end of all cron jobs
+.IP \fB4\fR
+will log all failed jobs (exit status != 0)
+.RE
+.IP
+The default is to log the start of all jobs (1). Logging will be disabled
+if \fIlevels\fR is set to zero (0). A value of seven (7) will select all
+options.
 .SH NOTES
 .PP
 .I cron

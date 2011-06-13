@@ -10,10 +10,20 @@
 READ_ENV="yes"
 
 # Extra options for cron, see cron(8)
-# For example, set a higher log level to audit cron's work
-# EXTRA_OPTS="-L 2"
-# Or, to enable LSB name support in /etc/cron.d/
+#
+# For example, to enable LSB name support in /etc/cron.d/, use
 # EXTRA_OPTS='-l'  
+#
+# Or, to log standard messages, plus jobs with exit status != 0:
+# EXTRA_OPTS='-L 5'
+#
+# For quick reference, the currently available log levels are:
+#   0   no logging (errors are logged irregardless)
+#   1   log start of jobs
+#   2   log end of jobs
+#   4   log jobs with exit status != 0
+#
+#EXTRA_OPTS=""
 
 # Uncomment to disable lost+found check
 #CHECK_LOSTFOUND=no
