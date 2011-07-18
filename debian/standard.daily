@@ -56,7 +56,7 @@ do
     if [ ! -d "$MTPT/$LOFO" ]
     then
         # XFS does not necessarily have a lost+found dir
-        [ $FSTYPE = "xfs" ] && continue
+        [ "$FSTYPE" = "xfs" ] && continue
 
         MISSING="$MISSING\n$MTPT/$LOFO"
     elif cd "$MTPT/$LOFO" 2> /dev/null
