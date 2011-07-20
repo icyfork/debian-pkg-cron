@@ -203,7 +203,7 @@ cron (3.0pl1-112) unstable; urgency=low
   * do_command.c:
     - Don't send mail when a job exits non-zero, only send mail if the job sent
       output to stderr. This behaviour was introduced erroneously; while it
-      does have merit, it is completly against standard cron behaviour.
+      does have merit, it is completely against standard cron behaviour.
       Closes: #581612
   * debian/compat:
     - Bumped debhelper compatibility to 7
