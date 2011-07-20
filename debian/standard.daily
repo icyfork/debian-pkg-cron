@@ -52,11 +52,18 @@ do
     esac
 
     [ "$MTPT" = '/' ] && MTPT=""
+    # Replace spaces in the path (\040)
+    MTPT="`echo $MTPT | sed -e 's/\\040/ /g'`"
 
     if [ ! -d "$MTPT/$LOFO" ]
     then
         # XFS does not necessarily have a lost+found dir
         [ "$FSTYPE" = "xfs" ] && continue
+
+        # If we do not find the directory then it might
+        # be an issue with the mtab or with how we parse 
+        # the information
+        [ ! -d "$MTPT" ] && continue
 
         MISSING="$MISSING\n$MTPT/$LOFO"
     elif cd "$MTPT/$LOFO" 2> /dev/null
