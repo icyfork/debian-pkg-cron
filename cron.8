@@ -40,7 +40,7 @@ Stay in foreground mode, don't daemonize.
 Enable LSB compliant names for /etc/cron.d files
 .TP
 .B -L levels
-Tell cron what to log about \fBjobs\fR (errors are logged irregardless of this
+Tell cron what to log about \fBjobs\fR (errors are logged regardless of this
 value) as the sum of the following values:
 .br
 .RS 12
@@ -78,7 +78,7 @@ follow the special format of that file, i.e. they include the
 field). However, they are independent of /etc/crontab: they do not, for 
 example, inherit environment variable settings from it. The intended purpose
 of this feature is to allow packages that require
-finer control of their scheduling than the /etc/cron.{daily,weekly,monthly} 
+finer control of their scheduling than the /etc/cron.{hourly,daily,weekly,monthly} 
 directories to add a crontab file to /etc/cron.d. Such files
 should be named after the package that supplies them. Files must
 conform to the same naming convention as used by 
