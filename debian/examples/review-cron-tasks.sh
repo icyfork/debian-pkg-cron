@@ -85,7 +85,7 @@ check_results () {
 [ -r /etc/default/cron ] &&  . /etc/default/cron
 use_lsb="no"
 [ "$LSBNAMES" = "-l" ] && use_lsb="yes"
-echo $EXTRA_OPTS | grep -q '-l' && use_lsb="yes"
+echo $EXTRA_OPTS | grep -q -- '-l' && use_lsb="yes"
 # Set the options for run parts
 run_opts=""
 [ "$use_lsb" = "yes" ] &&  run_opts="--lsbsysinit"
