@@ -54,12 +54,14 @@ check_results () {
     find $dir \( -type f -o -type l \) -printf '%p %l\n'  |
     while read file pointer; do
         if ! grep -q "^$file$" $run_file; then
-            if [ "$exec_test" = "yes" ] && [ ! -x "$file" ] ; then
-                warn $file "Is not executable"
-            else
-                warn $file "Does not conform to the run-parts convention"
-            fi
+            [ -L "$file" ] && [ ! -e "$pointer" ] && \
+                    warn $file "Points to an nonexistent location ($pointer)" && continue
+            [ "$exec_test" = "yes" ]  && [ ! -x "$file" ] &&  \
+                    warn $file "Is not executable" && continue
+             warn $file "Does not conform to the run-parts convention"
         else
+
+# do additional checks for symlinks for files that *are* listed by run-parts 
             if [ -L "$file" ] ; then
 # for symlinks: does the file exist?
                 if [ ! -e "$pointer" ] ; then
@@ -71,6 +73,7 @@ check_results () {
                        warn $file "Is not owned by root"
                  fi
             fi
+
        fi
     done
 
