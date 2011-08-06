@@ -60,6 +60,8 @@ check_results () {
                     warn $file "Points to an nonexistent location ($pointer)" && continue
             [ "$exec_test" = "yes" ]  && [ ! -x "$file" ] &&  \
                     warn $file "Is not executable" && continue
+            [ ! -r "$file" ] && \
+                    warn $file "Cannot read the file to determine if it will be run (are you running as root?"
              warn $file "Does not conform to the run-parts convention"
         else
 
