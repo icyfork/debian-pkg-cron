@@ -38,10 +38,42 @@ warn () {
 
     # Do not send a warning if the file is '.dpkg-old' or '.dpkg-dist'
     if ! echo $file | grep -q -E '\.dpkg-(old|dist)$' ; then
-        echo "WARN: The file $file will not be executed by cron: $reason"
+        echo "WARN: The file $file will not be executed by cron: $reason" >&2
     else
         echo "INFO: The file $file is a leftover from the Debian package manager"
     fi
+}
+
+check_results () {
+
+    dir=$1
+    run_file=$2
+    exec_test=$3
+
+    # Now check the files we found and the ones that exist in the directory
+    find $dir \( -type f -o -type l \) -printf '%p %l\n'  |
+    while read file pointer; do
+        if ! grep -q "^$file$" $run_file; then
+            if [ "$exec_test" = "yes" ] && [ ! -x "$file" ] ; then
+                warn $file "Is not executable"
+            else
+                warn $file "Does not conform to the run-parts convention"
+            fi
+        else
+            if [ -L "$file" ] ; then
+# for symlinks: does the file exist?
+                if [ ! -e "$pointer" ] ; then
+                    warn $file "Points to an nonexistent location ($pointer)"
+                fi
+# for symlinks: is it owned by root?
+                 owner=`ls -l $pointer  | awk '{print $3}'`
+                 if [ "$owner" != "root" ]; then
+                       warn $file "Is not owned by root"
+                 fi
+            fi
+       fi
+    done
+
 }
 
 # Step 1: Review /etc/cron.d
@@ -60,23 +92,24 @@ else
     run-parts --list /etc/cron.d >$temp
 fi
 
-# Now check the files we found and the ones that exist in the directory
-find /etc/cron.d \( -type f -o -type l \) -printf '%p %l\n'  |
-while read file pointer; do
-    if ! grep -q "^$file$" $temp; then
-            warn $file "Does not conform to the run-parts convention"
+check_results /etc/cron.d $temp "no"
+
+
+# Step 2: Review /etc/cron.{hourly,daily,weekly,monthly}
+
+for interval in hourly daily weekly monthly; do
+    testdir=/etc/cron.$interval
+    if [ "$LSBNAMES" = "-l" ] ; then
+         run-parts ---lsbsysinit --test $testdir >$temp
     else
-        if [ -L "$file" ] ; then
-# for symlinks: does the file exist?
-            if [ ! -e "$pointer" ] ; then
-                 warn $file "Points to an unexistant location ($pointer)"
-             fi
-# for symlinks: is it owned by root?
-            owner=`ls -l $pointer  | awk '{print $3}'`
-            if [ "$owner" != "root" ]; then
-                 warn $file "Is not owned by root"
-            fi
-        fi
+         run-parts --test $testdir >$temp
     fi
+
+    check_results $testdir $temp "yes"
+    
 done
+
+rm -f $temp
+
+exit 0
 
