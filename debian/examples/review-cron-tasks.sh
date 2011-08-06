@@ -83,11 +83,12 @@ check_results () {
 
 # First: check if we are using -l
 [ -r /etc/default/cron ] &&  . /etc/default/cron
+use_lsb="no"
 [ "$LSBNAMES" = "-l" ] && use_lsb="yes"
 echo $EXTRA_OPTS | grep -q '-l' && use_lsb="yes"
 # Set the options for run parts
 run_opts=""
-[ $use_lsb = "yes" ] &&  run_opts="--lsbsysinit"
+[ "$use_lsb" = "yes" ] &&  run_opts="--lsbsysinit"
 
 temp=`tempfile` || { echo "ERROR: Cannot create temporary file" >&2 ; exit 1; }
 trap "rm -f $temp" 1 2 3 13 15
