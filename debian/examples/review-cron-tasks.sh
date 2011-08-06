@@ -88,6 +88,7 @@ check_results () {
 # so they are *not* required to be executables, just to conform with the 
 
 temp=`tempfile` || { echo "ERROR: Cannot create temporary file" >&2 ; exit 1; }
+trap "rm -f $temp" 1 2 3 13 15
 
 if [ "$LSBNAMES" = "-l" ] ; then
     run-parts ---lsbsysinit --list /etc/cron.d >$temp
@@ -112,7 +113,6 @@ for interval in hourly daily weekly monthly; do
     
 done
 
-rm -f $temp
 
 exit 0
 
