@@ -83,6 +83,8 @@ check_results () {
 
 # First: check if we are using -l
 [ -r /etc/default/cron ] &&  . /etc/default/cron
+[ "$LSBNAMES" = "-l" ] && use_lsb="yes"
+echo $EXTRA_OPTS | grep -q '-l' && use_lsb="yes"
 
 # Now review the scripts, note that cron does not use run-parts to run these
 # so they are *not* required to be executables, just to conform with the 
@@ -90,7 +92,7 @@ check_results () {
 temp=`tempfile` || { echo "ERROR: Cannot create temporary file" >&2 ; exit 1; }
 trap "rm -f $temp" 1 2 3 13 15
 
-if [ "$LSBNAMES" = "-l" ] ; then
+if [ $use_lsb = "yes" ]; then
     run-parts ---lsbsysinit --list /etc/cron.d >$temp
 else
     run-parts --list /etc/cron.d >$temp
@@ -103,7 +105,7 @@ check_results /etc/cron.d $temp "no"
 
 for interval in hourly daily weekly monthly; do
     testdir=/etc/cron.$interval
-    if [ "$LSBNAMES" = "-l" ] ; then
+    if [ $use_lsb = "yes" ]; then
          run-parts ---lsbsysinit --test $testdir >$temp
     else
          run-parts --test $testdir >$temp
