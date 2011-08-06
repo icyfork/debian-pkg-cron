@@ -61,9 +61,9 @@ check_results () {
             [ "$exec_test" = "yes" ]  && [ ! -x "$file" ] &&  \
                     warn $file "Is not executable" && continue
             [ ! -r "$file" ] && [ "`id -u`" != "0" ] && \
-                    warn $file "Cannot read the file to determine if it will be run (you are not running as root)"
+                    warn $file "Cannot read the file to determine if it will be run (you are not running as root)" && continue
             [ ! -r "$file" ] && \
-                    warn $file "File is unreadable"
+                    warn $file "File is unreadable" && continue
              warn $file "Does not conform to the run-parts convention"
         else
 
