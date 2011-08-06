@@ -79,25 +79,24 @@ check_results () {
 
 }
 
-# Step 1: Review /etc/cron.d
+# Setup for the tests
 
 # First: check if we are using -l
 [ -r /etc/default/cron ] &&  . /etc/default/cron
 [ "$LSBNAMES" = "-l" ] && use_lsb="yes"
 echo $EXTRA_OPTS | grep -q '-l' && use_lsb="yes"
-
-# Now review the scripts, note that cron does not use run-parts to run these
-# so they are *not* required to be executables, just to conform with the 
+# Set the options for run parts
+run_opts=""
+[ $use_lsb = "yes" ] &&  run_opts="--lsbsysinit"
 
 temp=`tempfile` || { echo "ERROR: Cannot create temporary file" >&2 ; exit 1; }
 trap "rm -f $temp" 1 2 3 13 15
 
-if [ $use_lsb = "yes" ]; then
-    run-parts ---lsbsysinit --list /etc/cron.d >$temp
-else
-    run-parts --list /etc/cron.d >$temp
-fi
+# Now review the scripts, note that cron does not use run-parts to run these
+# so they are *not* required to be executables, just to conform with the 
 
+# Step 1: Review /etc/cron.d
+run-parts $run_opts --list /etc/cron.d >$temp
 check_results /etc/cron.d $temp "no"
 
 
@@ -105,14 +104,8 @@ check_results /etc/cron.d $temp "no"
 
 for interval in hourly daily weekly monthly; do
     testdir=/etc/cron.$interval
-    if [ $use_lsb = "yes" ]; then
-         run-parts ---lsbsysinit --test $testdir >$temp
-    else
-         run-parts --test $testdir >$temp
-    fi
-
+    run-parts $run_opts --list $testdir >$temp
     check_results $testdir $temp "yes"
-    
 done
 
 
