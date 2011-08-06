@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/bin/bash
+#
 # Review the cron tasks defined in the system and warn the admin
 # if some of the files will not be run
 #
@@ -27,6 +28,69 @@ set -e
 LC_ALL=C
 export LC_ALL
 
+PROGNAME=${0##*/}
+PROGVERSION=1.0
+# Command line options
+SHORTOPTS=hvsi
+LONGOPTS=help,version,syslog,info
+set -- $(getopt -s bash -o $SHORTOPTS -l $LONGOPTS --n $PROGNAME -- "$@")
+
+version () {
+  echo "$PROGNAME $PROGVERSION"
+  echo "$PROGNAME is copyright © Javier Fernandez-Sanguino <jfs@debian.org>"
+  echo "Released under the terms of the GPL version 2 or later"
+  echo "This program is part of the cron package"
+}
+
+usage () {
+    cat <<EOUSE
+    Usage: $PROGNAME [-si]
+
+    Reviews the directories used by cron and reports scripts that
+    might not be run by cron due to problems in their naming or
+    in their setup.
+     
+    You should run this program as root to prevent false positives.
+
+    Options:
+        -s       -- Use syslog to report information
+        -i       -- Report also informational messages
+EOUSE
+}
+
+syslog="no"
+send_info="no"
+for opt in $@; do
+    case $opt in
+        -h|--help) usage; exit 0;;
+        -v|--version) version; exit 0;;
+        -s|--syslog) syslog="yes";;
+        -i|--info)   send_info="yes";;
+        *)  ;;
+    esac
+done
+    
+
+send_message () {
+
+    level=$1
+    msg=$2
+    [ "$level" = "info" ] && [ "$send_info" = "no" ] && return
+
+    if [ "$syslog" = "yes" ] ; then
+        logger -p cron.$level -t CRON $msg
+    else
+        case $level in
+            "warn")
+                echo "WARN: $msg" >&2
+                ;;
+            "info")
+                echo "INFO: $msg" 
+                ;;
+        esac
+    fi
+}
+
 warn () {
 # Send a warning to the user
     file=$1
@@ -38,11 +102,13 @@ warn () {
     # Skip disabled files
     echo $name | grep -q -E '\.disabled' && return
 
+    # TODO: Should we send warnings for '.old' or '.orig'?
+
     # Do not send a warning if the file is '.dpkg-old' or '.dpkg-dist'
     if ! echo $file | grep -q -E '\.dpkg-(old|dist)$' ; then
-        echo "WARN: The file $file will not be executed by cron: $reason" >&2
+        send_message "warn" "The file $file will not be executed by cron: $reason"
     else
-        echo "INFO: The file $file is a leftover from the Debian package manager"
+        send_message "info" "The file $file is a leftover from the Debian package manager"
     fi
 }
 
@@ -61,7 +127,7 @@ check_results () {
             [ "$exec_test" = "yes" ]  && [ ! -x "$file" ] &&  \
                     warn $file "Is not executable" && continue
             [ ! -r "$file" ] && [ "`id -u`" != "0" ] && \
-                    warn $file "Cannot read the file to determine if it will be run (you are not running as root)" && continue
+                    warn $file "Cannot read the file to determine if it will be run ($PROGNAME is not running as root)" && continue
             [ ! -r "$file" ] && \
                     warn $file "File is unreadable" && continue
              warn $file "Does not conform to the run-parts convention"
