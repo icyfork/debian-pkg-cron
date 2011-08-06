@@ -585,7 +585,7 @@ force_rescan_user(cron_db *old_db, cron_db *new_db, const char *fname, time_t ol
 		free_user(u);
 	}
 
-	/* Allocate an empty crontab with mtime 0, add it to new DB */
+	/* Allocate an empty crontab with the specified mtime, add it to new DB */
         if ((u = (user *) malloc(sizeof(user))) == NULL) {
                 errno = ENOMEM;
                 return NULL;
