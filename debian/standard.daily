@@ -36,20 +36,11 @@ fi
 # Go through /etc/mtab, looking for filesystems with lost+found dirs
 while read DEV MTPT FSTYPE OPTS REST
 do
-    case "$DEV" in
-      /dev/*)
-        ;;
-      *)
-        continue
-        ;;
-    esac
-    case "$FSTYPE" in
-      ext2|ext3|ext4|xfs)
-        ;;
-      *)
-        continue
-        ;;
-    esac
+    # Skip devices outside of /dev
+    echo "$DEV" | grep -q '^/dev/' || continue  
+
+    # Only check on FS where we might expect lost+found
+    echo "$FSTYPE" | grep -q -E '^(ext2|ext3|ext4|xfs)$' || continue
 
     [ "$MTPT" = '/' ] && MTPT=""
     # Replace spaces in the path (\040)
