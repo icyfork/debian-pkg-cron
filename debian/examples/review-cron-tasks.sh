@@ -35,6 +35,8 @@ warn () {
     name=`basename $file`
     # Skip hidden files
     echo $name | grep -q -E '^\.' && return
+    # Skip disabled files
+    echo $name | grep -q -E '\.disabled' && return
 
     # Do not send a warning if the file is '.dpkg-old' or '.dpkg-dist'
     if ! echo $file | grep -q -E '\.dpkg-(old|dist)$' ; then
