@@ -107,7 +107,7 @@ check_results /etc/cron.d $temp "no"
 
 for interval in hourly daily weekly monthly; do
     testdir=/etc/cron.$interval
-    run-parts $run_opts --list $testdir >$temp
+    run-parts $run_opts --test $testdir >$temp
     check_results $testdir $temp "yes"
 done
 
