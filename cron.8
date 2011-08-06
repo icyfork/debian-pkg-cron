@@ -37,7 +37,9 @@ runlevels.
 Stay in foreground mode, don't daemonize.
 .TP
 .B -l
-Enable LSB compliant names for /etc/cron.d files
+Enable LSB compliant names for /etc/cron.d files. This setting, however, does
+not affect the parsing of files under /etc/cron.hourly, /etc/cron.daily,
+/etc/cron.weekly or /etc/cron.monthly.
 .TP
 .B -L levels
 Tell cron what to log about \fBjobs\fR (errors are logged regardless of this
