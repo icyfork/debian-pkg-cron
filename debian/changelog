@@ -23,17 +23,21 @@ cron (3.0pl1-119) UNRELEASED; urgency=low
      how /etc/cron.{hourly,daily,weekly,monthly} and /etc/cron.d behave
      and should be used.
 
- [ Christian Kastner ]
+  [ Christian Kastner ]
   * debian/control:
     - Updated Vcs-* URLs to point to the new git repository
-  * debian/control:
-    - Updated Vcs-URLs to point
+  * debian/cron.c, database.c:
+    - Interpret the "-L" option of the daemon as a bitmask, and add initial
+      support for three selectors: start, stop, end
   * database.c, cron.c, cron.h, debian/copyright:
     - Check orphaned crontabs for adoption. Fix taken from Fedora cronie.
       Closes: #634926
   * do_command.c:
     - When logging a job run, prefix the command text with the PID of the
       process. Closes: #609780
+  * debian/NEWS:
+    - Added entry documenting the change of the "-L" option as well as the
+      dropping of LSBNAMES in -117.
 
  -- Javier Fernandez-Sanguino Pen~a <jfs@debian.org>  Wed, 08 Jun 2011 20:44:49 +0200
 
