@@ -5,7 +5,7 @@ This is the Debian GNU/Linux prepackaged and heavily modified version
 of Paul Vixie's cron subsystem.
 
 Debian's cron development is being done on Alioth:
-http://svn.debian.org/wsvn/pkg-cron
+http://anonscm.debian.org/gitweb/?p=pkg-cron/cron.git
 
 This package was put together by Ian Jackson <iwj10@cus.cam.ac.uk>,
 from the standard sources to 3.0pl1, as posted to comp.sources.unix.
@@ -35,3 +35,7 @@ deny file:     /etc/cron.deny
 
 This package is now maintained by Javier Fernández-Sanguino Peña
 <jfs@computer.org> and Christian Kastner <debian@kvr.at>.
+
+Historical note: The old subversion repository from before the
+migration to git can be found here:
+ http://svn.debian.org/wsvn/pkg-cron

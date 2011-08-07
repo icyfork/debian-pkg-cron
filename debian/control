@@ -10,8 +10,8 @@ Build-Depends:
     libselinux1-dev [linux-any],
     libaudit-dev [linux-any]
 Homepage: http://ftp.isc.org/isc/cron/
-Vcs-Svn: svn://svn.debian.org/svn/pkg-cron
-Vcs-Browser: http://svn.debian.org/viewsvn/pkg-cron
+Vcs-Git: git://git.debian.org/git/pkg-cron/cron.git
+Vcs-Browser: http://anonscm.debian.org/gitweb/?p=pkg-cron/cron.git
 
 Package: cron
 Architecture: any

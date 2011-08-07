@@ -1,5 +1,9 @@
 cron (3.0pl1-119) UNRELEASED; urgency=low
 
+  * The development team has migrated from Subversion to git, with the latter
+    becoming authoritative immediately. A log of the migration process can be
+    found in debian/svn-git-migration.txt.
+
   [ Javier Fernandez-Sanguino ]
   * debian/NEWS:
     - Remove the entry introduced in the previous version until an agreement is
@@ -16,6 +20,10 @@ cron (3.0pl1-119) UNRELEASED; urgency=low
       example script.
 
  [ Christian Kastner ]
+  * debian/control:
+    - Updated Vcs-* URLs to point to the new git repository
+  * debian/control:
+    - Updated Vcs-URLs to point
   * database.c, cron.c, cron.h, debian/copyright:
     - Check orphaned crontabs for adoption. Fix taken from Fedora cronie.
       Closes: #634926
