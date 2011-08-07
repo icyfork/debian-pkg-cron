@@ -23,8 +23,12 @@ Copyright: 1988, 1990, 1993, 1994 Paul Vixie <paul@vix.com>
            2011, Red Hat, Inc.
 License: Paul Vixie's license and GPL-2+ and ISC
 
-Files: debian/examples/stats-cron.pl
+Files: debian/examples/cron-stats.pl
 Copyright: 2006, Javier Fernández-Sanguino Peña <jfs@debian.org>
+License: GPL-2+
+
+Files: debian/examples/cron-tasks-review.sh
+Copyright: 2011, Javier Fernández-Sanguino Peña <jfs@debian.org>
 License: GPL-2+
 
 Files: debian/examples/crontab2english.pl
