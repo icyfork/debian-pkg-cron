@@ -575,7 +575,7 @@ cron (3.0pl1-100) unstable; urgency=low
 cron (3.0pl1-99) unstable; urgency=low
 
   * Fix the test for anacron in /etc/crontab that would make cron run the
-    run-parts regardless of wether anacron was installed or not, thanks to
+    run-parts regardless of whether anacron was installed or not, thanks to
     Paul Kimoto for spotting the bug introduced in the fix to #383857 
     (Closes: #392600)
   * Fix lintian error by adding a comment line in the init.d script
