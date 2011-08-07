@@ -1,4 +1,4 @@
-cron (3.0pl1-119) UNRELEASED; urgency=low
+cron (3.0pl1-119) unstable; urgency=low
 
   * The development team has migrated from Subversion to git, with the latter
     becoming authoritative immediately. A log of the migration process can be
