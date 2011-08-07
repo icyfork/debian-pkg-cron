@@ -18,6 +18,10 @@ cron (3.0pl1-119) UNRELEASED; urgency=low
   * debian/copyright:
     - Adjust debian/copyright to acknowledge the (c) and license of the new
       example script.
+  * cron.8: 
+     - Document the Debian specific changes in a separate section, describing
+     how /etc/cron.{hourly,daily,weekly,monthly} and /etc/cron.d behave
+     and should be used.
 
  [ Christian Kastner ]
   * debian/control:
