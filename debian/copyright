@@ -20,7 +20,8 @@ Copyright: 1988, 1990, 1993, 1994 Paul Vixie <paul@vix.com>
            1996-2005, Steve Greenland <stevegr@debian.org>
            2003, Clint Adams <schizo@debian.org>
            2010-2011, Christian Kastner <debian@kvr.at>
-License: Paul Vixie's license and GPL-2+
+           2011, Red Hat, Inc.
+License: Paul Vixie's license and GPL-2+ and ISC
 
 Files: debian/examples/stats-cron.pl
 Copyright: 2006, Javier Fernández-Sanguino Peña <jfs@debian.org>
@@ -67,3 +68,16 @@ License: Artistic
  .
  On Debian systems, the complete text of the Artistic License
  can be found in "/usr/share/common-licenses/Artistic".
+
+License: ISC
+ Permission to use, copy, modify, and distribute this software for any 
+ purpose with or without fee is hereby granted, provided that the above
+ copyright notice and this permission notice appear in all copies.
+ .
+ THE SOFTWARE IS PROVIDED "AS IS" AND ISC DISCLAIMS ALL WARRANTIES
+ WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS.  IN NO EVENT SHALL ISC BE LIABLE FOR 
+ ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT 
+ OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
