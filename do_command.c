@@ -265,7 +265,9 @@ child_process(e, u)
 		 * PID is part of the log message.
 		 */
 		if (log_level & CRON_LOG_JOBSTART) {
-			char *x = mkprints((u_char *)e->cmd, strlen(e->cmd));
+			char logcmd[MAX_COMMAND + 8];
+			snprintf(logcmd, sizeof(logcmd), "[%d] %s", (int) getpid(), e->cmd);
+			char *x = mkprints((u_char *)logcmd, strlen(logcmd));
 
 			log_it(usernm, getpid(), "CMD", x);
 			free(x);
@@ -637,7 +639,10 @@ mail_finished:
 	fclose(tmpout);
 
 	if (log_level & CRON_LOG_JOBEND) {
-		char *x = mkprints((u_char *)e->cmd, strlen(e->cmd));
+		char logcmd[MAX_COMMAND + 8];
+		snprintf(logcmd, sizeof(logcmd), "[%d] %s", (int) job_pid, e->cmd);
+		char *x = mkprints((u_char *)logcmd, strlen(logcmd));
+
 		log_it(usernm, job_pid, "END", x);
 		free(x);
 	}
