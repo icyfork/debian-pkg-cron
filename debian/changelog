@@ -1,13 +1,19 @@
 
 cron (3.0pl1-119) UNRELEASED; urgency=low
 
+  [ Javier Fernandez-Sanguino ]
   * debian/NEWS: Remove the entry introduced in the previous version
     until an agreement is reached on the desired behaviour 
     (Reopens: #508774)
   * debian/standard.daily: 
        - Work properly if mount points have a space (Closes: 63397)
        - Sanity check mount point value before generating an error
-
+  * Add one new example script:
+     - cron-tasks-review.sh: Reviews the files that exist in /etc/cron.d
+     and in /etc/cron.{hourly,daily,weekly,monthly} to find those that
+     will not be run by cron due to some error.
+  * Adjust debian/copyright to acknowledge the (c) and license of the new
+    example script.
 
  -- Javier Fernandez-Sanguino Pen~a <jfs@debian.org>  Wed, 08 Jun 2011 20:44:49 +0200
 
