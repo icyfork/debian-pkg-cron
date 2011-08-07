@@ -173,6 +173,7 @@ main(argc, argv)
 		} while (clockTime == timeRunning);
 		timeRunning = clockTime;
 
+		check_orphans(&database);
 		load_database(&database);
 
 		/*

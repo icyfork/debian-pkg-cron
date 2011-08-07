@@ -56,6 +56,9 @@ static user *get_next_system_crontab __P((user *));
 
 void force_rescan_user(cron_db *old_db, cron_db *new_db, const char *fname, time_t old_mtime);
 
+static void add_orphan(const char *uname, const char *fname, const char *tabname);
+static void free_orphan(orphan *o);
+
 void
 load_database(old_db)
 	cron_db		*old_db;
@@ -328,7 +331,7 @@ process_crontab(uname, fname, tabname, statbuf, new_db, old_db)
 {
 	struct passwd	*pw = NULL;
 	int		crontab_fd = OK - 1;
-	user		*u;
+	user		*u = NULL;
 
 #ifdef DEBIAN
 	/* If the name begins with *system*, don't worry about password -
@@ -342,6 +345,7 @@ process_crontab(uname, fname, tabname, statbuf, new_db, old_db)
 		if (strncmp(fname, "tmp.", 4)) {
 			/* don't log these temporary files */
 			log_it(fname, getpid(), "ORPHAN", "no passwd entry");
+			add_orphan(uname, fname, tabname);
 		}
 		goto next_crontab;
 	}
@@ -463,7 +467,10 @@ process_crontab(uname, fname, tabname, statbuf, new_db, old_db)
          * 1), but this is all we've got.
          */
 	Debug(DLOAD, ("\t%s:", fname))
-	u = find_user(old_db, fname);
+
+	if (old_db != NULL)
+		u = find_user(old_db, fname);
+
 	if (u != NULL) {
 		/* if crontab has not changed since we last read it
 		 * in, then we can just use our existing entry.
@@ -588,12 +595,10 @@ force_rescan_user(cron_db *old_db, cron_db *new_db, const char *fname, time_t ol
 	/* Allocate an empty crontab with the specified mtime, add it to new DB */
         if ((u = (user *) malloc(sizeof(user))) == NULL) {
                 errno = ENOMEM;
-                return;
         }   
         if ((u->name = strdup(fname)) == NULL) {
                 free(u);
                 errno = ENOMEM;
-                return;
         }   
         u->mtime = old_mtime;
         u->crontab = NULL;
@@ -602,4 +607,75 @@ force_rescan_user(cron_db *old_db, cron_db *new_db, const char *fname, time_t ol
 #endif
         Debug(DLOAD, ("\t%s: [added empty placeholder to force rescan]\n", fname))
 	link_user(new_db, u);
+}
+
+/* This fix was taken from Fedora cronie */
+static orphan *orphans;
+
+static void
+free_orphan(orphan *o) {
+        free(o->tabname);
+        free(o->fname);
+        free(o->uname);
+        free(o);
+}
+
+void
+check_orphans(cron_db *db) {
+        orphan *prev_orphan = NULL;
+        orphan *o = orphans;
+	struct stat statbuf;
+
+        while (o != NULL) {
+                if (getpwnam(o->uname) != NULL) {
+                        orphan *next = o->next;
+
+                        if (prev_orphan == NULL) {
+                                orphans = next;
+                        } else {
+                                prev_orphan->next = next;
+                        }   
+
+                        process_crontab(o->uname, o->fname, o->tabname,
+                                &statbuf, db, NULL);
+
+                        /* process_crontab could have added a new orphan */
+                        if (prev_orphan == NULL && orphans != next) {
+                                prev_orphan = orphans;
+                        }   
+                        free_orphan(o);
+                        o = next;
+                } else {
+                        prev_orphan = o;
+                        o = o->next;
+                }   
+        }   
+}
+
+static void
+add_orphan(const char *uname, const char *fname, const char *tabname) {
+        orphan *o; 
+
+        o = calloc(1, sizeof(*o));
+        if (o == NULL)
+                return;
+
+        if (uname)
+                if ((o->uname=strdup(uname)) == NULL)
+                        goto cleanup;
+
+        if (fname)
+                if ((o->fname=strdup(fname)) == NULL)
+                        goto cleanup;
+
+        if (tabname)
+                if ((o->tabname=strdup(tabname)) == NULL)
+                        goto cleanup;
+
+        o->next = orphans;
+        orphans = o;
+        return;
+
+cleanup:
+        free_orphan(o);
 }

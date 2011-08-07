@@ -213,6 +213,12 @@ typedef	struct _cron_db {
 #endif
 } cron_db;
 
+typedef struct _orphan {
+	struct _orphan  *next;          /* link */
+	char            *uname;
+	char            *fname;
+	char            *tabname;
+} orphan;
 
 void		set_cron_uid __P((void)),
 		set_cron_cwd __P((void)),
@@ -230,7 +236,8 @@ void		set_cron_uid __P((void)),
 		acquire_daemonlock __P((int)),
 		skip_comments __P((FILE *)),
 		log_it __P((char *, int, char *, char *)),
-		log_close __P((void));
+		log_close __P((void)),
+		check_orphans __P((cron_db *));
 
 int		job_runqueue __P((void)),
 		set_debug_flags __P((char *)),

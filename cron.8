@@ -73,7 +73,7 @@ also reads /etc/crontab, which is in a slightly different format (see
 .IR crontab(5) ). In Debian, the content of /etc/crontab is predefined
 to run programs under /etc/cron.hourly, /etc/cron.daily,
 /etc/cron.weekly and /etc/cron.monthly. This configuration is specific to
-Debian see the note under 
+Debian, see the note under 
 .B DEBIAN SPECIFIC
 below.
 in order 
@@ -213,9 +213,9 @@ numerous other smaller features and fixes.
 .PP
 Support for /etc/cron.hourly, /etc/cron.daily, /etc/cron.weekly and
 /etc/cron.monthly is provided in Debian through the default setting
-of the /etc/crontab (see the system-wide example in 
-.IR crontab(7) ).
-The default sytem-wide crontab contains four cron tabs: run every hour, every
+of the /etc/crontab file (see the system-wide example in 
+.IR crontab(5) ).
+The default sytem-wide crontab contains four tasks: run every hour, every
 day, every week and every month. Each of these tasks will execute 
 .B run-parts
 providing each one of the directories as an argument. These tasks are disabled if
@@ -228,12 +228,11 @@ some sanity checks including the following: be executable, be owned by root,
 not be writable by group or other and, if symlinks, point to files owned by
 root. Additionally, the file names must conform to the filename requirements
 of 
-.B run-parts :
+.BR run-parts :
 they must be entirely made up of letters, digits and can only contain the
 special signs underscores ('_') and hyphens ('-'). Any file that does
 not conform to these requirements will not be executed by 
-.B
-run-parts . 
+.BR run-parts . 
 For example, any file containing dots will be ignored.
 This is done to prevent cron from running any of the files
 that are left by the Debian package management system when handling files in
@@ -245,12 +244,12 @@ tasks that will be run at defined intervals. Files created by packages in these
 directories should be named after the package that supplies them.
 
 .PP
-Support for /etc/cron.d is included in
+Support for /etc/cron.d is included in the
 .I cron 
 daemon itself, which handles this location as the system-wide crontab spool.
 This directory can contain any file defining tasks following the format
-used in /etc/crontab, i.e. unlike the user cron spool these files will
-define the username to run the task as in the task definition.
+used in /etc/crontab, i.e. unlike the user cron spool, these files must
+provide the username to run the task as in the task definition.
 
 Files in this directory have to be owned by root, do not need to be executable
 (they are configuration files, just like /etc/crontab) and 
@@ -284,14 +283,13 @@ is controlled by
 .I /etc/default/cron
 which is read by the init.d script that launches the
 .I cron
-daemon. This file determines wether 
+daemon. This file determines whether 
 .I cron
 will read the system's environment variables and makes it possible to add 
 additional options to the 
 .I cron
-program before is executed, either to configure its logging or to define how
-it will treat the files under /etc/cron.d
-
+program before it is executed, either to configure its logging or to define how
+it will treat the files under /etc/cron.d.
 
 .SH "SEE ALSO"
 crontab(1), crontab(5), run-parts(8)
