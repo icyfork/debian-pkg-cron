@@ -16,12 +16,12 @@ cron (3.0pl1-119) UNRELEASED; urgency=low
       example script.
 
  [ Christian Kastner ]
- * database.c, cron.c, cron.h, debian/copyright:
-   - Check orphaned crontabs for adoption. Fix taken from Fedora cronie.
-     Closes: #634926
- * do_command.c:
-   - When logging a job run, prefix the command text with the PID of the
-     process. Closes: #609780
+  * database.c, cron.c, cron.h, debian/copyright:
+    - Check orphaned crontabs for adoption. Fix taken from Fedora cronie.
+      Closes: #634926
+  * do_command.c:
+    - When logging a job run, prefix the command text with the PID of the
+      process. Closes: #609780
 
  -- Javier Fernandez-Sanguino Pen~a <jfs@debian.org>  Wed, 08 Jun 2011 20:44:49 +0200
 
