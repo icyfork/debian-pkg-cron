@@ -12,7 +12,7 @@ else
 fi
 echo
 
-echo "--- usr/bin/editor:"
+echo "--- /usr/bin/editor:"
 readlink -f /usr/bin/editor
 echo
 
