@@ -44,5 +44,5 @@ Description: process scheduling daemon
  as well so that you can receive these messages.
  .
  This cron package is configured by default to do some basic daily system
- maintenance tasks, such as creating backups of key system files. Other
- packages, such as checksecurity, can provide further maintenance tasks.
+ maintenance tasks. Other packages, such as checksecurity, can provide further
+ maintenance tasks.
