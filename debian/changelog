@@ -1,3 +1,11 @@
+cron (3.0pl1-120) UNRELEASED; urgency=low
+
+  [ Christian Kastner ]
+  * debian/control:
+    - Fix broken Vcs-* URLs
+
+ -- Javier Fernandez-Sanguino Pen~a <jfs@debian.org>  Fri, 09 Sep 2011 23:25:35 +0200
+
 cron (3.0pl1-119) unstable; urgency=low
 
   * The development team has migrated from Subversion to git, with the latter
