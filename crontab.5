@@ -232,6 +232,14 @@ string	meaning
 .br
 @hourly	Run once an hour, "0 * * * *".
 .br
+.PP
+Please note that startup, as far as @reboot is concerned, is the time when
+the
+.IR cron (8)
+daemon startup.  In particular, it may be before some system daemons,
+or other facilities, were startup.  This is due to the boot order
+sequence of the machine.
+
 .SH EXAMPLE CRON FILE
 
 The following lists an example of a user crontab file.
