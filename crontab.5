@@ -311,6 +311,30 @@ environment variable in his
 this will affect only the commands executed in the crontab, not the execution
 of the crontab tasks themselves.
 
+The 
+.I crontab
+syntax does not make it possible to define all possible periods one could 
+image off. For example, it is not straightforward to define the last
+weekday of a month. If a task needs to be run in a specific period of time
+that cannot be defined in the 
+.I crontab
+syntaxs the best approach would be to have the program itself check the
+date and time information and continue execution only if the period
+matches the desired one.
+
+If the program itself cannot do the checks then a wrapper script would be
+required. Useful tools that could be used for date analysis are 
+.I ncal
+or
+.I calendar 
+For example, to run a program the last Saturday of every month you could use
+the following wrapper code:
+
+.nf
+0 4 * * Sat   [ "$(date +%e)" = "`ncal | grep $(date +%a | sed  -e 's/.$//') | sed -e 's/^.*\s\([0-9]\+\)\s*$/\1/'`" ] && echo "Last Saturday" && program_to_run
+.fi
+
+
 .SH DIAGNOSTICS
 cron requires that each entry in a crontab end in a newline character. If the
 last entry in a crontab is missing a newline (ie, terminated by EOF), cron will
