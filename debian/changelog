@@ -6,6 +6,11 @@ cron (3.0pl1-120) UNRELEASED; urgency=low
     choses to select this new option.   (Closes: 637295) 
   * debian/examples/cron-stats.pl: Adjust the script with the
     changes introduced in the logging behaviour.
+  * crontab.5: 
+      - Document limitations of the periods that can be defined in crontab
+        syntax and provide workarounds (Closes: 640086)
+      - Document limitation of the use of @reboot due to the definition
+        of the boot sequence as suggested by Regid Ichira.
   [ Christian Kastner ]
   * debian/control:
     - Fix broken Vcs-* URLs
