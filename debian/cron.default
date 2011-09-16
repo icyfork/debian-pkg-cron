@@ -22,6 +22,7 @@ READ_ENV="yes"
 #   1   log start of jobs
 #   2   log end of jobs
 #   4   log jobs with exit status != 0
+#   8   log the process identifier of child process (in all logs)
 #
 #EXTRA_OPTS=""
 

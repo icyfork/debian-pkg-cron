@@ -259,21 +259,17 @@ child_process(e, u)
 		Debug(DPROC, ("[%d] grandchild process fork()'ed\n",
 			      getpid()))
 
-		/* write a log message.  we've waited this long to do it
+		/* write a log message .  we've waited this long to do it
 		 * because it was not until now that we knew the PID that
 		 * the actual user command shell was going to get and the
 		 * PID is part of the log message.
 		 */
-		if (log_level & CRON_LOG_JOBSTART) {
-			char logcmd[MAX_COMMAND + 8];
-			snprintf(logcmd, sizeof(logcmd), "[%d] %s", (int) getpid(), e->cmd);
-			char *x = mkprints((u_char *)logcmd, strlen(logcmd));
-
+		if ( (log_level & CRON_LOG_JOBSTART) && ! (log_level & CRON_LOG_JOBPID)) {
+			char *x = mkprints((u_char *)e->cmd, strlen(e->cmd));
 			log_it(usernm, getpid(), "CMD", x);
 			free(x);
 		}
-
-		/* that's the last thing we'll log.  close the log files.
+		/* nothing to log from now on. close the log files.
 		 */
 		log_close();
 
@@ -383,6 +379,16 @@ child_process(e, u)
 		break;
 	default:
 		/* parent process */
+		/* write a log message if we want the parent and child
+		 * PID values
+		 */
+		if ( (log_level & CRON_LOG_JOBSTART) && (log_level & CRON_LOG_JOBPID)) {
+			char logcmd[MAX_COMMAND + 8];
+			snprintf(logcmd, sizeof(logcmd), "[%d] %s", (int) job_pid, e->cmd);
+			char *x = mkprints((u_char *)logcmd, strlen(logcmd));
+			log_it(usernm, getpid(), "CMD", x);
+			free(x);
+		}
 		break;
 	}
 
@@ -639,10 +645,14 @@ mail_finished:
 	fclose(tmpout);
 
 	if (log_level & CRON_LOG_JOBEND) {
-		char logcmd[MAX_COMMAND + 8];
-		snprintf(logcmd, sizeof(logcmd), "[%d] %s", (int) job_pid, e->cmd);
-		char *x = mkprints((u_char *)logcmd, strlen(logcmd));
-
+		char *x;
+		if (log_level & CRON_LOG_JOBPID) {
+			char logcmd[MAX_COMMAND + 8];
+			snprintf(logcmd, sizeof(logcmd), "[%d] %s", (int) job_pid, e->cmd);
+			x = mkprints((u_char *)logcmd, strlen(logcmd));
+		} else {
+			x = mkprints((u_char *)e->cmd, strlen(e->cmd));
+		}
 		log_it(usernm, job_pid, "END", x);
 		free(x);
 	}

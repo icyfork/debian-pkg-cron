@@ -138,6 +138,7 @@ typedef int time_min;
 #define	CRON_LOG_JOBSTART	0x01
 #define	CRON_LOG_JOBEND		0x02
 #define	CRON_LOG_JOBFAILED	0x04
+#define	CRON_LOG_JOBPID		0x08
 
 #define SECONDS_PER_MINUTE 60
 

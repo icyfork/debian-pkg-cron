@@ -1,10 +1,16 @@
 cron (3.0pl1-120) UNRELEASED; urgency=low
 
+  * do_command.c, cron.h, cron.8: Change the behaviour when logging the
+    information of the child processes. A new loglevel (8) is introduced and
+    documented in cron.8. The previous log format is kept unless the sysadmin
+    choses to select this new option.   (Closes: 637295) 
+  * debian/examples/cron-stats.pl: Adjust the script with the
+    changes introduced in the logging behaviour.
   [ Christian Kastner ]
   * debian/control:
     - Fix broken Vcs-* URLs
 
- -- Javier Fernandez-Sanguino Pen~a <jfs@debian.org>  Fri, 09 Sep 2011 23:25:35 +0200
+ -- Javier Fernández-Sanguino Peña <jfs@debian.org>  Fri, 09 Sep 2011 23:25:35 +0200
 
 cron (3.0pl1-119) unstable; urgency=low
 
