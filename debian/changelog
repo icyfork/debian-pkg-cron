@@ -26,7 +26,7 @@ cron (3.0pl1-119) unstable; urgency=low
   [ Javier Fernandez-Sanguino ]
   * debian/NEWS:
     - Remove the entry introduced in the previous version until an agreement is
-      reached on the desired behaviour (Reopens: #508774)
+      reached on the desired behaviour (Reopens: #608774)
   * debian/standard.daily: 
     - Work properly if mount points have a space (Closes: #633972)
     - Sanity check mount point value before generating an error
