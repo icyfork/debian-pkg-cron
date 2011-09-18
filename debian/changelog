@@ -1,28 +1,37 @@
 cron (3.0pl1-120) unstable; urgency=low
 
-  * do_command.c, cron.h, cron.8: Change the behaviour when logging the
-    information of the child processes. A new loglevel (8) is introduced and
-    documented in cron.8. The previous log format is kept unless the sysadmin
-    choses to select this new option.   (Closes: 637295) 
-  * debian/examples/cron-stats.pl: Adjust the script with the
-    changes introduced in the logging behaviour.
+  * do_command.c, cron.h, cron.8: 
+    - Change the behaviour when logging the information of the child processes.
+      A new loglevel (8) is introduced and documented in cron.8. The previous
+      log format is kept unless the sysadmin choses to select this new option.
+      (Closes: #637295) 
+  * debian/examples/cron-stats.pl:
+    - Adjust the script with the changes introduced in the logging behaviour.
   * cron.8: Fix minor formatting errors
   * debian/cron.bug-script:
-      - Report properly on the EDITOR variable
-      - Report the permissions and contents of all relevant cron directories
+    - Report properly on the EDITOR variable. Thanks to Jan Braun for the
+      report.
+    - Also report the contents of /etc/cron.* dirs. This is helpful when
+      debugging syntax/mode/naming errors. Users that do not want to share this
+      information should edit/delete before reporting bugs.
   * debian/changelog: Typo fixes and missing information
+  * debian/control:
+    - Update package description, removing the "backup of key system files" as
+      a feature. The last of these responsibilities were transffered in -117.
   * crontab.5: 
-      - Document limitations of the periods that can be defined in crontab
-        syntax and provide workarounds (Closes: 640086)
-      - Document limitation of the use of @reboot due to the definition
-        of the boot sequence as suggested by Regid Ichira.
-  * debian/source/lintian-overrides: Add overrides file for lintian
-    required because the maintainer name in debian/changelog and in
-    debian/control do not match due to encoding.
+    - Document limitations of the periods that can be defined in crontab syntax
+      and provide workarounds (Closes: #640086)
+    - Document limitation of the use of @reboot due to the definition of the
+      boot sequence as suggested by Regid Ichira.
+  * debian/source/lintian-overrides:
+    - Add overrides file for lintian required because the maintainer name in
+      debian/changelog and in debian/control do not match due to encoding.
   [ Christian Kastner ]
   * debian/control:
     - Fix broken Vcs-* URLs
-  * debian/NEWS: Remove previous spurious entry from 3.0pl1-110.
+  * debian/NEWS: 
+    - Remove spurious NEWS entry (the entry for -110 was duplicated at the
+      bottom)
 
  -- Javier Fernández-Sanguino Peña <jfs@debian.org>  Fri, 09 Sep 2011 23:25:35 +0200
 
