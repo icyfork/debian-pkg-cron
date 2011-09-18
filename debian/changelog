@@ -16,6 +16,9 @@ cron (3.0pl1-120) UNRELEASED; urgency=low
         syntax and provide workarounds (Closes: 640086)
       - Document limitation of the use of @reboot due to the definition
         of the boot sequence as suggested by Regid Ichira.
+  * debian/source/lintian-overrides: Add overrides file for lintian
+    required because the maintainer name in debian/changelog and in
+    debian/control do not match due to encoding.
   [ Christian Kastner ]
   * debian/control:
     - Fix broken Vcs-* URLs
