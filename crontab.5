@@ -339,7 +339,7 @@ For example, to run a program the last Saturday of every month you could use
 the following wrapper code:
 
 .nf
-0 4 * * Sat   [ "$(date +%e)" = "`ncal | grep $(date +%a | sed  -e 's/.$//') | sed -e 's/^.*\s\([0-9]\+\)\s*$/\1/'`" ] && echo "Last Saturday" && program_to_run
+0 4 * * Sat   [ "$(date +%e)" = "`ncal | grep $(date +%a | sed  -e 's/.$//') | sed -e 's/^.*\\s\\([0-9]\\+\\)\\s*$/\\1/'`" ] && echo "Last Saturday" && program_to_run
 .fi
 
 
