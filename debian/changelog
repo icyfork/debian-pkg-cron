@@ -6,6 +6,11 @@ cron (3.0pl1-120) UNRELEASED; urgency=low
     choses to select this new option.   (Closes: 637295) 
   * debian/examples/cron-stats.pl: Adjust the script with the
     changes introduced in the logging behaviour.
+  * cron.8: Fix minor formatting errors
+  * debian/cron.bug-script:
+      - Report properly on the EDITOR variable
+      - Report the permissions and contents of all relevant cron directories
+  * debian/changelog: Typo fixes and missing information
   * crontab.5: 
       - Document limitations of the periods that can be defined in crontab
         syntax and provide workarounds (Closes: 640086)
@@ -14,6 +19,7 @@ cron (3.0pl1-120) UNRELEASED; urgency=low
   [ Christian Kastner ]
   * debian/control:
     - Fix broken Vcs-* URLs
+  * debian/NEWS: Remove previous spurious entry from 3.0pl1-110.
 
  -- Javier Fernández-Sanguino Peña <jfs@debian.org>  Fri, 09 Sep 2011 23:25:35 +0200
 
