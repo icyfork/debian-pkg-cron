@@ -1,4 +1,4 @@
-cron (3.0pl1-120) UNRELEASED; urgency=low
+cron (3.0pl1-120) unstable; urgency=low
 
   * do_command.c, cron.h, cron.8: Change the behaviour when logging the
     information of the child processes. A new loglevel (8) is introduced and
