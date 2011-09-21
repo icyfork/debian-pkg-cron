@@ -260,7 +260,7 @@ MAILTO=paul
 23 0-23/2 * * * echo "run 23 minutes after midn, 2am, 4am ..., everyday"
 5 4 * * sun     echo "run at 5 after 4 every sunday"
 # Run on every second Saturday of the month
-0 4 8-14 * *    test $(date +%u) \-eq 6 && echo "2nd Saturday"
+0 4 8-14 * *    test $(date +\\%u) \-eq 6 && echo "2nd Saturday"
 .fi
 .SH EXAMPLE SYSTEM CRON FILE
 
@@ -339,7 +339,7 @@ For example, to run a program the last Saturday of every month you could use
 the following wrapper code:
 
 .nf
-0 4 * * Sat   [ "$(date +%e)" = "`ncal | grep $(date +%a | sed  -e 's/.$//') | sed -e 's/^.*\\s\\([0-9]\\+\\)\\s*$/\\1/'`" ] && echo "Last Saturday" && program_to_run
+0 4 * * Sat   [ "$(date +\\%e)" = "`ncal | grep $(date +\\%a | sed  -e 's/.$//') | sed -e 's/^.*\\s\\([0-9]\\+\\)\\s*$/\\1/'`" ] && echo "Last Saturday" && program_to_run
 .fi
 
 
