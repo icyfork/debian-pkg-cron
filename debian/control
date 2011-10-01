@@ -1,7 +1,7 @@
 Source: cron
 Section: admin
 Priority: important
-Maintainer: Javier Fernandez-Sanguino Pen~a <jfs@debian.org>
+Maintainer: Javier Fernández-Sanguino Peña <jfs@debian.org>
 Uploaders: Christian Kastner <debian@kvr.at>
 Standards-Version: 3.9.2
 Build-Depends:
