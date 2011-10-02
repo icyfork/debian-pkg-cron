@@ -18,7 +18,7 @@ READ_ENV="yes"
 # EXTRA_OPTS='-L 5'
 #
 # For quick reference, the currently available log levels are:
-#   0   no logging (errors are logged irregardless)
+#   0   no logging (errors are logged regardless)
 #   1   log start of jobs
 #   2   log end of jobs
 #   4   log jobs with exit status != 0
