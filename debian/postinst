@@ -2,6 +2,12 @@
 set -e
 
 crondir="/var/spool/cron"
+action="$1"
+
+if [ "$action" != configure ]; then
+    exit 0
+fi
+
 
 # LEGACY: This hasn't been relevant to Debian cron since the last Millenium,
 # but we keep it here to preserve the upgrade path... 
