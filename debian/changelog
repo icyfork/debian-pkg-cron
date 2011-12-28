@@ -2,6 +2,8 @@ cron (3.0pl1-121) UNRELEASED; urgency=low
 
   * debian/control:
     - Put the maintainer address in UTF-8 encoding
+  * debian/postinst:
+     - Only go ahead when configuring the package (Closes: #653304)
   * debian/source/lintian-overrides:
     - Removed, no longer required
   * crontab.5:
