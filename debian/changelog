@@ -16,6 +16,8 @@ cron (3.0pl1-121) UNRELEASED; urgency=low
       David Prévot (Closes: #643603)
   * debian/cron.default:
     - Fix typo (Closes: #643897)
+  * debian/compat:
+    - Set to compatibility version 9 to enable hardened build flags (Closes: #653720)
 
  -- Javier Fernandez-Sanguino Pen~a <jfs@debian.org>  Mon, 19 Sep 2011 00:20:17 +0200
 
