@@ -7,17 +7,18 @@ cron (3.0pl1-121) unstable; urgency=low
   * debian/source/lintian-overrides:
     - Removed, no longer required
   * crontab.5:
-    - Escape the '%' in the examples so that they can work when copied over
-      to crontab (Closes: #642309)
+    - Escape the '%' in the examples so that they can work when copied over to
+      crontab (Closes: #642309)
     - Remove tabs from manpage since they are not formatted properly in the
       nonfill area
   * cron.8, crontab.1, crontab.5:
-    - Fix formatting errors in manual pages with patch provided by 
-      David Prévot (Closes: #643603)
+    - Fix formatting errors in manual pages with patch provided by David
+      Prévot (Closes: #643603)
   * debian/cron.default:
     - Fix typo (Closes: #643897)
   * debian/compat:
-    - Set to compatibility version 9 to enable hardened build flags (Closes: #653720)
+    - Set to compatibility version 9 to enable hardened build flags 
+      (Closes: #653720)
 
  -- Javier Fernández-Sanguino Peña <jfs@debian.org>  Mon, 19 Sep 2011 00:20:17 +0200
 
