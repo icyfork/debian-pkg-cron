@@ -10,6 +10,7 @@
 cd /
 LOCKFILE=/var/lock/cron.daily
 LOFO=lost+found
+SEENFS=""
 
 # When flock is available, avoid running more than once at a time 
 if `which flock >/dev/null`; then
@@ -41,6 +42,10 @@ do
 
     # Only check on FS where we might expect lost+found
     echo "$FSTYPE" | grep -q -E '^(ext2|ext3|ext4|xfs)$' || continue
+
+    # Only check a filesystem once
+    echo "$SEENFS" | grep -q -E "$DEV " && continue
+    SEENFS="$DEV $SEENFS"
 
     [ "$MTPT" = '/' ] && MTPT=""
     # Replace spaces in the path (\040)
