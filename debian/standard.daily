@@ -44,7 +44,7 @@ do
     echo "$FSTYPE" | grep -q -E '^(ext2|ext3|ext4|xfs)$' || continue
 
     # Only check a filesystem once
-    echo "$SEENFS" | grep -q -E "$DEV " && continue
+    echo "$SEENFS" | grep -q "$DEV " && continue
     SEENFS="$DEV $SEENFS"
 
     [ "$MTPT" = '/' ] && MTPT=""
