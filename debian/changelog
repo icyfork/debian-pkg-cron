@@ -1,3 +1,11 @@
+cron (3.0pl1-122) UNRELEASED; urgency=low
+
+  * debian/standard.daily: Apply patch from Steve Allison to prevent checking
+     two times the same filesystem. This prevents bogus warnings about missing
+     lost+found in schroot bind mounts (Closes: #660879)
+
+ -- Javier Fernandez-Sanguino Pen~a <jfs@debian.org>  Thu, 22 Mar 2012 00:11:27 +0100
+
 cron (3.0pl1-121) unstable; urgency=low
 
   * debian/control:
