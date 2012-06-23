@@ -1,4 +1,4 @@
-cron (3.0pl1-123) UNRELEASED; urgency=low
+cron (3.0pl1-123) unstable; urgency=low
 
   * debian/standard.daily: Apply patch from Steve Allison to prevent checking
      two times the same filesystem. This prevents bogus warnings about missing
