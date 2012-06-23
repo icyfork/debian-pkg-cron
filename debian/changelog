@@ -1,12 +1,19 @@
-cron (3.0pl1-122) UNRELEASED; urgency=low
+cron (3.0pl1-123) UNRELEASED; urgency=low
 
   * debian/standard.daily: Apply patch from Steve Allison to prevent checking
      two times the same filesystem. This prevents bogus warnings about missing
      lost+found in schroot bind mounts (Closes: #660879)
-  * debian/rules: Apply patch from Steve Langasek to add cross compiler support to
-    cron (Closes: #666892)
+  * debian/rules: Apply patch from Steve Langasek to add cross compiler
+    support to cron (Closes: #666892)
+  * debian/cron.default, debian/standard.daily, debian/rules: Remove
+    the lost+found check as this is no longer required and causes
+    issues with some filesystems (e.g. bind mounts, locally mounted USB
+    drives). Additionally, in some filesystems the directory
+    will be generated when required. Removing the script makes it possible to
+    remove the dependency from a low priority package (Closes: #620164,
+    #658743, #662605, #660879, #579640)
 
- -- Javier Fernández-Sanguino Peña <jfs@debian.org>  Mon, 09 Apr 2012 17:23:01 +0200
+ -- Javier Fernández-Sanguino Peña <jfs@debian.org>  Sat, 23 Jun 2012 08:28:27 +0200
 
 cron (3.0pl1-121) unstable; urgency=low
 

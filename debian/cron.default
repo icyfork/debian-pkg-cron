@@ -26,5 +26,3 @@ READ_ENV="yes"
 #
 #EXTRA_OPTS=""
 
-# Uncomment to disable lost+found check
-#CHECK_LOSTFOUND=no
