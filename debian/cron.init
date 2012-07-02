@@ -70,7 +70,9 @@ start)	log_daemon_msg "Starting periodic command scheduler" "cron"
 	;;
 stop)	log_daemon_msg "Stopping periodic command scheduler" "cron"
         killproc -p $PIDFILE $DAEMON
-        log_end_msg $?
+        RETVAL=$?
+        [ $RETVAL -eq 0 ] && [ -e "$PIDFILE" ] && rm -f $PIDFILE
+        log_end_msg $RETVAL
         ;;
 restart) log_daemon_msg "Restarting periodic command scheduler" "cron" 
         $0 stop
