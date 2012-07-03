@@ -2,6 +2,11 @@ cron (3.0pl1-124) unstable; urgency=low
 
   * debian/{preinst,postinst,postrm}: remove obsolete /etc/cron.daily/standard
     on upgrade. (Closes: #679062)
+  * debian/cron.init: Have the init.d file remove cron's pidfile if it 
+    exists after killing the process. The pidfile should be removed
+    by cron itself (but it isn't) through its SIGhandler as done in later
+    versions in cron (4.1 and cronie). This fix is, however, simpler and less
+    intrusive. (Closes: 679106, 615855)
 
  -- Javier Fernández-Sanguino Peña <jfs@debian.org>  Thu, 28 Jun 2012 12:08:09 +0200
 
