@@ -43,6 +43,6 @@ Description: process scheduling daemon
  (or to the user in question); you should probably install a mail system
  as well so that you can receive these messages.
  .
- This cron package is configured by default to do some basic daily system
- maintenance tasks. Other packages, such as checksecurity, can provide further
- maintenance tasks.
+ This cron package does not provide any system maintenance tasks. Basic
+ periodic maintenance tasks are provided by other packages, such 
+ as checksecurity.
