@@ -1,4 +1,4 @@
-cron (3.0pl1-124) unstable; urgency=low
+cron (3.0pl1-124) UNRELEASED; urgency=low
 
   * debian/{preinst,postinst,postrm}: remove obsolete /etc/cron.daily/standard
     on upgrade. (Closes: #679062)
