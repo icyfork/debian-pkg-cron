@@ -3,9 +3,9 @@ Section: admin
 Priority: important
 Maintainer: Javier Fernández-Sanguino Peña <jfs@debian.org>
 Uploaders: Christian Kastner <debian@kvr.at>
-Standards-Version: 3.9.2
+Standards-Version: 3.9.3
 Build-Depends:
-    debhelper (>= 7.2.3~),
+    debhelper (>= 9),
     libpam0g-dev,
     libselinux1-dev [linux-any],
     libaudit-dev [linux-any]
