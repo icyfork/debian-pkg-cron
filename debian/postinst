@@ -30,8 +30,9 @@ for fname in allow deny ; do
     fi
 done
 
-# Conffile has become obsolete
+# Conffiles that are now obsolete
 dpkg-maintscript-helper rm_conffile /etc/cron.monthly/standard "3.0pl1-113" -- "$@"
+dpkg-maintscript-helper rm_conffile /etc/cron.daily/standard "3.0pl1-123" -- "$@"
 # If dpkg-maintscript-helper renames it instead of removing it because it has
 # local modifications, we must rename it back to a valid name, or crond
 # will not accept it. Thanks to Raphaël Hertzog for the tip.
