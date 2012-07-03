@@ -213,7 +213,7 @@ cron (3.0pl1-117) unstable; urgency=low
     - Backup of /etc/{passd,group} is no longer performed by cron; the task
       was handed over to src:shadow (see #554170). In Squeeze, this task will
       be performed redundantly by both packages (as discussed on
-      debian-release)
+      debian-release) (Closes: 333837)
     - Rewrite locking and lost+found-checking code, based on a submission to
       the BTS by Justin B. Rye. Closes: #478967, #537073, LP: #257367
     - Parse /etc/mtab instead of /proc/mounts; the former makes handling bind
