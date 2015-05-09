@@ -588,8 +588,15 @@ log_it(username, xpid, event, detail)
 #endif /*SYSLOG*/
 
 #if DEBUGGING
+
+#ifndef LOG_FILE
+	TIME_T			now = time((TIME_T) 0);
+	register struct tm	*t = localtime(&now);
+#endif
+
 	if (DebugFlags) {
-		fprintf(stderr, "log_it: (%s %d) %s (%s)\n",
+		fprintf(stderr, "%02d/%02d-%02d:%02d:%02d (%s %d) %s (%s)\n",
+			t->tm_mon+1, t->tm_mday, t->tm_hour, t->tm_min, t->tm_sec,
 			username, xpid, event, detail);
 	}
 #endif
